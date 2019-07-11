@@ -7,7 +7,7 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-knitr::opts_knit$set(root.dir = '../aus-rodent-skulls')
+knitr::opts_knit$set(root.dir = '../eco-rodents')
 ```
 
 # Compare big and small patch protocols
@@ -130,21 +130,6 @@ sm.hypothetical.4 <- sm.wrap.PCA$pc.shapes[[4]]  # PC2 max
 PC2.var.plot <- procrustes.var.plot(sm.hypothetical.3, sm.hypothetical.4, col = heat.colors, col.val = sm.PC2.var[, "length"], labels = F)  # use "radius" with "spherical" in line 121
 ```
 
-### Compare histograms of landmark variation by protocol
-We can quantify this variation with histograms of the variation for each protocol. 
-
-Big patch protocol:
-```{r}
-big.var.range <- variation.range(big.gpagen.shape)
-hist(big.var.range[, 1])
-```
-
-Small patch protocol:
-```{r}
-sm.var.range <- variation.range(sm.gpagen.shape)
-hist(sm.var.range[, 1])
-```
-
 ## Plot PCAs for each protocol
 PCAs allow visual comparison of how differently the patch protocols sort the shape data. To assist, we wrote a function, `PlotByGroup()`, to match colors or other plotting attributes to groups within the dataset. These don't impact the analysis; they are just visualization aids.
 
@@ -241,24 +226,23 @@ The patch protocols look very similar on the PCAs, which suggests that they do n
 Big patch protocol:
 ```{r}
 big.gdf <- geomorph.data.frame(shape = big.shape, genus = big.info$EGenus, csize = big.info$Csize)
-big.procD <- procD.lm(big.shape ~ size * genus, data = gdf)
+big.procD <- procD.lm(shape ~ csize * genus, data = big.gdf)
 print(big.procD)
 
-# with procd.allomery
+# with procd.allometry
 big.Allo <- procD.allometry(shape ~ csize, ~ genus, logsz = TRUE, iter = 999, RRPP = TRUE, print.progress = TRUE, data = big.gdf)
 summary(big.Allo)
 ```
 
 Small patch protocol:
 ```{r}
-gdf <- geomorph.data.frame(genus = sm.info$EGenus, size = sm.info$Csize)
-sm.procD <- procD.lm(sm.shape ~ size * genus, data = gdf)
+sm.gdf <- geomorph.data.frame(shape = sm.shape, genus = sm.info$EGenus, csize = sm.info$Csize)
+sm.procD <- procD.lm(shape ~ csize * genus, data = sm.gdf)
 print(sm.procD)
 
 # with procd.allomery
-sm.Allo <- procD.allometry(sm.shape ~ csize, ~ genus, logsz = TRUE, iter = 999, RRPP = TRUE, print.progress = TRUE, data = gdf)
+sm.Allo <- procD.allometry(sm.shape ~ csize, ~ genus, logsz = TRUE, iter = 999, RRPP = TRUE, print.progress = TRUE, data = sm.gdf)
 summary(sm.Allo)
-
 ```
 These ANOVAs are also very similar. Therefore, we decided to use only the small patch protocol as this protocol captured more information (sutures versus patch points) and had less asymmetry than the big patch protocol. It also resembles the more common method of landmarking.
 

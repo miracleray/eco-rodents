@@ -41,7 +41,7 @@ First, to reduce user error, AEM landmarked 20 specimens to familiarize herself 
 
 Viewbox puts the most recent specimen in the first row of the output .csv file, which is why we take the 20 initial specimens from the last rows of the coordinate dataset. 
 ```{r}
-coords.3D <- read.csv("../Data/Raw/19_01_09_RawData.csv", header = T)
+coords.3D <- read.csv("../Data/Raw/Raw_Coord_Data.csv", header = T)
 coords.3D <- coords.3D[1:(length(coords.3D) - 40)]  # removes first 20 specimens landmarked, with 2 protocols per specimen = 40
 ```
 _Note that the data is loaded in using a relative directory - not a `setwd()` command. This allows others who have cloned this repo of data and code to still use the code out of the box._
@@ -204,8 +204,6 @@ summary(big.biY)
 summary(sm.biY)
 ```
 Interestingly, we observe that the big patch protocol has elevated asymmetry relative to the small patch protocol (side Rsq = .11 vs .04, respectively). We suspect this is because it was impossible to get a perfectly mirror-image-matched large patch on the dorsal surface of the skull in Viewbox. Perhaps this asymmetry, hard-coded into the patch protocol, contributed to an increase in asymmetry measured compared to the small patch protocol. The small patch protocol had fewer patch points and it was easier to make mirror-image small patches.
-
-### TODO: test asymmetry without patches
 
 ### Save intermediate data
 Now that we have extracted the 2 patch protocol datasets and the specimen metadata, we are ready for the next analysis step: 02-calculate-user-error.Rmd.

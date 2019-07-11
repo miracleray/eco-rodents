@@ -7,7 +7,7 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-knitr::opts_knit$set(root.dir = '../aus-rodent-skulls')
+knitr::opts_knit$set(root.dir = '../eco-rodents')
 ```
 
 # Plotting exploratory PCAs
@@ -61,30 +61,6 @@ The chunk below demonstrates how a plot can be exported as a .eps file. These fi
 PlotPCA(PCA, 1, 2, sp.col.gen)
 legend(0.144, 0.056, legend = gen.name.phylo, col = col.phylo, pch = 16, cex = 0.78)
 ### dev.off()
-```
-
-### Plot PCA by immigration wave
-Here we visualize the same PCA but color it by immigration wave:
-1: Australian old endemics (AOEs) by blue
-2: Native _Rattus_ by black
-3: Invasives (*M musculus, R. rattus, R. norvegicus*) by grey
-
-```{r}
-# Create Wave column in traits metadata
-info.traits$Wave <- 1  
-info.traits$Wave[which(info.traits$Genus == "Rat")] <- 2
-info.traits$Wave[which(info.traits$Clade == "invRattus")] <- 3
-info.traits$Wave[which(info.traits$Clade == "Mus")] <- 4
-
-# Create color vector
-col.wave <- c("blue", "black", "grey", "grey")
-sp.col.wave <- PlotByGroup(info.traits, "Wave", col.wave)
-
-# Plot PCA
-PlotPCA(PCA, 1, 2, sp.col.wave)
-legend(-0.145, -0.055, legend = c("AOEs", "Native Rattus", "Invasives"), col = c("blue", "black", "grey"), pch = 16, cex = 0.78)
-text(-0.01, -0.08, "Carnivores", col = "blue")
-text(0.105, -0.025, "R. norvegicus", col = "grey")
 ```
 
 ## PCA plot by diet and guild
@@ -178,5 +154,5 @@ for (i in 1:7) {
 
 ### Save intermediate data
 ```{r}
-save(info.traits, col.feed, pch.gld, col.wave, col.egen, sp.col.wave, file = "../Data/Processed/04-sm-data-with-traits.rda")
+save(info.traits, col.feed, pch.gld, col.egen, file = "../Data/Processed/04-sm-data-with-traits.rda")
 ```

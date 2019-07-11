@@ -7,14 +7,16 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-knitr::opts_knit$set(root.dir = '../aus-rodent-skulls')
+knitr::opts_knit$set(root.dir = '../eco-rodents')
 ```
 # Calculate user error
 Geometric morphometric studies usually require a lot of user-generated data and it's important to assess how much user error is created during the landmarking process. 
 
-First, we visualize whether any outliers can be explained by mistakes in landmark placement (e.g. a point "falling through" the nasal to land on the inner basicranium).
+First, we visualize whether any outliers can be explained by mistakes in landmark placement (e.g. a point "falling through" the nasal to land on the inner basicranium). This was already done for this dataset in allometry-rodents repo and associated paper.
 
 Second, we compare the shape variation between 20 individuals, from a variety of different species, landmarked twice to calculate the intra-observer (i.e. digitizer) error.
+
+Third, we'll finalize the specimens to be included in future analyses.
 
 ### Load packages, functions, and data from previous steps
 ```{r message = FALSE}
@@ -27,57 +29,21 @@ load(file = "../Data/Processed/01-bilat-data-w-ERR.rda")
 ```
 
 ## 1) Check for outliers and fix landmarking errors
-_geomorph_ comes with a handy function to check for outliers. Since our sample has a wide range of species, we decided to include the groups factor. This means the plotOutliers returns likely outliers for each genus instead of the group as a whole. When groups were not defined, only large species were returned as "outliers". 
-```{r}
-# Plot outliers by genus for small patch dataset
-outliers <- plotOutliers(sm.bY.shape, groups = sm.sp.info$Genus, inspect.outliers = T)
-```
+Done in previous manuscript (see allometry-rodents repo)
 
-### Visualize why they are outliers by looking at landmark vectors
-We can examine the landmark placements in outliers as compared to the specimen closest to the median, based on the plots above. This allows us to determine if there were any major landmarking errors that might impact further analyses.
-
-Genus abbreviatons and number of outliers were inserted where needed for each genus. This code was only used once: after all landmarks were captured and before the other major analyses were completed.
-
-We wrote a function, `MatchSpecShape()` to help us visualize outlier shape information. The function returns the 3D shape of specimen of interest. We can use it to compare the outliers to the median specimen in its genus.
-```{r}
-# Get shape data for outliers indicated by plots above
-out.1 <- MatchSpecShape(outliers$Not[1], sm.sp.info, sm.bY.shape)  # 1st outlier in genus Mel
-out.2 <- MatchSpecShape(outliers$Mel[2], sm.sp.info, sm.bY.shape)  # 2nd outlier in genus Mel
-
-# Compare outlier specimens to median specimen
-med.spec <- outliers$Not[median(outliers$Not)]  # median specimen in Mel
-med.shape <- MatchSpecShape(med.spec, sm.sp.info, sm.bY.shape)
-
-# Compare landmark locations in outlier specimens to median specimen
-plotRefToTarget(med.shape, out.1, method = "vector", label = FALSE)
-plotRefToTarget(med.shape, out.2, method = "vector", label = FALSE)
-```
-**Repeat the above for each genus/patch protocol as needed. When landmarking errors are found, fix in Viewbox, export new coordinates, and begin again from script 01.** 
-
-### ID outliers within genus Pseudomys
-To ID outliers within each species of the speciose genus Pseudomys, we needed to create shape and metadata files just for them so the `plotOutliers()` function can separate them. 
-```{r}
-# Isolate Pseudomys species
-is.Pse <- which(sm.sp.info$Species == "Pse")
-Pse.sm.shape <- sm.bY.shape[, , is.Pse]  # shape
-Pse.sm.info <- sm.sp.info[is.Pse, ]  # metadata
-
-# Run plotOutliers
-outliers.Pse <- plotOutliers(Pse.sm.shape, sm.sp.info$Species, inspect.outliers = TRUE)
-```
-
-### Remove 2 outliers from dataset
-Two specimens had major landmarking errors -- landmarks consistently placed in the wrong places. Therefore, we opted to remove these two specimens.
+### Remove outliers from dataset
+Three specimens had major landmarking errors -- landmarks consistently placed in the wrong places. Therefore, we opted to remove these specimens.
 ```{r}
 # Find indices (same for both big and small datasets)
+mel.out <- which(sm.sp.info$CatNum == "J22537")  # Melomys burtoni
 rat.out <- which(sm.sp.info$CatNum == "C11381")  # Rattus norvegicus
 uro.out <- which(sm.sp.info$CatNum == "J17610")  # Uromys caudimaculatus
 
 # Remove from both big and small datasets
-sm.sp.info <- sm.sp.info[-c(rat.out, uro.out), ]
-big.sp.info <- big.sp.info[-c(rat.out, uro.out), ]
-sm.bY.shape <- sm.bY.shape[, , -c(rat.out, uro.out)]
-big.bY.shape <- big.bY.shape[, , -c(rat.out, uro.out)]
+sm.sp.info <- sm.sp.info[-c(mel.out, rat.out, uro.out), ]
+big.sp.info <- big.sp.info[-c(mel.out, rat.out, uro.out), ]
+sm.bY.shape <- sm.bY.shape[, , -c(mel.out, rat.out, uro.out)]
+big.bY.shape <- big.bY.shape[, , -c(mel.out, rat.out, uro.out)]
 ```
 
 ## 2) Calculate intra-observer error
@@ -119,22 +85,9 @@ RepAbility(sm.err.shape, sm.err.info$CatNum, n.Rep = 2)
 Patch points could artificially inflate our repeatability numbers since they are placed automatically by the Viewbox software. To test this, we calculated repeatability for each protocol with patch points removed. 
 
 Note that removing patch points will remove 16 more points from the big patch protocol than from the small patch protocol. 
-```{r}
-# Find patch numbers for each protocol
-big.patches <- str_detect(big.pt.names, "PAT")
-big.pat.num <- which(big.patches == TRUE)
 
-sm.patches <- str_detect(sm.pt.names, "PAT")
-sm.pat.num <- which(sm.patches == TRUE)
+<Done in previous manuscript, see allometry-rodents repo>
 
-# Subset the shape datasets for only fixed LMs and curve semi-LMs
-big.patchless.shape <- big.err.shape[-big.pat.num, , ] 
-sm.patchless.shape <- sm.err.shape[-sm.pat.num, , ]
-
-# Re-run repeatability
-RepAbility(big.patchless.shape, big.err.info$CatNum, n.Rep = 2)
-RepAbility(sm.patchless.shape, sm.err.info$CatNum, n.Rep = 2)
-```
 Taking out patch points decreases the repeatability by less than 2% for each protocol:
 Big Patch is 93.0% with patches, 91.3% without patches (140 points removed)
 Small Patch: 93.0% with patches, 91.5% without patches (124 points removed) 
