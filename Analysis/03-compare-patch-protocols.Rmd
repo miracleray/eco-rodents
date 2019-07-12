@@ -15,10 +15,11 @@ Our study asked a methodological question: does it make a difference if we use b
 
 We hypothesized that the big patch protocol would pick up convergent evolution while the small patch + suture curve protocol would better detect phylogentically-conserved shapes. 
 
-Here we test if the shape patterns produced by the two protocols are different in any way.
+The heatmaps provide a statistically rigorous way to visualize the relative variation of landmarks across a protocol. In other words, the colors show us which parts of the skull vary most and if the protocols emphasize different patterns.
 
 ### Load packages, functions, and data from previous steps
 ```{r message = FALSE}
+library(png)  # needed to work with screenshots
 # Load libraries (and install if necessary) for landvR package
 if(!require(devtools)) install.packages("devtools")
 if(!require(dispRity)) install.packages("dispRity")
@@ -30,7 +31,7 @@ source("../Functions/utilities.R")  # custom functions
 load(file = "../Data/Processed/02-main-data-both-protocols.rda")
 ```
 
-## Landmark variation heatmaps
+## Landmark variation heatmaps for big patch protocol
 Here we use Dr Thomas Guillerme's new package, `landvR` to see how landmarks vary within and between the two protocols. Much of the below was adapted from [this vignette written by Dr Guillerme](https://cdn.rawgit.com/TGuillerme/landvR/8a6a6bd5/inst/vignettes/Landmark_partition_test.html).
 ```{r}
 # Find mean configuration - i.e. mean shape in dataset
@@ -64,9 +65,6 @@ big.wrap.PCA <- plotTangentSpace(big.shape, verbose = FALSE)
 # Select extreme specimens (the ones that make the warp-meshes) on PC1
 big.hypothetical.1 <- big.wrap.PCA$pc.shapes[[1]]  # PC1 min
 big.hypothetical.2 <- big.wrap.PCA$pc.shapes[[2]]  # PC1 max
-
-# Plot the range of variation along PC1 using a heat color scheme
-PC1.var.plot <- procrustes.var.plot(big.hypothetical.1, big.hypothetical.2, col = heat.colors, col.val = big.PC1.var[, "radius"], labels = F)
 ```
 
 **Repeat the steps immediately above for PC2**
@@ -78,12 +76,9 @@ big.PC2.var <- variation.range(big.gpagen.shape, return.ID = FALSE, axis = 2, or
 # Select extreme specimens on PC2
 big.hypothetical.3 <- big.wrap.PCA$pc.shapes[[3]]  # PC2 min
 big.hypothetical.4 <- big.wrap.PCA$pc.shapes[[4]]  # PC2 max
-
-# Plot the range of variation along PC2 using a heat color scheme
-PC2.var.plot <- procrustes.var.plot(big.hypothetical.3, big.hypothetical.4, col = heat.colors, col.val = big.PC2.var[, "length"], labels = F)  # use "radius" with "spherical" in line 75
 ```
 
-## Repeat landmark variation heatmap for small patch protocol PC1 & PC2
+## Repeat landmark variation heatmap for small patch protocol 
 ```{r}
 # Find mean configuration - i.e. mean shape in dataset
 sm.consensus <- (select.procrustes(sm.shape, selector = mean))[[1]]
@@ -101,6 +96,7 @@ sm.gpagen.shape$coords <- sm.shape
 sm.gpagen.shape$consensus <- sm.consensus
 class(sm.gpagen.shape) <- "gpagen"
 
+## PC1
 # Measure extremes of variation from mean on PC1
 sm.PC1.var <- variation.range(sm.gpagen.shape, return.ID = FALSE, axis = 1, ordination = ordination, type = "spherical")
 
@@ -111,23 +107,142 @@ sm.wrap.PCA <- plotTangentSpace(sm.shape, verbose = FALSE)
 sm.hypothetical.1 <- sm.wrap.PCA$pc.shapes[[1]]
 sm.hypothetical.2 <- sm.wrap.PCA$pc.shapes[[2]]
 
-# Plot the range of variation along PC1 using a heat color scheme
-PC1.var.plot <- procrustes.var.plot(sm.hypothetical.1, sm.hypothetical.2, col = heat.colors, col.val = sm.PC1.var[, "radius"], labels = F)
-```
-The heatmaps provide a statistically rigorous way to visualize the relative variation of landmarks across a protocol. In other words, the colors show us which parts of the skull vary most and if the protocols emphasize different patterns. 
-
-**Make heatmap for small patch PC2**
-The pc.shapes[1] and [2] correspond to PC1min and PC1max. Therefore we can adjust the same sm.wrap.PCA to plot the heatmaps for PC2. 
-```{r}
+## PC2
 # Measure extremes of variation from mean on PC2
 sm.PC2.var <- variation.range(big.gpagen.shape, return.ID = FALSE, axis = 2, ordination = ordination, type = "vector")  # can also try "spherical"
 
 # Select extreme specimens on PC2
 sm.hypothetical.3 <- sm.wrap.PCA$pc.shapes[[3]]  # PC2 min
 sm.hypothetical.4 <- sm.wrap.PCA$pc.shapes[[4]]  # PC2 max
+```
 
-# Plot the range of variation along PC2 using a heat color scheme
-PC2.var.plot <- procrustes.var.plot(sm.hypothetical.3, sm.hypothetical.4, col = heat.colors, col.val = sm.PC2.var[, "length"], labels = F)  # use "radius" with "spherical" in line 121
+## Make heatmap plot comparisons
+```{r}
+## Big patch protocol PC1
+# Dorsal view
+open3d(windowRect = c(0, 0, 600, 600))
+big.PC1.var.plot <- procrustes.var.plot(big.hypothetical.1, big.hypothetical.2, col = heat.colors, col.val = big.PC1.var[, "radius"], labels = F)
+view3d(phi = 0)  # flip cranium
+rgl.snapshot("../Data/Processed/heatmap_PC1_big_dor.png")  # save screenshot for multipanel plot
+
+# Lateral view
+open3d(windowRect = c(0, 0, 600, 600))
+big.PC1.var.plot <- procrustes.var.plot(big.hypothetical.1, big.hypothetical.2, col = heat.colors, col.val = big.PC1.var[, "radius"], labels = F)
+view3d(phi = 90)
+rgl.snapshot("../Data/Processed/heatmap_PC1_big_lat.png")
+
+## Small patch protocol PC1
+# Dorsal view
+open3d(windowRect = c(0, 0, 600, 600))
+sm.PC1.var.plot <- procrustes.var.plot(sm.hypothetical.1, sm.hypothetical.2, col = heat.colors, col.val = sm.PC1.var[, "radius"], labels = F)
+view3d(phi = 0)  # flip cranium
+rgl.snapshot("../Data/Processed/heatmap_PC1_sm_dor.png")  # save screenshot for multipanel plot
+
+# Lateral view
+open3d(windowRect = c(0, 0, 600, 600))
+sm.PC1.var.plot <- procrustes.var.plot(sm.hypothetical.1, sm.hypothetical.2, col = heat.colors, col.val = sm.PC1.var[, "radius"], labels = F)
+view3d(phi = 90)
+rgl.snapshot("../Data/Processed/heatmap_PC1_sm_lat.png")
+
+## Big patch protocol PC2
+# Dorsal view
+open3d(windowRect = c(0, 0, 600, 600))
+big.PC2.var.plot <- procrustes.var.plot(big.hypothetical.3, big.hypothetical.4, col = heat.colors, col.val = big.PC2.var[, "length"], labels = F)
+view3d(phi = 0)  # flip cranium
+rgl.snapshot("../Data/Processed/heatmap_PC2_big_dor.png")
+
+# Lateral view
+open3d(windowRect = c(0, 0, 600, 600))
+big.PC2.var.plot <- procrustes.var.plot(big.hypothetical.3, big.hypothetical.4, col = heat.colors, col.val = big.PC2.var[, "length"], labels = F)
+view3d(phi = 90)
+rgl.snapshot("../Data/Processed/heatmap_PC2_big_lat.png")
+
+## Small patch protocol PC2
+# Dorsal view
+open3d(windowRect = c(0, 0, 600, 600))
+sm.PC2.var.plot <- procrustes.var.plot(sm.hypothetical.3, sm.hypothetical.4, col = heat.colors, col.val = sm.PC2.var[, "length"], labels = F)
+view3d(phi = 0)  # flip cranium
+rgl.snapshot("../Data/Processed/heatmap_PC2_sm_dor.png")
+
+# Lateral view
+open3d(windowRect = c(0, 0, 600, 600))
+sm.PC2.var.plot <- procrustes.var.plot(sm.hypothetical.3, sm.hypothetical.4, col = heat.colors, col.val = sm.PC2.var[, "length"], labels = F)
+view3d(phi = 90)
+rgl.snapshot("../Data/Processed/heatmap_PC2_sm_lat.png")
+```
+
+### Prep images for multi-panel figure TK
+This step assumes ImageMagik is installed on your computer
+```{r}
+system("mogrify ../Data/Processed/heatmap_*.png -trim ../Data/Processed/*.png")  # removes whitespace (requires ImageMagik)
+PC1_big_dor <- readPNG("../Data/Processed/heatmap_PC1_big_dor.png")
+PC1_big_lat <- readPNG("../Data/Processed/heatmap_PC1_big_lat.png")
+PC1_sm_dor <- readPNG("../Data/Processed/heatmap_PC1_sm_dor.png")
+PC1_sm_lat <- readPNG("../Data/Processed/heatmap_PC1_sm_lat.png")
+PC2_big_dor <- readPNG("../Data/Processed/heatmap_PC2_big_dor.png")
+PC2_big_lat <- readPNG("../Data/Processed/heatmap_PC2_big_lat.png")
+PC2_sm_dor <- readPNG("../Data/Processed/heatmap_PC2_sm_dor.png")
+PC2_sm_lat <- readPNG("../Data/Processed/heatmap_PC2_sm_lat.png")
+```
+
+### Plot multi-panel heatmap figure
+ERROR: memory issues when trying to add legend within setEPS. Works when lines 107-177 are run through the console, plot is "zoomed" from RStudio, and then screenshot from that window
+```{r}
+#setEPS()  # sets up plot export
+#postscript("../Data/Results/Figure1_Heatmaps.eps")
+#mat <- matrix(c(1,2,3,4,5,6,7,8), 4, 2, byrow = TRUE)  # 4 rows, 2 cols
+mat <- matrix(c(1,2,3,4), 2, 2, byrow = TRUE)  # 2 rows, 2 cols
+layout(mat, widths = c(1, 1, 1, 1), heights = rep(1, 4)) 
+
+## PC1
+# 1) Small patch PC1 dorsal
+par(mar = c(0, 0, 1, 0))
+plot(c(0, dim(PC1_sm_dor)[2]), c(0, dim(PC1_sm_dor)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
+rasterImage(PC1_sm_dor, 0, 0, dim(PC1_sm_dor)[2], dim(PC1_sm_dor)[1])
+text(0, dim(PC1_sm_dor)[1]-10, "A", cex = 2)
+
+# 2) Big patch PC1 dorsal
+par(mar = c(0, 0, 1, 0))
+plot(c(0, dim(PC1_big_dor)[2]), c(0, dim(PC1_big_dor)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
+rasterImage(PC1_big_dor, 0, 0, dim(PC1_big_dor)[2], dim(PC1_big_dor)[1])
+text(0, dim(PC1_big_dor)[1]-10, "E", cex = 2)
+
+# 3) Small patch PC1 lateral
+par(mar = c(0, 0, 1, 0))
+plot(c(0, dim(PC1_sm_lat)[2]), c(0, dim(PC1_sm_lat)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
+rasterImage(PC1_sm_lat, 0, 0, dim(PC1_sm_lat)[2], dim(PC1_sm_lat)[1])
+text(0, dim(PC1_sm_lat)[1]-10, "B", cex = 2)
+
+# 4) Big patch PC1 lateral
+par(mar = c(0, 0, 0, 0))
+plot(c(0, dim(PC1_big_lat)[2]), c(0, dim(PC1_big_lat)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
+rasterImage(PC1_big_lat, 0, 0, dim(PC1_big_lat)[2], dim(PC1_big_lat)[1])
+text(0, dim(PC1_big_lat)[1]-10, "F", cex = 2)
+
+## PC2
+# 5) Small patch PC2 dorsal
+par(mar = c(0, 0, 0, 0))
+plot(c(0, dim(PC2_sm_dor)[2]), c(0, dim(PC2_sm_dor)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
+rasterImage(PC2_sm_dor, 0, 0, dim(PC2_sm_dor)[2], dim(PC2_sm_dor)[1])
+text(0, dim(PC2_sm_dor)[1]-10, "C", cex = 2)
+
+# 6) Big patch PC2 dorsal
+par(mar = c(0, 0, 0, 0))
+plot(c(0, dim(PC2_big_dor)[2]), c(0, dim(PC2_big_dor)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
+rasterImage(PC2_big_dor, 0, 0, dim(PC2_big_dor)[2], dim(PC2_big_dor)[1])
+text(0, dim(PC2_big_dor)[1]-10, "G", cex = 2)
+
+# 7) Small patch PC2 lateral
+par(mar = c(0, 0, 0, 0))
+plot(c(0, dim(PC2_sm_lat)[2]), c(0, dim(PC2_sm_lat)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
+rasterImage(PC2_sm_lat, 0, 0, dim(PC2_sm_lat)[2], dim(PC2_sm_lat)[1])
+text(0, dim(PC2_sm_lat)[1]-10, "D", cex = 2)
+
+# 8) Big patch PC2 lateral
+par(mar = c(0, 0, 0, 0))
+plot(c(0, dim(PC2_big_lat)[2]), c(0, dim(PC2_big_lat)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
+rasterImage(PC2_big_lat, 0, 0, dim(PC2_big_lat)[2], dim(PC2_big_lat)[1])
+text(0, dim(PC2_big_lat)[1]-10, "H", cex = 2)
 ```
 
 ## Plot PCAs for each protocol
@@ -157,10 +272,6 @@ PCAs are very human-friendly way of visualizing shape variation in 2 dimensions.
 ```{r}
 big.pca <- plotTangentSpace(big.shape, groups = sp.col.gen, axis1 = 1, axis2 = 2, verbose = T)
 
-# Flip PC1 and PC2 to show positive shape allometry (larger spp, larger values)
-#big.pca$pc.scores[, "PC1"] <- -(big.pca$pc.scores[, "PC1"])
-#big.pca$pc.scores[, "PC2"] <- -(big.pca$pc.scores[, "PC2"])
-
 # Get proportion of variance for PC1 and PC2 in format for plots
 big.PCs <- big.pca$pc.summary$importance
 big.PC1 <- round(big.PCs[2, 1] * 100, digits = 1)  # % with 1 decimal
@@ -186,10 +297,6 @@ legend(0.16, 0.055, legend = gen.name.phylo, col = col.phylo, pch = 16, cex = 0.
 ```{r}
 # Plot PCAs
 sm.pca <- plotTangentSpace(sm.shape, groups = sp.col.gen, axis1 = 1, axis2 = 2, verbose = T, label = sm.info$CatNum)
-
-# Flip PC1 and PC2 to show positive shape allometry (larger spp, larger values)
-#sm.pca$pc.scores[, "PC1"] <- -(sm.pca$pc.scores[, "PC1"])
-#sm.pca$pc.scores[, "PC2"] <- -(sm.pca$pc.scores[, "PC2"])
 
 # Get proportion of variance for PC1 and PC2 in format for plots
 sm.PCs <- sm.pca$pc.summary$importance
