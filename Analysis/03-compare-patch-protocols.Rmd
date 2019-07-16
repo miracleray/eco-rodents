@@ -312,7 +312,7 @@ layout(mat, widths = c(1, 1), heights = c(1, 1))
 # 1) PCA for small patch protocol
 par(mar = c(4, 4, 1, 1))
 plot(x = sm.pca$pc.scores[, 1],
-     y = sm.pca$pc.scores[, 2], 
+     y = sm.pca$pc.scores[, 2],
      xlab = paste("PC1 (", sm.PC1, "%)", sep = ""), 
      ylab = paste("PC2 (", sm.PC2, "%)", sep = ""),
      xlim = c(-0.11, 0.163),
@@ -324,13 +324,13 @@ plot(x = sm.pca$pc.scores[, 1],
      cex = 1.5, 
      cex.axis = 1.3, 
      cex.lab = 1.3)
-legend("topright", legend = genera.phylo, col = col.phylo, pch = 16, cex = 0.63)
-text(-0.08, 0.1, "A", cex = 2)
+legend("topright", legend = genera.phylo, col = col.phylo, pch = 16, cex = 1)
+text(-0.11, 0.045, "Small patch", cex = 1.5)
 
 # 2) PCA for big patch protocol
 par(mar=c(4, 4, 1, 1))  # sets the margins
 plot(x = big.pca$pc.scores[, 1],
-     y = big.pca$pc.scores[, 2], 
+     y = big.pca$pc.scores[, 2],
      xlab = paste("PC1 (", big.PC1, "%)", sep = ""), 
      ylab = paste("PC2 (", big.PC2, "%)", sep = ""),
      xlim = c(-0.11, 0.163),
@@ -342,8 +342,8 @@ plot(x = big.pca$pc.scores[, 1],
      cex = 1.5, 
      cex.axis = 1.3, 
      cex.lab = 1.3)
-legend("topright", legend = genera.phylo, col = col.phylo, pch = 16, cex = 0.63)
-text(-0.08, 0.1, "B", cex = 2)
+legend("topright", legend = genera.phylo, col = col.phylo, pch = 16, cex = 1)
+text(-0.11, 0.045, "Big patch", cex = 1.5)
 
 dev.off()
 ```
