@@ -18,74 +18,80 @@ PCAs provide a human-friendly way to visualize shape data. They are a good way t
 library(stringr)
 library(data.table)
 library(geomorph)
+library(colorspace)  # colors
 source("../Functions/utilities.R")  # custom functions
 load(file = "../Data/Processed/03-sm-PCA-with-color.rda")
 ```
 
 ### Exploratory analyses with PCAs
-Here, we explore the variation in rodent skulls by coloring the PCA plots by genus, taxa, and by traits.
+Here, we explore the variation in rodent skulls by coloring the PCA plots by genus, by traits, by biome region.
 
 Since we are going to add several columns to the metadata table, we'll remove columns no longer needed past the bilateral symmetry and replicate handling stages. 
 ```{r}
 # Prep metadata for column additions
 info <- info[, c(-4, -5, -7)]  # removes now-unnecessary columns
-info$Order <- c(1:dim(info)[1])  # preserves specimen order so metadata matches shape data
+info$Order <- c(1:dim(info)[1])  # preserves specimen order
 ```
 
 Trait information was gathered from the book, Native Mice and Rats by Dr.s Bill Breed and Fred Ford (2007). 
 ```{r}
-# Add trait data to the metadata table, info and preserve specimen order
+# Add trait data to the metadata table
 traits <- read.csv("../Data/Processed/in_ex_traits.csv", header = TRUE)
 traits$Taxa <- paste(str_sub(traits$Genus, 1, 1), str_sub(traits$Species, 1, 3), sep = "_")  # make matching Taxa column
-info.traits <- merge(info, traits, by = "Taxa", sort = F)
-info.traits <- info.traits[order(info.traits$Order), ] 
+info.traits <- merge(info, traits, by = "Taxa", sort = F)  # merge
+info.traits <- info.traits[order(info.traits$Order), ]  # sort by Order
 
-# Rename Genus and Species columns so short names have their old column name
+## Rename Genus and Species columns 
+# short names (e.g. Pse or mus) have original column names
+# long names (e.g. Pseudomys or musculus) have a ".y" appended
 names(info.traits)[names(info.traits) == 'Genus.x'] <- 'Genus'
 names(info.traits)[names(info.traits) == 'Species.x'] <- 'Species'
 
-# Make effective taxa column to deal with Mastacomys belonging to Pseudomys
+# Make effective taxa column to assign Mastacomys to genus Pseudomys
 info.traits$ETaxa <- info.traits$Taxa
 info.traits$ETaxa[which(info.traits$Taxa == "M_fus")] <- "P_fus"
 ```
-Long form Genus and Species columns will keep `Genus.y` and `Species.y`. This will become important for the phylogenetic analyses in script 06.
 
-## Plot PCA by genus for small patch dataset with no landmarking errors
+## Plot PCA by genus for small patch dataset
 The function `PlotPCA()` quickly plots a PCA with specimens colored by groups and optionally given different point shapes for other attributes. The function also reports PC axis variation in %. 
-
-The chunk below demonstrates how a plot can be exported as a .eps file. These file types can be opened in programs like Adobe Illustrator for minor aesthetic adjustments or be exported to a variety of other filetypes.
 ```{r}
 # Plot PCA by genus and export as .eps into ../Data/Results folder
 ### setEPS()
 ### postscript("../Data/Results/PCA_genus.eps")
 PlotPCA(PCA, 1, 2, sp.col.gen)
-legend(0.144, 0.056, legend = gen.name.phylo, col = col.phylo, pch = 16, cex = 0.78)
+legend(0.144, 0.056, legend = genera.phylo, col = col.phylo, pch = 16, cex = 0.78)
 ### dev.off()
 ```
 
 ## PCA plot by diet and guild
-This PCA plot colors specimen points by diet and gives them a point shape based on guild, i.e. where they spend most of their time: aquatic, arboreal, or terrestrial.
-
-Assign colors by diet and point shapes by guild for PCA.
+This PCA colors specimens by diet and assigns point shape based on guild, i.e. where they spend most of their time.
 ```{r}
-# Colors by Carnivorous, Frugivorous, Granivorous, Herbivorus, Omnivorous
-col.feed <- c("red", "darkorange", "gold", "green", "burlywood4")
-col.feed <- PlotByGroup(info.traits, "Feeding", col.feed)
+# Set up pallete for diet
+warm <- sequential_hcl(5, "LaJolla")  
+col.carn <- warm[4]  # meat colored red
+col.frug <- warm[3]  # fruit colored orange
+col.gran <- warm[2]  # grain colored gold
+col.herb <- sequential_hcl(5, "Greens 3")[2]  # green colored grass
+col.omni <- sequential_hcl(5, "Grays")[3]  # gray for anything goes
 
-# Point key: Aquatic (circle), Arboreal (triangle), Terrestrial (square)
+# Define color pallete for diets of all specimens
+col.diet <- c(col.carn, col.frug, col.gran, col.herb, col.omni)
+col.diet <- PlotByGroup(info.traits, "Feeding", col.diet)
+
+# Points: Aquatic (circle), Arboreal (triangle), Terrestrial (square)
 pch.gld <- c(19, 24, 22)
 pch.gld <- PlotByGroup(info.traits, "Guild", pch.gld)
 ```
 
 Plot PC1 vs PC2 and add custom legends.
 ```{r}
-PlotPCA(PCA, 1, 2, col.feed, pch.gld)
-legend(0.11, -0.043, legend = c("Aquatic", "Arboreal", "Terrest."), col = "black", border = NULL, pch = c(21, 24, 22))
-text(-0.01, -0.08, "Carnivore", col = "red")
-text(0.11, -0.02, "Frugivore", col = "darkorange")
-text(0.073, 0.045, "Herbivore", col = "green")
-text(-0.07, -0.06, "Omnivore", col = "burlywood4")
-text(-0.11, 0, "Granivore", col = "gold2")
+PlotPCA(PCA, 1, 2, col.diet, pch.gld)
+legend("bottomright", legend = c("Aquatic", "Arboreal", "Terrest."), col = "black", border = NULL, pch = c(21, 24, 22))
+text(-0.01, -0.09, "Carnivore", col = col.carn)
+text(0.11, -0.02, "Frugivore", col = col.frug)
+text(0.08, 0.045, "Herbivore", col = col.herb)
+text(-0.07, -0.06, "Omnivore", col = col.omni)
+text(-0.117, 0.01, "Granivore", col = col.gran)
 ```
 
 ## Morphospace partitioning by habitat
@@ -154,5 +160,5 @@ for (i in 1:7) {
 
 ### Save intermediate data
 ```{r}
-save(info.traits, col.feed, pch.gld, col.egen, file = "../Data/Processed/04-sm-data-with-traits.rda")
+save(info.traits, col.diet, pch.gld, col.egen, file = "../Data/Processed/04-sm-data-with-traits.rda")
 ```
