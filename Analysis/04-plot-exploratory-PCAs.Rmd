@@ -50,10 +50,6 @@ names(info.traits)[names(info.traits) == 'Species.x'] <- 'Species'
 # Make effective taxa column to assign Mastacomys to genus Pseudomys
 info.traits$ETaxa <- info.traits$Taxa
 info.traits$ETaxa[which(info.traits$Taxa == "M_fus")] <- "P_fus"
-
-# Make full name column
-info.traits$FullName <- paste(info.traits$Genus.y, info.traits$Species.y, sep = "_")  # give names to metadata in the same format as the tree, "Genus_species"
-full.names <- unique(info.phylo$FullName)  # list of species
 ```
 
 ### Set up point types (matches allometry rodent key)
@@ -126,47 +122,38 @@ text(-0.117, 0.01, "Granivore", col = col.gran)
 So far, most of the variation in the morphospace could be explained by size and genus affiliation, with different genera of similar sizes overlapping quite a bit. There doesn't seem to be much differentiation among Australian rodents, but perhaps the differentiation is hidden by geographical region or environmental partitioning. 
 
 ### Write functions to visualize rodent morphospace by region
-First, we will subset the PCA scores by species which inhabit the 7 different ecological regions of Australia. Regions and species distributions therein taken from Breed & Ford 2007. `FoundInRegion()` subsets existing PCA data by species present in given region(s).
+Here, we subset the PCA scores by species which inhabit the 7 different ecological regions of Australia. Regions and species distributions therein taken from Breed & Ford 2007. `FoundInRegion()` subsets existing PCA data by species present in given region(s).
 
-Next, we wrote a function, `PointOutDiffSpp()` to give plotting points (pch values) by unique species within each genus.
-
-Finally, we'll combine these functions in a loop to plot PCAs for each region, with unique species within each genera having a unique point shape. The legends only name the species present for a given region. 
+We'll use a loop to plot PCAs for each region, with unique species within each genera having a unique point shape. The legends only name the species present for a given region. 
 ```{r}
 # Set up loop for particular regions in Australia
 region.names <- c("Savannah", "Arid Zone", "NE Wet Forest", "NE Dry Forest", "Pilbara", "South West", "South East")
 pc.scores <- subset(PCA$pc.scores, select = 1:3)  # only 1st 3 PCs
 
+# Write x and y labels with proportion of variance for PCx and PCy
+PCs <- PCA$pc.summary$importance
+PCx.per <- round(PCs[2, 1] * 100, digits = 1)  # % with 1 decimal
+PCx.lab <- paste("PC1 (", PCx.per, "%)", sep = "")
+PCy.per <- round(PCs[2, 2] * 100, digits = 1)
+PCy.lab <- paste("PC2 (", PCy.per, "%)", sep = "")
+
 # Loop through all 7 regions to plot morphospace of species found in each
 for (i in 1:7) {
-        # Subset info.traits, PC scores, and color key by region
+        # Subset info.traits and PCA by region
         in.region <- FoundInRegion(info.traits, regions = i)
         info.region <- info.traits[in.region, ]
         pc.region <- as.data.frame(pc.scores[in.region, ])
-        col.taxa.region <- sp.col.gen[in.region]
         
-        # Assign points by unique species in a genus
-        pch.tax.legend <- PointOutDiffSpp(info.region)
-        pch.tax.region <- PlotByGroup(info.region, "ETaxa", pch.tax.legend)
+        # Subset plotting colors and pch symbols for spp in region
+        col.taxa.region <- sp.col.gen[in.region]  # colors for all spp
+        pch.taxa.region <- sp.pch.taxa[in.region]  # pch for all spp
         
-        # Plot with fancy (i.e. verbose) legend by:
-        info.region$Legend <- paste(str_sub(info.region$EGenus, 1, 3), str_sub(info.region$Species, 1, 3))  # Mus musculus -> "Mus mus"
-
-        # 1) Making list of unique binomial names
-        unique.taxa <- sort(unique(info.region$Legend))  # alphabetical order
-        legend.genus <- substr(unique.taxa, 1, 3)  # makes string of genera names with repeats when there are unique species in a genus
-        
-        # 2) Making color key for legend
-        genera.in.region <- which(levels(info.traits$EGenus) %in% sort(unique(info.region$EGenus)))
-        col.gen.reg <- col.gen[genera.in.region]  # subset col.gen for region
-        names(col.gen.reg) <- unique(legend.genus)  # make genus color key with names of unique genera
-        col.gen.legend <- col.gen.reg[match(legend.genus, names(col.gen.reg))]
-        
-        # Write x and y labels with proportion of variance for PCx and PCy
-        PCs <- PCA$pc.summary$importance
-        PCx.per <- round(PCs[2, 1] * 100, digits = 1)  # % with 1 decimal
-        PCx.lab <- paste("PC1 (", PCx.per, "%)", sep = "")
-        PCy.per <- round(PCs[2, 2] * 100, digits = 1)
-        PCy.lab <- paste("PC2 (", PCy.per, "%)", sep = "")
+        # Subset legend by species present
+        uni.taxa <- unique(info.region$Taxa)
+        index <- which(phylo.names %in% uni.taxa)
+        legend.names <- phylo.names[index]
+        legend.col <- phylo.cols[index]
+        legend.pch <- phylo.pch[index]
         
         # Plot PCA with legend and labels
         PCA.plot <- plot(x = pc.region$PC1,
@@ -177,12 +164,12 @@ for (i in 1:7) {
                          xlim = c(-0.11, 0.18),
                          ylim = c(-0.095, 0.05),
                          col = col.taxa.region, 
-                         pch = pch.tax.region, 
+                         pch = pch.taxa.region, 
                          bg = col.taxa.region,
                          cex = 1.5,
                          cex.axis = 1.3, 
                          cex.lab = 1.3)
-        legend("bottomright", legend = unique.taxa, col = col.gen.legend, border = NULL, pch = pch.tax.legend, pt.bg = col.gen.legend, cex = 0.64)
+        legend("bottomright", legend = legend.names, col = legend.col, border = NULL, pch = legend.pch, pt.bg = legend.col, cex = 0.64)
 }
 ```
 
