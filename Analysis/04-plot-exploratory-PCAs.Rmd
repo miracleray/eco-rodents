@@ -21,20 +21,20 @@ library(geomorph)
 library(colorspace)  # colors
 source("../Functions/utilities.R")  # custom functions
 load(file = "../Data/Processed/03-sm-PCA-with-color.rda")
+load(file = "../Data/Processed/allometry_rodents_04-phylo-data.rda")  # brings in phylogenetic information to organize legends
 ```
 
 ### Exploratory analyses with PCAs
 Here, we explore the variation in rodent skulls by coloring the PCA plots by genus, by traits, by biome region.
 
+Trait information was gathered from the book, Native Mice and Rats by Dr.s Bill Breed and Fred Ford (2007). 
+
 Since we are going to add several columns to the metadata table, we'll remove columns no longer needed past the bilateral symmetry and replicate handling stages. 
+
 ```{r}
 # Prep metadata for column additions
 info <- info[, c(-4, -5, -7)]  # removes now-unnecessary columns
-info$Order <- c(1:dim(info)[1])  # preserves specimen order
-```
 
-Trait information was gathered from the book, Native Mice and Rats by Dr.s Bill Breed and Fred Ford (2007). 
-```{r}
 # Add trait data to the metadata table
 traits <- read.csv("../Data/Processed/in_ex_traits.csv", header = TRUE)
 traits$Taxa <- paste(str_sub(traits$Genus, 1, 1), str_sub(traits$Species, 1, 3), sep = "_")  # make matching Taxa column
@@ -50,6 +50,34 @@ names(info.traits)[names(info.traits) == 'Species.x'] <- 'Species'
 # Make effective taxa column to assign Mastacomys to genus Pseudomys
 info.traits$ETaxa <- info.traits$Taxa
 info.traits$ETaxa[which(info.traits$Taxa == "M_fus")] <- "P_fus"
+
+# Make full name column
+info.traits$FullName <- paste(info.traits$Genus.y, info.traits$Species.y, sep = "_")  # give names to metadata in the same format as the tree, "Genus_species"
+full.names <- unique(info.phylo$FullName)  # list of species
+```
+
+### Set up point types (matches allometry rodent key)
+Pch #21 is default but different point types are assigned for genera with multiple species. 
+```{r}
+# legend in order of phylogeny, hard-coded to match allometry rodent paper; Z_ped added because this isn't tied to phylogeny
+phylo.names <- c("M_mus", "R_rat", "R_nor", "R_lut", "R_leu", "R_tun", "R_vil", "R_sor", "R_fus", "P_mol", "X_myo", "H_chr", "N_cer", "N_fus", "N_mit", "N_ale", "P_pat", "P_gra", "P_ora", "P_sho", "P_des", "P_apo", "P_aus", "P_hig", "P_her", "P_nov", "P_del", "M_fus", "Z_arg", "Z_ped", "L_for", "U_cau", "M_cer", "M_cap", "M_bur", "L_con", "M_gou", "C_pen")
+
+# pch vector with colors for legend (unique taxa) 
+n.rat <- 8
+n.not <- 4
+n.pse <- 12
+n.zyz <- 2
+n.mel <- 3
+
+phylo.cols <- c(col.phylo[1], rep.int(col.phylo[2], n.rat), col.phylo[3], col.phylo[4], col.phylo[5], rep.int(col.phylo[6], n.not), rep.int(col.phylo[7], n.pse), rep.int(col.phylo[8], n.zyz), col.phylo[9], col.phylo[10], rep.int(col.phylo[11], n.mel), col.phylo[12], col.phylo[13], col.phylo[14])
+
+# pch symbol vector with unique pch symbols for legend
+pch.chain <- c(21, 22, 23, 24, 25, 7, 8, 9, 10, 11, 12, 13)
+phylo.pch <- c(21, pch.chain[1:n.rat], 21, 21, 21, pch.chain[1:n.not], pch.chain[1:n.pse], pch.chain[1:n.zyz], 21, 21, pch.chain[1:n.mel], 21, 21, 21)
+names(phylo.pch) <- phylo.names
+
+# pch vector for all data
+sp.pch.taxa <- phylo.pch[match(as.factor(info.traits$Taxa), names(phylo.pch))]
 ```
 
 ## Plot PCA by genus for small patch dataset
@@ -58,8 +86,8 @@ The function `PlotPCA()` quickly plots a PCA with specimens colored by groups an
 # Plot PCA by genus and export as .eps into ../Data/Results folder
 ### setEPS()
 ### postscript("../Data/Results/PCA_genus.eps")
-PlotPCA(PCA, 1, 2, sp.col.gen)
-legend(0.144, 0.056, legend = genera.phylo, col = col.phylo, pch = 16, cex = 0.78)
+PlotPCA(PCA, 1, 2, sp.col.gen, sp.pch.taxa)
+legend("bottomright", legend = phylo.names, col = phylo.cols, pt.bg = phylo.cols, pch = phylo.pch, cex = .35, pt.cex = 1.5, ncol = 2)
 ### dev.off()
 ```
 
@@ -95,18 +123,18 @@ text(-0.117, 0.01, "Granivore", col = col.gran)
 ```
 
 ## Morphospace partitioning by habitat
-So far, most of the variation in the morphospace could be explained by size and genus affiliation, with different genera of similar sizes overlapping quite a bit. This looks like there isn't much differentiation among Australian rodents, but perhaps the differentiation is hidden by geographical region or partitioning of the environment. 
+So far, most of the variation in the morphospace could be explained by size and genus affiliation, with different genera of similar sizes overlapping quite a bit. There doesn't seem to be much differentiation among Australian rodents, but perhaps the differentiation is hidden by geographical region or environmental partitioning. 
 
-### Write functions to subset and visualize species morphospace by region
-First we will subset the PCA scores by species which inhabit the 7 different ecological regions of Australia. Regions and species distributions therein taken from Breed & Ford 2007. `FoundInRegion()` subsets existing PCA data by species present in given region(s).
+### Write functions to visualize rodent morphospace by region
+First, we will subset the PCA scores by species which inhabit the 7 different ecological regions of Australia. Regions and species distributions therein taken from Breed & Ford 2007. `FoundInRegion()` subsets existing PCA data by species present in given region(s).
 
 Next, we wrote a function, `PointOutDiffSpp()` to give plotting points (pch values) by unique species within each genus.
 
-Finally, we'll combine these functions with a loop to plot PCAs with color by taxa for each region, unique species within each genera having a unique point shape, and a legend for only the species present in each region. 
+Finally, we'll combine these functions in a loop to plot PCAs for each region, with unique species within each genera having a unique point shape. The legends only name the species present for a given region. 
 ```{r}
+# Set up loop for particular regions in Australia
 region.names <- c("Savannah", "Arid Zone", "NE Wet Forest", "NE Dry Forest", "Pilbara", "South West", "South East")
 pc.scores <- subset(PCA$pc.scores, select = 1:3)  # only 1st 3 PCs
-col.egen <- col.gen[-4]  # take out Mas color
 
 # Loop through all 7 regions to plot morphospace of species found in each
 for (i in 1:7) {
@@ -129,7 +157,7 @@ for (i in 1:7) {
         
         # 2) Making color key for legend
         genera.in.region <- which(levels(info.traits$EGenus) %in% sort(unique(info.region$EGenus)))
-        col.gen.reg <- col.egen[genera.in.region]  # subset col.egen for region
+        col.gen.reg <- col.gen[genera.in.region]  # subset col.gen for region
         names(col.gen.reg) <- unique(legend.genus)  # make genus color key with names of unique genera
         col.gen.legend <- col.gen.reg[match(legend.genus, names(col.gen.reg))]
         
@@ -154,11 +182,11 @@ for (i in 1:7) {
                          cex = 1.5,
                          cex.axis = 1.3, 
                          cex.lab = 1.3)
-        legend(0.147, 0.058, legend = unique.taxa, col = col.gen.legend, border = NULL, pch = pch.tax.legend, pt.bg = col.gen.legend, cex = 0.64)
+        legend("bottomright", legend = unique.taxa, col = col.gen.legend, border = NULL, pch = pch.tax.legend, pt.bg = col.gen.legend, cex = 0.64)
 }
 ```
 
 ### Save intermediate data
 ```{r}
-save(info.traits, col.diet, pch.gld, col.egen, file = "../Data/Processed/04-sm-data-with-traits.rda")
+save(info.traits, col.diet, pch.gld, file = "../Data/Processed/04-sm-data-with-traits.rda")
 ```
