@@ -21,7 +21,6 @@ library(geomorph)
 library(colorspace)  # colors
 source("../Functions/utilities.R")  # custom functions
 load(file = "../Data/Processed/03-sm-PCA-with-color.rda")
-load(file = "../Data/Processed/allometry_rodents_04-phylo-data.rda")  # brings in phylogenetic information to organize legends
 ```
 
 ### Exploratory analyses with PCAs
@@ -169,11 +168,11 @@ for (i in 1:7) {
                          cex = 1.5,
                          cex.axis = 1.3, 
                          cex.lab = 1.3)
-        legend("bottomright", legend = legend.names, col = legend.col, border = NULL, pch = legend.pch, pt.bg = legend.col, cex = 0.64)
+        legend("bottomright", legend = legend.names, col = legend.col, border = NULL, pch = legend.pch, pt.bg = legend.col, cex = 0.64, ncol = 2)
 }
 ```
 
 ### Save intermediate data
 ```{r}
-save(info.traits, col.diet, pch.gld, file = "../Data/Processed/04-sm-data-with-traits.rda")
+save(info.traits, phylo.names, phylo.cols, phylo.pch, sp.pch.taxa, col.diet, pch.gld, file = "../Data/Processed/04-sm-data-with-traits.rda")
 ```
