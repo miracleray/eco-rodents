@@ -12,15 +12,56 @@ knitr::opts_knit$set(root.dir = '../eco-rodents')
 
 # Testing biome partitioning 
 
-Code set up to run function sepregr.R by Dr Gabriele Sansalone
+First, testing for a phylogenetic signal difference in each of the 7 regional biomes. 
+
+Second, code to run function sepregr.R by Dr Gabriele Sansalone
 
 ### Load packages, functions, and data
 ```{r message = FALSE}
 library(geomorph)
+library(geiger)
 source("../Functions/utilities.R")  # custom functions
 source("../Functions/sepregr.R")  # function by Dr Sansalone
 load(file = "../Data/Processed/03-sm-PCA-with-color.rda")
 load(file = "../Data/Processed/04-sm-data-with-traits.rda")
+load(file = "../Data/Processed/allometry_rodents_04-phylo-data.rda")  # includes phylogenetic tree from Allometry Rodents paper
 ```
 
-## 
+### Remove *Z. ped* from dataset
+*Z. pedunculatus* is missing from the phylogenetic tree so needs to be removed from the shape dataset as well. Only removes 2 observations.
+```{r}
+is.Z.ped <- which(info.traits$Taxa == "Z_ped")
+info.phy <- info.traits[-is.Z.ped, ]  # metadata
+shape.phy <- shape[, , -is.Z.ped]  # shape coordinates
+```
+
+## Assess phylogenetic signal in each region partition
+Here, again, we subset the PCA scores by species which inhabit the 7 different ecological regions of Australia. We'll use a loop to test the phylogenetic signal in each region. 
+
+Evolutionary tree comes from the Allometry Paper repo. 
+```{r}
+# Set up loop for particular regions in Australia
+region.names <- c("Savannah", "Arid Zone", "NE Wet Forest", "NE Dry Forest", "Pilbara", "South West", "South East")
+
+# Loop through all 7 regions to plot morphospace of species found in each
+for (i in 1:7) {
+        # Subset info.traits and shape coords by region
+        in.region <- FoundInRegion(info.phy, regions = i)
+        info.region <- info.phy[in.region, ]
+        shape.region <- shape.phy[, , in.region]
+        dimnames(shape.region)[[3]] <- info.region$FullName
+        
+        # Subset tree by species in the region
+        concord <- name.check(aus.tree, data.names = info.region$FullName)  # check concordance
+        region.tree <- drop.tip(aus.tree, concord$tree_not_data)  # prune tree to regional sample
+        
+        # Re-order to match tree tip order
+        tree.order <- match(region.tree$tip.label, info.region$FullName)
+        info.region <- info.region[tree.order, ]  # metadata
+        shape.region <- shape.region[, , tree.order]  # shape data
+        
+        # Test phylogenetic signal
+        print(region.names[i])
+        physignal(shape.region, region.tree)
+}
+```

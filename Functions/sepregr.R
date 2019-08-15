@@ -1,7 +1,9 @@
 # Originally written by Dr Gabriele Sansalone
-# Comments by Ariel Marcy
+# Comments and formatting by Ariel Marcy
 
 # What format is expected of x, y, and especially of group??
+
+# What is the output? 
 
 sepregr <- function(x, y, group, scalevariable = 1, conf = 0, nperm = 999, labels = NULL, reorder = TRUE){
    

@@ -46,6 +46,9 @@ info.traits <- info.traits[order(info.traits$Order), ]  # sort by Order
 names(info.traits)[names(info.traits) == 'Genus.x'] <- 'Genus'
 names(info.traits)[names(info.traits) == 'Species.x'] <- 'Species'
 
+# Make full names column to compare to the phylogenetic tree
+info.traits$FullName <- paste(info.traits$Genus.y, info.traits$Species.y, sep = "_")
+
 # Make effective taxa column to assign Mastacomys to genus Pseudomys
 info.traits$ETaxa <- info.traits$Taxa
 info.traits$ETaxa[which(info.traits$Taxa == "M_fus")] <- "P_fus"
