@@ -35,6 +35,17 @@ info.phy <- info.traits[-is.Z.ped, ]  # metadata
 shape.phy <- shape[, , -is.Z.ped]  # shape coordinates
 ```
 
+## Assess phylogenetic signal overall
+Baseline comparison.
+
+Make mean shape by species?? 
+
+```{r}
+dimnames(shape.phy)[[3]] <- info.phy$FullName
+# Test phylogenetic signal
+physig.all <- physignal(shape.phy, aus.tree)
+```
+
 ## Assess phylogenetic signal in each region partition
 Here, again, we subset the PCA scores by species which inhabit the 7 different ecological regions of Australia. We'll use a loop to test the phylogenetic signal in each region. 
 
@@ -42,6 +53,9 @@ Evolutionary tree comes from the Allometry Paper repo.
 ```{r}
 # Set up loop for particular regions in Australia
 region.names <- c("Savannah", "Arid Zone", "NE Wet Forest", "NE Dry Forest", "Pilbara", "South West", "South East")
+n.taxa <- c(rep("NA", length(region.names)))
+K.region <- c(rep("NA", length(region.names)))
+p.region <- c(rep("NA", length(region.names)))
 
 # Loop through all 7 regions to plot morphospace of species found in each
 for (i in 1:7) {
@@ -54,6 +68,7 @@ for (i in 1:7) {
         # Subset tree by species in the region
         concord <- name.check(aus.tree, data.names = info.region$FullName)  # check concordance
         region.tree <- drop.tip(aus.tree, concord$tree_not_data)  # prune tree to regional sample
+        n.taxa[i] <- length(region.tree$tip.label)
         
         # Re-order to match tree tip order
         tree.order <- match(region.tree$tip.label, info.region$FullName)
@@ -61,7 +76,20 @@ for (i in 1:7) {
         shape.region <- shape.region[, , tree.order]  # shape data
         
         # Test phylogenetic signal
-        print(region.names[i])
-        physignal(shape.region, region.tree)
+        physig.region <- physignal(shape.region, region.tree)
+        K.region[i] <- round(physig.region$phy.signal, 3)
+        p.region[i] <- as.numeric(physig.region$pvalue)
 }
+```
+
+### Make and export Table TK
+Create and export Table TK. Includes Bonferroni p-value adjustment for running 7 biomes. 
+```{r}
+p.region <- round(p.adjust(p.region, method = "bonferroni"), 3)
+
+table <- cbind(n.taxa, K.region, p.region)
+colnames(table) <- c("N Taxa", "Phy. Signal", "p Value")
+row.names(table) <- region.names
+
+write.table(table, "../Data/Results/Table_RegionPhySig.csv", sep = ",", col.names = NA)
 ```
