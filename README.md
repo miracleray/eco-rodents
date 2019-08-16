@@ -4,7 +4,7 @@ Code author: Ariel E. Marcy
 To cite the paper and/or code:
 > Coming soonish
 
-As of July 2019, this is still a work in progress.
+As of August 2019, this is still a work in progress.
 
 After cloning this repo, remember to either set your working directory to the aus-rodent-skulls folder on your computer, or open an RStudio project from that folder.
 
