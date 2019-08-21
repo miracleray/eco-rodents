@@ -139,6 +139,8 @@ PCx.lab <- paste("PC1 (", PCx.per, "%)", sep = "")
 PCy.per <- round(PCs[2, 2] * 100, digits = 1)
 PCy.lab <- paste("PC2 (", PCy.per, "%)", sep = "")
 
+
+#par(mfrow=c(4,4))
 # Loop through all 7 regions to plot morphospace of species found in each
 for (i in 1:7) {
         # Subset info.traits and PCA by region
