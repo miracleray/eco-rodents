@@ -1,5 +1,5 @@
 # Australian rodent cranial ecomorphology (Chapter 4 of Thesis) - data and code
-Code author: Ariel E. Marcy
+Code authors: Ariel E. Marcy, Dr Gabriele Sansalone, Dr Thomas Guillerme
 
 To cite the paper and/or code:
 > Coming soonish
