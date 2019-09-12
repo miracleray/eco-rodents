@@ -19,6 +19,7 @@ Second, code to run function sepregr.R by Dr Gabriele Sansalone
 ### Load packages, functions, and data
 ```{r message = FALSE}
 library(geomorph)
+library(dplyr)
 library(geiger)
 source("../Functions/utilities.R")  # custom functions
 source("../Functions/sepregr.R")  # function by Dr Sansalone
@@ -26,6 +27,65 @@ load(file = "../Data/Processed/03-sm-PCA-with-color.rda")
 load(file = "../Data/Processed/04-sm-data-with-traits.rda")
 load(file = "../Data/Processed/allometry_rodents_04-phylo-data.rda")  # includes phylogenetic tree from Allometry Rodents paper
 ```
+
+### Look at ANOVA difference in centroid sizes
+```{r}
+test.data <- info.traits[, c("Taxa", "Genus", "Species", "CatNum", "Order", "Csize", "Feeding", "Guild")]  # relevant columns
+
+# Take out aquatic carnivores, which skew data
+#aquatic <- which(info.traits$Guild == "Aquatic")
+#test.data <- test.data[-aquatic, ]  
+#test.shape <- shape[, , -aquatic]
+
+
+# Get summary statistics on each group
+group_by(test.data$Csize, Guild) %>% 
+        summarise(count = n(test.data$Csize), 
+                  mean = mean(test.data$Csize),
+                  sd = sd(test.data$Csize)) 
+
+
+## Visualize data
+install.packages("ggpubr")
+library("ggpubr")
+
+# Box Plots
+ggboxplot(test.data, x = "Guild", y = "Csize", 
+          color = "Guild", palette = c("#00AFBB", "#E7B800", "#FC4E07"),
+          order = c("Aquatic", "Arboreal", "Terrestrial"),
+          ylab = "Csize", xlab = "Guild")
+
+# Mean Plots
+ggline(test.data, x = "Guild", y = "Csize", 
+       add = c("mean_se", "jitter"), 
+       order = c("Aquatic", "Arboreal", "Terrestrial"),
+       ylab = "Csize", xlab = "Guild")
+
+
+# Run ANOVA on just Csize and Guild
+guild.aov <- aov(Csize ~ Guild, data = test.data)
+summary(guild.aov)
+
+# Multiple comparisons
+TukeyHSD(guild.aov)
+
+```
+
+
+
+
+```{r}
+# Run Procrustes ANOVA for guild
+test.GDF <- geomorph.data.frame(coords = shape, size = test.data$Csize, guild = test.data$Guild)
+procANOVA <- procD.lm(coords ~ size * guild, data = test.GDF)
+
+# Run Procrustes ANOVA for guild
+test.GDF <- geomorph.data.frame(coords = test.shape, size = test.data$Csize, feed = test.data$Feeding)
+procANOVA <- procD.lm(coords ~ size * guild, data = test.GDF)
+```
+
+
+
 
 ### Remove *Z. ped* from dataset
 *Z. pedunculatus* is missing from the phylogenetic tree so needs to be removed from the shape dataset as well. Only removes 2 observations.
