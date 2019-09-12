@@ -140,7 +140,7 @@ PCy.per <- round(PCs[2, 2] * 100, digits = 1)
 PCy.lab <- paste("PC2 (", PCy.per, "%)", sep = "")
 
 
-#par(mfrow=c(4,4))
+par(mfrow=c(4,2), mar = c(2,2,2,2))
 # Loop through all 7 regions to plot morphospace of species found in each
 for (i in 1:7) {
         # Subset info.traits and PCA by region
@@ -153,11 +153,11 @@ for (i in 1:7) {
         pch.taxa.region <- sp.pch.taxa[in.region]  # pch for all spp
         
         # Subset legend by species present
-        uni.taxa <- unique(info.region$Taxa)
-        index <- which(phylo.names %in% uni.taxa)
-        legend.names <- phylo.names[index]
-        legend.col <- phylo.cols[index]
-        legend.pch <- phylo.pch[index]
+        # uni.taxa <- unique(info.region$Taxa)
+        # index <- which(phylo.names %in% uni.taxa)
+        # legend.names <- phylo.names[index]
+        # legend.col <- phylo.cols[index]
+        # legend.pch <- phylo.pch[index]
         
         # Plot PCA with legend and labels
         PCA.plot <- plot(x = pc.region$PC1,
@@ -173,7 +173,7 @@ for (i in 1:7) {
                          cex = 1.5,
                          cex.axis = 1.3, 
                          cex.lab = 1.3)
-        legend("bottomright", legend = legend.names, col = legend.col, border = NULL, pch = legend.pch, pt.bg = legend.col, cex = 0.64, ncol = 2)
+        #legend("bottomright", legend = legend.names, col = legend.col, border = NULL, pch = legend.pch, pt.bg = legend.col, cex = 0.64, ncol = 2)
 }
 ```
 
