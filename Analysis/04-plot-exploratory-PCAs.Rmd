@@ -92,6 +92,7 @@ legend("bottomright", legend = phylo.names, col = phylo.cols, pt.bg = phylo.cols
 ## PCA plot by diet and guild
 This PCA colors specimens by diet and assigns point shape based on guild, i.e. where they spend most of their time.
 ```{r}
+###### FIX COLORS & PCH #########
 # Set up pallete for diet
 warm <- sequential_hcl(5, "LaJolla")  
 col.carn <- warm[4]  # meat colored red
@@ -175,6 +176,23 @@ for (i in 1:7) {
                          cex.lab = 1.3)
         #legend("bottomright", legend = legend.names, col = legend.col, border = NULL, pch = legend.pch, pt.bg = legend.col, cex = 0.64, ncol = 2)
 }
+```
+
+## Remove specialists from PCAs
+This step is to see whether the PCA changes to highlight morphological differences among the less specialized species
+
+### Aquatic carnivores only
+These are the most specialized
+```{r}
+test.data <- info.traits[, c("Taxa", "Genus", "Species", "CatNum", "Order", "Csize", "Clade", "Feeding", "Guild")]  # relevant columns
+
+# Subset out Hydromys and Xeromys
+aquatic <- which(info.traits$Guild == "Aquatic")
+test.data <- test.data[-aquatic, ]  
+test.shape <- shape[, , -aquatic]
+
+
+
 ```
 
 ### Save intermediate data
