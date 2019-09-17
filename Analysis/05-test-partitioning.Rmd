@@ -25,6 +25,7 @@ library(dplyr)
 library(geiger)
 source("../Functions/utilities.R")  # custom functions
 source("../Functions/sepregr.R")  # function by Dr Sansalone
+load(file = "../Data/Processed/01-bilat-data-w-ERR.rda")
 load(file = "../Data/Processed/03-sm-PCA-with-color.rda")
 load(file = "../Data/Processed/04-sm-data-with-traits.rda")
 load(file = "../Data/Processed/allometry_rodents_04-phylo-data.rda")  # includes phylogenetic tree from Allometry Rodents paper
@@ -38,11 +39,13 @@ physig.all <- physignal(mean.shapes.tree, aus.tree)
 summary(physig.all)
 ```
 
-## Assess phylogenetic signal in each region partition
+## 1) Assess phylogenetic signal in each region partition
 Here, again, we subset the PCA scores by species which inhabit the 7 different ecological regions of Australia. We'll use a loop to test the phylogenetic signal in each region. 
 
 Evolutionary tree comes from the Allometry Paper repo. 
 ```{r}
+info.means.tree$Order <- c(1:nrow(info.means.tree))  # preserves order with coordinate shape data
+
 # Set up loop for particular regions in Australia
 region.names <- c("Savannah", "Arid Zone", "NE Wet Forest", "NE Dry Forest", "Pilbara", "South West", "South East")
 n.taxa <- c(rep("NA", length(region.names)))
@@ -51,26 +54,31 @@ p.region <- c(rep("NA", length(region.names)))
 
 # Loop through all 7 regions to plot morphospace of species found in each
 for (i in 1:7) {
-        # Subset info.traits and shape coords by region
-        in.region <- FoundInRegion(info.phy, regions = i)
-        info.region <- info.phy[in.region, ]
-        shape.region <- shape.phy[, , in.region]
-        dimnames(shape.region)[[3]] <- info.region$FullName
+        # Identify species found in the region
+        spp.in.region <- FoundInRegion(traits, regions = i)
+        spp.region <- traits[spp.in.region, ]
+        
+        # Subset metadata by region
+        temp <- info.means.tree[, c("Taxa", "MeanCsize", "FullName", "Order")]
+        meta.region <- merge(spp.region, temp, by = "Taxa")
+        
+        # Subset shape coordinates by region
+        shape.region <- mean.shapes.tree[, , meta.region$Order]
         
         # Subset tree by species in the region
-        concord <- name.check(aus.tree, data.names = info.region$FullName)  # check concordance
+        concord <- name.check(aus.tree, data.names = meta.region$FullName)  # check concordance
         region.tree <- drop.tip(aus.tree, concord$tree_not_data)  # prune tree to regional sample
         n.taxa[i] <- length(region.tree$tip.label)
         
         # Re-order to match tree tip order
-        tree.order <- match(region.tree$tip.label, info.region$FullName)
-        info.region <- info.region[tree.order, ]  # metadata
+        tree.order <- match(region.tree$tip.label, meta.region$FullName)
+        meta.region <- meta.region[tree.order, ]  # metadata
         shape.region <- shape.region[, , tree.order]  # shape data
         
         # Test phylogenetic signal
         physig.region <- physignal(shape.region, region.tree)
         K.region[i] <- round(physig.region$phy.signal, 3)
-        p.region[i] <- as.numeric(physig.region$pvalue)
+        p.region[i] <- as.numeric(physig.region$pvalue)  # round after Bonferroni correction in next code chuck
 }
 ```
 
@@ -80,12 +88,93 @@ Create and export Table TK. Includes Bonferroni p-value adjustment for running 7
 p.region <- round(p.adjust(p.region, method = "bonferroni"), 3)
 
 table <- cbind(n.taxa, K.region, p.region)
-colnames(table) <- c("N Taxa", "Phy. Signal", "p Value")
+colnames(table) <- c("N Taxa", "Phy. Signal", "p Value (cor.)")
 row.names(table) <- region.names
 
 write.table(table, "../Data/Results/Table_RegionPhySig.csv", sep = ",", col.names = NA)
 ```
 
+
+## 1.5) Do same analysis but for centroid size only
+
+```{r}
+# Set up blank variables again for results table
+n.taxa <- c(rep("NA", length(region.names)))
+K.region <- c(rep("NA", length(region.names)))
+p.region <- c(rep("NA", length(region.names)))
+
+# Loop through all 7 regions to plot morphospace of species found in each
+for (i in 1:7) {
+        # Identify species found in the region
+        spp.in.region <- FoundInRegion(traits, regions = i)
+        spp.region <- traits[spp.in.region, ]
+        
+        # Subset metadata by region
+        temp <- info.means.tree[, c("Taxa", "MeanCsize", "FullName", "Order")]
+        meta.region <- merge(spp.region, temp, by = "Taxa")
+        
+        # Subset tree by species in the region
+        concord <- name.check(aus.tree, data.names = meta.region$FullName)  # check concordance
+        region.tree <- drop.tip(aus.tree, concord$tree_not_data)  # prune tree to regional sample
+        n.taxa[i] <- length(region.tree$tip.label)
+        
+        # Re-order to match tree tip order
+        tree.order <- match(region.tree$tip.label, meta.region$FullName)
+        meta.region <- meta.region[tree.order, ]  # metadata
+        
+        # Test phylogenetic signal with centroid size
+        Csize <- as.numeric(meta.region$MeanCsize)
+        names(Csize) <- meta.region$FullName
+        physig.region <- physignal(Csize, region.tree) 
+        K.region[i] <- round(physig.region$phy.signal, 3)
+        p.region[i] <- as.numeric(physig.region$pvalue)  # round after Bonferroni correction in next code chuck
+}
+```
+
+### Make and export Table TK
+Create and export Table TK. Includes Bonferroni p-value adjustment for running 7 biomes and filename indicating these results are for centroid size. 
+```{r}
+p.region <- round(p.adjust(p.region, method = "bonferroni"), 3)
+
+table <- cbind(n.taxa, K.region, p.region)
+colnames(table) <- c("N Taxa", "Phy. Signal", "p Value (cor.)")
+row.names(table) <- region.names
+
+write.table(table, "../Data/Results/Table_RegionPhySig_Csize.csv", sep = ",", col.names = NA)
+```
+
+
+## 2) Run sepregr.R to detect allometry by biome
+Function performs separate regressions by using a grouping variable (in this case region/biome) with nice graphics to visualize any allometry variations. 
+
+```{r}
+
+
+
+
+```
+
+
+## 3) Check biome partitioning WITHOUT allometry and WITH phylogenetic correction
+First, extract residuals - code thanks to Dr Vera Weisbecker
+```{r}
+# Use pgls of coords with size to get residuals
+allom.GDF <- geomorph.data.frame(coords = mean.shapes.tree, Csize = info.means.tree$MeanCsize) 
+allometry.all <- procD.pgls(coords ~ Csize, aus.tree, data = allom.GDF)
+summary(allometry.all)
+
+# Turn the residuals into an appropriate array
+allom.resid <- arrayspecs(allometry.all$pgls.residuals, dim(mean.shapes.tree)[[1]], 3)
+
+# Add the consensus shape (from the GPA) to the residuals if you want to understand the landmark variation in the residuals
+Allom.all.plus.consensus <- allom.resid + array(mean.shapes.tree, dim(allom.resid))
+```
+
+### Second, plot residuals by biome
+```{r}
+
+
+```
 
 
 ### Recycle Bin ###
