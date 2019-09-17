@@ -160,6 +160,9 @@ First, extract residuals - code thanks to Dr Vera Weisbecker
 ```{r}
 # Use pgls of coords with size to get residuals
 allom.GDF <- geomorph.data.frame(coords = mean.shapes.tree, Csize = info.means.tree$MeanCsize) 
+
+dimnames(mean.shapes.tree)[[3]]==info.means.tree$FullName
+
 allometry.all <- procD.pgls(coords ~ Csize, aus.tree, data = allom.GDF)
 summary(allometry.all)
 
@@ -172,9 +175,13 @@ Allom.all.plus.consensus <- allom.resid + array(mean.shapes.tree, dim(allom.resi
 
 ### Second, plot residuals
 ```{r}
+re.do <- match(info.means.tree$Taxa, names(phylo.cols))
+alpha.cols <- phylo.cols[re.do]
+alpha.pch <- phylo.pch[re.do]
+
 res.PCA <- plotTangentSpace(Allom.all.plus.consensus, groups = sp.col.gen)
-PlotPCA(res.PCA, 1, 2, phylo.cols, phylo.pch)
-legend("bottomright", legend = phylo.names, col = phylo.cols, pt.bg = phylo.cols, pch = phylo.pch, cex = .42, pt.cex = 1.5, ncol = 2)
+PlotPCA(res.PCA, 1, 2, alpha.cols)
+legend("bottomright", col = alpha.cols, pch = alpha.pch, cex = .42, pt.cex = 1.5, ncol = 2)
 ```
 
 ### Third, plot residuals by region

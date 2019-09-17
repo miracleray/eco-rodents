@@ -69,6 +69,8 @@ n.mel <- 3
 
 phylo.cols <- c(col.phylo[1], rep.int(col.phylo[2], n.rat), col.phylo[3], col.phylo[4], col.phylo[5], rep.int(col.phylo[6], n.not), rep.int(col.phylo[7], n.pse), rep.int(col.phylo[8], n.zyz), col.phylo[9], col.phylo[10], rep.int(col.phylo[11], n.mel), col.phylo[12], col.phylo[13], col.phylo[14])
 
+names(phylo.cols) <- phylo.names
+
 # pch symbol vector with unique pch symbols for legend
 pch.chain <- c(21, 22, 23, 24, 25, 7, 8, 9, 10, 11, 12, 13)
 phylo.pch <- c(21, pch.chain[1:n.rat], 21, 21, 21, pch.chain[1:n.not], pch.chain[1:n.pse], pch.chain[1:n.zyz], 21, 21, pch.chain[1:n.mel], 21, 21, 21)
@@ -92,7 +94,6 @@ legend("bottomright", legend = phylo.names, col = phylo.cols, pt.bg = phylo.cols
 ## PCA plot by diet and guild
 This PCA colors specimens by diet and assigns point shape based on guild, i.e. where they spend most of their time.
 ```{r}
-###### FIX COLORS & PCH #########
 # Set up pallete for diet
 warm <- sequential_hcl(5, "LaJolla")  
 col.carn <- warm[4]  # meat colored red
