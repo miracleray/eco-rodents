@@ -170,11 +170,62 @@ allom.resid <- arrayspecs(allometry.all$pgls.residuals, dim(mean.shapes.tree)[[1
 Allom.all.plus.consensus <- allom.resid + array(mean.shapes.tree, dim(allom.resid))
 ```
 
-### Second, plot residuals by biome
+### Second, plot residuals
 ```{r}
-
-
+res.PCA <- plotTangentSpace(Allom.all.plus.consensus, groups = sp.col.gen)
+PlotPCA(res.PCA, 1, 2, phylo.cols, phylo.pch)
+legend("bottomright", legend = phylo.names, col = phylo.cols, pt.bg = phylo.cols, pch = phylo.pch, cex = .42, pt.cex = 1.5, ncol = 2)
 ```
+
+### Third, plot residuals by region
+```{r}
+# Set up loop for particular regions in Australia
+region.names <- c("Savannah", "Arid Zone", "NE Wet Forest", "NE Dry Forest", "Pilbara", "South West", "South East")
+pc.scores <- subset(res.PCA$pc.scores, select = 1:3)  # only 1st 3 PCs
+
+# Write x and y labels with proportion of variance for PCx and PCy
+PCs <- res.PCA$pc.summary$importance
+PCx.per <- round(PCs[2, 1] * 100, digits = 1)  # % with 1 decimal
+PCx.lab <- paste("PC1 (", PCx.per, "%)", sep = "")
+PCy.per <- round(PCs[2, 2] * 100, digits = 1)
+PCy.lab <- paste("PC2 (", PCy.per, "%)", sep = "")
+
+
+par(mfrow=c(4,2), mar = c(2,2,2,2))
+# Loop through all 7 regions to plot morphospace of species found in each
+for (i in 1:7) {
+        # Subset info.traits and PCA by region
+        spp.in.region <- FoundInRegion(traits, regions = i)
+        spp.region <- traits[spp.in.region, ]
+        
+        # Subset metadata by region
+        temp <- info.means.tree[, c("Taxa", "MeanCsize", "FullName", "Order")]
+        meta.region <- merge(spp.region, temp, by = "Taxa")
+        
+        # Subset PCA coordinates by region
+        pc.region <- as.data.frame(pc.scores[meta.region$Order, ])
+        
+        # Subset plotting colors and pch symbols for spp in region
+        col.taxa.region <- phylo.cols[meta.region$Order]  # colors for all spp
+        pch.taxa.region <- phylo.pch[meta.region$Order]  # pch for all spp
+        
+        # Plot PCA with legend and labels
+        PCA.plot <- plot(x = pc.region$PC1,
+                         y = pc.region$PC2,
+                         main = paste(region.names[i], "Residual Morphospace" ),
+                         xlab = PCx.lab,
+                         ylab = PCy.lab,
+                         xlim = c(-0.11, 0.18),
+                         ylim = c(-0.095, 0.05),
+                         col = col.taxa.region, 
+                         pch = pch.taxa.region, 
+                         bg = col.taxa.region,
+                         cex = 1.5,
+                         cex.axis = 1.3, 
+                         cex.lab = 1.3)
+}
+```
+
 
 
 ### Recycle Bin ###
