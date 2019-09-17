@@ -91,6 +91,29 @@ legend("bottomright", legend = phylo.names, col = phylo.cols, pt.bg = phylo.cols
 ### dev.off()
 ```
 
+## PCA plot by ancestor group
+There are two main tribes on Australia: Hydromini and Rattini, which represent two different lineages within Murinae to make it from Asia to Sahul. 
+
+Within Hydromini, there are 5 groups with unique ancestors and arrivals from New Guinea to Australia. Most had unique radiations that centered on different biomes. 
+```{r}
+# Set up colors, using distinct colors from above. 
+col.Hyd <- phylo.cols[which(names(phylo.cols) == "H_chr")]  # Hydromys 
+col.invR <- "black"  # to distinguish between native and invasive Rattus rats 
+col.Mes <- phylo.cols[which(names(phylo.cols) == "M_gou")]  # Mesembriomys
+col.mus <- phylo.cols[which(names(phylo.cols) == "M_mus")]  # Mus musculus
+col.Pog <- phylo.cols[which(names(phylo.cols) == "P_mol")]  # Pogonomys
+col.Pse <- phylo.cols[which(names(phylo.cols) == "L_for")]  # Pseudomys
+col.Rat <- phylo.cols[which(names(phylo.cols) == "R_vil")]  # native Rattus
+col.Uro <- phylo.cols[which(names(phylo.cols) == "M_bur")]  # Uromys
+col.clade <- c(col.Hyd, col.invR, col.Mes, col.mus, col.Pog, col.Pse, col.Rat, col.Uro)
+
+# Colors matching each specimen in order of shape dataset
+col.by.clade <- PlotByGroup(info.traits, "Clade", col.clade)
+
+# PCA 
+PlotPCA(PCA, 1, 2, col.by.clade)
+```
+
 ## PCA plot by diet and guild
 This PCA colors specimens by diet and assigns point shape based on guild, i.e. where they spend most of their time.
 ```{r}
@@ -154,13 +177,6 @@ for (i in 1:7) {
         col.taxa.region <- sp.col.gen[in.region]  # colors for all spp
         pch.taxa.region <- sp.pch.taxa[in.region]  # pch for all spp
         
-        # Subset legend by species present
-        # uni.taxa <- unique(info.region$Taxa)
-        # index <- which(phylo.names %in% uni.taxa)
-        # legend.names <- phylo.names[index]
-        # legend.col <- phylo.cols[index]
-        # legend.pch <- phylo.pch[index]
-        
         # Plot PCA with legend and labels
         PCA.plot <- plot(x = pc.region$PC1,
                          y = pc.region$PC2,
@@ -175,7 +191,6 @@ for (i in 1:7) {
                          cex = 1.5,
                          cex.axis = 1.3, 
                          cex.lab = 1.3)
-        #legend("bottomright", legend = legend.names, col = legend.col, border = NULL, pch = legend.pch, pt.bg = legend.col, cex = 0.64, ncol = 2)
 }
 ```
 

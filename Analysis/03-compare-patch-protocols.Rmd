@@ -363,22 +363,14 @@ Big patch protocol:
 ```{r}
 big.gdf <- geomorph.data.frame(shape = big.shape, genus = big.info$EGenus, csize = big.info$Csize)
 big.procD <- procD.lm(shape ~ csize * genus, data = big.gdf)
-print(big.procD)
-
-# with procd.allometry
-big.Allo <- procD.allometry(shape ~ csize, ~ genus, logsz = TRUE, iter = 999, RRPP = TRUE, print.progress = TRUE, data = big.gdf)
-summary(big.Allo)
+summary(big.procD)
 ```
 
 Small patch protocol:
 ```{r}
 sm.gdf <- geomorph.data.frame(shape = sm.shape, genus = sm.info$EGenus, csize = sm.info$Csize)
 sm.procD <- procD.lm(shape ~ csize * genus, data = sm.gdf)
-print(sm.procD)
-
-# with procd.allomery
-sm.Allo <- procD.allometry(sm.shape ~ csize, ~ genus, logsz = TRUE, iter = 999, RRPP = TRUE, print.progress = TRUE, data = sm.gdf)
-summary(sm.Allo)
+summary(sm.procD)
 ```
 These ANOVAs are also very similar. Therefore, we decided to use only the small patch protocol as this protocol captured more information (sutures versus patch points) and had less asymmetry than the big patch protocol. It also resembles the more common method of landmarking.
 
