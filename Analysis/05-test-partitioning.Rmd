@@ -179,16 +179,16 @@ re.do <- match(info.means.tree$Taxa, names(phylo.cols))
 alpha.cols <- phylo.cols[re.do]
 alpha.pch <- phylo.pch[re.do]
 
-res.PCA <- plotTangentSpace(Allom.all.plus.consensus, groups = sp.col.gen)
-PlotPCA(res.PCA, 1, 2, alpha.cols)
-legend("bottomright", col = alpha.cols, pch = alpha.pch, cex = .42, pt.cex = 1.5, ncol = 2)
+res.PCA <- plotTangentSpace(Allom.all.plus.consensus, groups = alpha.cols)
+PlotPCA(res.PCA, 1, 2, alpha.cols, alpha.pch)
+legend("bottomright", phylo.names, col = phylo.cols, pch = phylo.pch, pt.bg = phylo.cols, cex = .42, pt.cex = 1.5, ncol = 2)
 ```
 
 ### Third, plot residuals by region
 ```{r}
 # Set up loop for particular regions in Australia
 region.names <- c("Savannah", "Arid Zone", "NE Wet Forest", "NE Dry Forest", "Pilbara", "South West", "South East")
-pc.scores <- subset(res.PCA$pc.scores, select = 1:3)  # only 1st 3 PCs
+res.pc.scores <- subset(res.PCA$pc.scores, select = 1:3)  # only 1st 3 PCs
 
 # Write x and y labels with proportion of variance for PCx and PCy
 PCs <- res.PCA$pc.summary$importance
@@ -210,20 +210,20 @@ for (i in 1:7) {
         meta.region <- merge(spp.region, temp, by = "Taxa")
         
         # Subset PCA coordinates by region
-        pc.region <- as.data.frame(pc.scores[meta.region$Order, ])
+        res.pc.region <- as.data.frame(res.pc.scores[meta.region$Order, ])
         
         # Subset plotting colors and pch symbols for spp in region
-        col.taxa.region <- phylo.cols[meta.region$Order]  # colors for all spp
-        pch.taxa.region <- phylo.pch[meta.region$Order]  # pch for all spp
+        col.taxa.region <- alpha.cols[meta.region$Order]  # colors for all spp
+        pch.taxa.region <- alpha.pch[meta.region$Order]  # pch for all spp
         
         # Plot PCA with legend and labels
-        PCA.plot <- plot(x = pc.region$PC1,
-                         y = pc.region$PC2,
+        PCA.plot <- plot(x = res.pc.region$PC1,
+                         y = res.pc.region$PC2,
                          main = paste(region.names[i], "Residual Morphospace" ),
                          xlab = PCx.lab,
                          ylab = PCy.lab,
-                         xlim = c(-0.11, 0.18),
-                         ylim = c(-0.095, 0.05),
+                         xlim = c(-0.12, 0.15),
+                         ylim = c(-0.1, 0.2),
                          col = col.taxa.region, 
                          pch = pch.taxa.region, 
                          bg = col.taxa.region,
