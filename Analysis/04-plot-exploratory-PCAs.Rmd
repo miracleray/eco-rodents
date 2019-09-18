@@ -237,5 +237,5 @@ PlotPCA(no.aq.pca, 1, 2, test.col.gen, test.pch.gen)
 
 ### Save intermediate data
 ```{r}
-save(traits, info.traits, phylo.names, phylo.cols, phylo.pch, sp.pch.taxa, col.diet, pch.gld, file = "../Data/Processed/04-sm-data-with-traits.rda")
+save(traits, info.traits, phylo.names, phylo.cols, phylo.pch, sp.pch.taxa, col.diet, pch.gld, col.by.clade, col.clade, file = "../Data/Processed/04-sm-data-with-traits.rda")
 ```

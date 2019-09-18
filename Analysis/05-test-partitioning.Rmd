@@ -1,6 +1,6 @@
 ---
 title: "05-test-partitioning"
-author: "Gabriele Sansalone & Ariel Marcy"
+author: "Ariel Marcy & Vera Weisbecker"
 date: "8/15/2019"
 output: html_document
 ---
@@ -11,20 +11,17 @@ knitr::opts_knit$set(root.dir = '../eco-rodents')
 ```
 
 # Test biome partitioning 
-
 First, testing for a phylogenetic signal difference in each of the 7 regional biomes. 
 
-Second, code to run function sepregr.R by Dr Gabriele Sansalone
-
-Tree, mean shape, and metadata for phylogenetic analyses come from the allometry rodents script 04. 
+Second, testing for partitioning by region in the residual shapes (size-less shape)
 
 ### Load packages, functions, and data
+Tree, mean shape, and metadata for phylogenetic analyses come from the allometry rodents script 04. 
 ```{r message = FALSE}
 library(geomorph)
 library(dplyr)
 library(geiger)
 source("../Functions/utilities.R")  # custom functions
-source("../Functions/sepregr.R")  # function by Dr Sansalone
 load(file = "../Data/Processed/01-bilat-data-w-ERR.rda")
 load(file = "../Data/Processed/03-sm-PCA-with-color.rda")
 load(file = "../Data/Processed/04-sm-data-with-traits.rda")
@@ -94,9 +91,7 @@ row.names(table) <- region.names
 write.table(table, "../Data/Results/Table_RegionPhySig.csv", sep = ",", col.names = NA)
 ```
 
-
-## 1.5) Do same analysis but for centroid size only
-
+## 2) Do same analysis but for centroid size only
 ```{r}
 # Set up blank variables again for results table
 n.taxa <- c(rep("NA", length(region.names)))
@@ -144,17 +139,6 @@ write.table(table, "../Data/Results/Table_RegionPhySig_Csize.csv", sep = ",", co
 ```
 
 
-## 2) Run sepregr.R to detect allometry by biome
-Function performs separate regressions by using a grouping variable (in this case region/biome) with nice graphics to visualize any allometry variations. 
-
-```{r}
-
-
-
-
-```
-
-
 ## 3) Check biome partitioning WITHOUT allometry and WITH phylogenetic correction
 First, extract residuals - code thanks to Dr Vera Weisbecker
 ```{r}
@@ -169,22 +153,25 @@ summary(allometry.all)
 # Turn the residuals into an appropriate array
 allom.resid <- arrayspecs(allometry.all$pgls.residuals, dim(mean.shapes.tree)[[1]], 3)
 
-# Add the consensus shape (from the GPA) to the residuals if you want to understand the landmark variation in the residuals
+# Add the consensus shape (from the GPA) to the residuals if you want to understand the landmark variation in the residuals - needed for script 06
 Allom.all.plus.consensus <- allom.resid + array(mean.shapes.tree, dim(allom.resid))
 ```
 
-### Second, plot residuals
+### Then, plot residuals
 ```{r}
+# Get names and other vectors in alphabetical order
 re.do <- match(info.means.tree$Taxa, names(phylo.cols))
 alpha.cols <- phylo.cols[re.do]
 alpha.pch <- phylo.pch[re.do]
+alpha.names <- phylo.names[re.do]
 
+# Run PCA on residuals
 res.PCA <- plotTangentSpace(Allom.all.plus.consensus, groups = alpha.cols)
 PlotPCA(res.PCA, 1, 2, alpha.cols, alpha.pch)
-legend("bottomright", phylo.names, col = phylo.cols, pch = phylo.pch, pt.bg = phylo.cols, cex = .42, pt.cex = 1.5, ncol = 2)
+legend("bottomright", phylo.names, col = phylo.cols, pch = phylo.pch, pt.bg = phylo.cols, cex = .53, pt.cex = 1.5, ncol = 2)
 ```
 
-### Third, plot residuals by region
+### Finally, plot residuals by region
 ```{r}
 # Set up loop for particular regions in Australia
 region.names <- c("Savannah", "Arid Zone", "NE Wet Forest", "NE Dry Forest", "Pilbara", "South West", "South East")
@@ -196,7 +183,6 @@ PCx.per <- round(PCs[2, 1] * 100, digits = 1)  # % with 1 decimal
 PCx.lab <- paste("PC1 (", PCx.per, "%)", sep = "")
 PCy.per <- round(PCs[2, 2] * 100, digits = 1)
 PCy.lab <- paste("PC2 (", PCy.per, "%)", sep = "")
-
 
 par(mfrow=c(4,2), mar = c(2,2,2,2))
 # Loop through all 7 regions to plot morphospace of species found in each
@@ -233,7 +219,10 @@ for (i in 1:7) {
 }
 ```
 
-
+### Save intermediate data
+```{r}
+save(alpha.cols, alpha.pch, alpha.names, res.PCA, Allom.all.plus.consensus, file = "../Data/Processed/05-residual-data.rda")
+```
 
 ### Recycle Bin ###
 
@@ -285,14 +274,4 @@ procANOVA <- procD.lm(coords ~ size * guild, data = test.GDF)
 # Run Procrustes ANOVA for guild
 test.GDF <- geomorph.data.frame(coords = test.shape, size = test.data$Csize, feed = test.data$Feeding)
 procANOVA <- procD.lm(coords ~ size * guild, data = test.GDF)
-```
-
-
-
-### Remove *Z. ped* from dataset
-*Z. pedunculatus* is missing from the phylogenetic tree so needs to be removed from the shape dataset as well. Only removes 2 observations.
-```{r}
-is.Z.ped <- which(info.traits$Taxa == "Z_ped")
-info.phy <- info.traits[-is.Z.ped, ]  # metadata
-shape.phy <- shape[, , -is.Z.ped]  # shape coordinates
 ```

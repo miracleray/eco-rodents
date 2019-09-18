@@ -1,0 +1,30 @@
+---
+title: "06-visualize-residual-morphospace"
+author: "Ariel Marcy"
+date: "9/18/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = '../eco-rodents')
+```
+
+# Test biome partitioning 
+1) Explore morphospace differences in PCA of size-less shape (residuals)
+
+2) Assess patterns in skull shape variation along PC1 & 2 axes that could be related to adaptation
+
+### Load packages, functions, and data
+Tree, mean shape, and metadata for phylogenetic analyses come from the allometry rodents script 04. 
+```{r message = FALSE}
+library(geomorph)
+library(dplyr)
+library(geiger)
+source("../Functions/utilities.R")  # custom functions
+load(file = "../Data/Processed/03-sm-PCA-with-color.rda")
+load(file = "../Data/Processed/04-sm-data-with-traits.rda")
+load(file = "../Data/Processed/allometry_rodents_04-phylo-data.rda")  # phylogenetic tree from Allometry Rodents paper / repo
+load(file = "../Data/Processed/05-residual-data.rda")
+```
+
