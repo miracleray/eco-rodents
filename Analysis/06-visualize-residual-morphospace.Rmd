@@ -28,3 +28,27 @@ load(file = "../Data/Processed/allometry_rodents_04-phylo-data.rda")  # phylogen
 load(file = "../Data/Processed/05-residual-data.rda")
 ```
 
+### Remove aquatic carnivores because differences are known
+Two species: *Hydromys_chrysogaster* (H_chr) and "Xeromys_myoides" (X_myo)
+```{r}
+# no carnivores = nc
+nc.info.means.tree <- info.means.tree[c(-2, -36), ]  # metadata
+nc.residuals <- Allom.all.plus.consensus[, , c(-2, -36)]  # shape data
+nc.alpha.cols <- alpha.cols[c(-2,-36)]  # colors
+nc.alpha.pch <- alpha.pch[c(-2,-36)]  # pch synbols
+
+# For legend
+carn <- c(which(names(phylo.cols) == "H_chr"), which(names(phylo.cols) == "X_myo"))
+nc.phylo.cols <- phylo.cols[-carn]  # colors
+nc.phylo.pch <- phylo.pch[-carn]  # pch synbols
+nc.phylo.names <- phylo.names[-carn]  # names
+```
+
+### Plot residuals
+```{r}
+nc.res.PCA <- plotTangentSpace(nc.residuals, groups = nc.alpha.cols)
+PlotPCA(nc.res.PCA, 1, 2, nc.alpha.cols, nc.alpha.pch)
+legend("bottomright", nc.phylo.names, col = nc.phylo.cols, pch = nc.phylo.pch, pt.bg = nc.phylo.cols, cex = .57, pt.cex = 1.5, ncol = 2)
+```
+
+## Plot warp grids of PC1
