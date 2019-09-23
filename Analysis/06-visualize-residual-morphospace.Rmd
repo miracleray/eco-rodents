@@ -155,3 +155,126 @@ res.PC2.var.plot <- procrustes.var.plot(res.hypothetical.3, res.hypothetical.4, 
 view3d(phi = 90)
 rgl.snapshot("../Data/Processed/heatmap_PC2_lat.png")
 ```
+
+
+
+
+### Remove *Notomys* because differences are known
+
+```{r}
+# No Notomys = not
+not <- which(nc.info.means.tree$Genus == "Not")
+not.info.means.tree <- nc.info.means.tree[-not, ]  # metadata
+not.residuals <- nc.residuals[, , -not]  # shape data
+not.alpha.cols <- nc.alpha.cols[-not]  # colors
+not.alpha.pch <- nc.alpha.pch[-not]  # pch synbols
+not.alpha.names <- nc.alpha.names[-not]  # names (for plot labels)
+
+# For legend
+noto <- which(grepl("N_", names(nc.phylo.cols)))
+not.phylo.cols <- nc.phylo.cols[-noto]  # colors
+not.phylo.pch <- nc.phylo.pch[-noto]  # pch synbols
+not.phylo.names <- nc.phylo.names[-noto]  # names
+```
+
+### Plot residuals
+
+## TO DO: need to fix plot limits so legend fits (if legend is needed)
+```{r}
+not.res.PCA <- plotTangentSpace(not.residuals, groups = not.alpha.cols, label = not.alpha.names)
+
+# Make axis labels
+PCs <- not.res.PCA$pc.summary$importance
+PCx.per <- round(PCs[2, 1] * 100, digits = 1)  # % with 1 decimal
+PCx.lab <- paste("PC1", " (", PCx.per, "%)", sep = "")
+PCy.per <- round(PCs[2, 2] * 100, digits = 1)
+PCy.lab <- paste("PC2", " (", PCy.per, "%)", sep = "")
+        
+# Pretty plot
+PCA.plot <- plot(x = not.res.PCA$pc.scores[, 1],
+                 y = not.res.PCA$pc.scores[, 2], 
+                 xlab = PCx.lab, 
+                 ylab = PCy.lab,
+                 asp = TRUE,
+                 col = not.alpha.cols, 
+                 pch = not.alpha.pch, 
+                 bg = not.alpha.cols,
+                 cex = 1.5,
+                 cex.axis = 1.3, 
+                 cex.lab = 1.3)
+#legend("bottomright", not.phylo.names, col = not.phylo.cols, pch = not.phylo.pch, pt.bg = not.phylo.cols, cex = .57, pt.cex = 1.5, ncol = 2)
+```
+
+## Plot warp grids of PC1
+Uses Dr Thomas Guillerme's new package, `landvR` to see how landmarks vary within and between the two protocols. Much of the below was adapted from [this vignette written by Dr Guillerme](https://cdn.rawgit.com/TGuillerme/landvR/8a6a6bd5/inst/vignettes/Landmark_partition_test.html).
+```{r}
+# Find mean configuration - i.e. mean shape in dataset
+all.consensus <- (select.procrustes(not.residuals, selector = mean))[[1]]
+
+# Measure spherical coordinates differences from the mean for each specimen for each landmark
+diff.from.mean <- coordinates.difference(coordinates = not.residuals, reference = all.consensus, type = "spherical")
+```
+
+To test the hypothesis that each landmark's variation from the mean configuration is above expected, we can use the PC axes from a PCA.
+```{r}
+# Ordinate the data
+twoD.shape <- two.d.array(not.residuals)
+ordination <- stats::prcomp(twoD.shape)
+
+# Force the symmetric component of shape into class "gpagen" (required for variation.range)
+res.gpagen.shape <- list()
+res.gpagen.shape$coords <- not.residuals
+res.gpagen.shape$consensus <- all.consensus
+class(res.gpagen.shape) <- "gpagen"
+
+# Measure extremes of variation from mean on PC1
+res.PC1.var <- variation.range(res.gpagen.shape, return.ID = FALSE, axis = 1, ordination = ordination, type = "spherical")
+```
+
+The next step is to make a heatmap showing the size of variation and direction of movement for each landmark in the dataset, comparing between the min and max specimens along PC1.
+```{r}
+# Wrap specimens on the tangent space
+res.wrap.PCA <- plotTangentSpace(not.residuals, verbose = FALSE)
+
+# Select extreme specimens (the ones that make the warp-meshes) on PC1
+res.hypothetical.1 <- res.wrap.PCA$pc.shapes[[1]]  # PC1 min
+res.hypothetical.2 <- res.wrap.PCA$pc.shapes[[2]]  # PC1 max
+```
+
+**Repeat the steps immediately above for PC2**
+The pc.shapes[1] and [2] correspond to PC1min and PC1max. Therefore we can adjust the same res.wrap.PCA to plot the heatmaps for PC2. 
+```{r}
+# Measure extremes of variation from mean on PC2
+res.PC2.var <- variation.range(res.gpagen.shape, return.ID = FALSE, axis = 2, ordination = ordination, type = "vector")  # can also try "spherical"
+
+# Select extreme specimens on PC2
+res.hypothetical.3 <- res.wrap.PCA$pc.shapes[[3]]  # PC2 min
+res.hypothetical.4 <- res.wrap.PCA$pc.shapes[[4]]  # PC2 max
+```
+
+## Make heatmap plot comparisons
+```{r}
+# PC1 Dorsal view
+open3d(windowRect = c(0, 0, 600, 600))
+res.PC1.var.plot <- procrustes.var.plot(res.hypothetical.1, res.hypothetical.2, col = heat.colors, col.val = res.PC1.var[, "radius"], labels = F)
+view3d(phi = 0)  # flip cranium
+rgl.snapshot("../Data/Processed/heatmap_PC1_dor_NOt.png")  # save screenshot for multipanel plot
+
+# PC1 Lateral view
+open3d(windowRect = c(0, 0, 600, 600))
+res.PC1.var.plot <- procrustes.var.plot(res.hypothetical.1, res.hypothetical.2, col = heat.colors, col.val = res.PC1.var[, "radius"], labels = F)
+view3d(phi = 90)
+rgl.snapshot("../Data/Processed/heatmap_PC1_lat_NOt.png")
+
+# PC2 Dorsal view
+open3d(windowRect = c(0, 0, 600, 600))
+res.PC2.var.plot <- procrustes.var.plot(res.hypothetical.3, res.hypothetical.4, col = heat.colors, col.val = res.PC2.var[, "length"], labels = F)
+view3d(phi = 0)  # flip cranium
+rgl.snapshot("../Data/Processed/heatmap_PC2_dor_NOt.png")
+
+# PC2 Lateral view
+open3d(windowRect = c(0, 0, 600, 600))
+res.PC2.var.plot <- procrustes.var.plot(res.hypothetical.3, res.hypothetical.4, col = heat.colors, col.val = res.PC2.var[, "length"], labels = F)
+view3d(phi = 90)
+rgl.snapshot("../Data/Processed/heatmap_PC2_lat_NOt.png")
+```
