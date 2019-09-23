@@ -35,10 +35,7 @@ load(file = "../Data/Processed/05-residual-data.rda")
 ```
 
 ### Remove aquatic carnivores because differences are known
-Two species: *Hydromys_chrysogaster* (H_chr) and "Xeromys_myoides" (X_myo)
-
-## TO DO: remove invasives as well?
-
+Two species: *Hydromys_chrysogaster* (H_chr) and *Xeromys_myoides* (X_myo)
 ```{r}
 # no carnivores = nc
 nc.info.means.tree <- info.means.tree[c(-2, -36), ]  # metadata
@@ -55,8 +52,7 @@ nc.phylo.names <- phylo.names[-carn]  # names
 ```
 
 ### Plot residuals
-
-## TO DO: need to fix plot limits so legend fits (if legend is needed)
+Color and legend by species
 ```{r}
 nc.res.PCA <- plotTangentSpace(nc.residuals, groups = nc.alpha.cols, label = nc.alpha.names)
 
@@ -68,14 +64,15 @@ PCy.per <- round(PCs[2, 2] * 100, digits = 1)
 PCy.lab <- paste("PC2", " (", PCy.per, "%)", sep = "")
         
 # Pretty plot
-PCA.plot <- plot(x = nc.res.PCA$pc.scores[, PCx],
-                 y = nc.res.PCA$pc.scores[, PCy], 
+PCA.plot <- plot(x = nc.res.PCA$pc.scores[, 1],
+                 y = nc.res.PCA$pc.scores[, 2], 
                  xlab = PCx.lab, 
                  ylab = PCy.lab,
-                 asp = TRUE,
-                 col = col.grp, 
+                 xlim = c(-0.12, 0.2),
+                 ylim = c(-.1, .1),
+                 col = nc.alpha.cols, 
                  pch = nc.alpha.pch, 
-                 bg = col.grp,
+                 bg = nc.alpha.cols,
                  cex = 1.5,
                  cex.axis = 1.3, 
                  cex.lab = 1.3)
@@ -179,7 +176,6 @@ not.phylo.names <- nc.phylo.names[-noto]  # names
 
 ### Plot residuals
 
-## TO DO: need to fix plot limits so legend fits (if legend is needed)
 ```{r}
 not.res.PCA <- plotTangentSpace(not.residuals, groups = not.alpha.cols, label = not.alpha.names)
 
@@ -195,14 +191,15 @@ PCA.plot <- plot(x = not.res.PCA$pc.scores[, 1],
                  y = not.res.PCA$pc.scores[, 2], 
                  xlab = PCx.lab, 
                  ylab = PCy.lab,
-                 asp = TRUE,
+                 xlim = c(-0.12, 0.2),
+                 ylim = c(-.1, .1),
                  col = not.alpha.cols, 
                  pch = not.alpha.pch, 
                  bg = not.alpha.cols,
                  cex = 1.5,
                  cex.axis = 1.3, 
                  cex.lab = 1.3)
-#legend("bottomright", not.phylo.names, col = not.phylo.cols, pch = not.phylo.pch, pt.bg = not.phylo.cols, cex = .57, pt.cex = 1.5, ncol = 2)
+legend("bottomright", not.phylo.names, col = not.phylo.cols, pch = not.phylo.pch, pt.bg = not.phylo.cols, cex = .57, pt.cex = 1.5, ncol = 2)
 ```
 
 ## Plot warp grids of PC1
