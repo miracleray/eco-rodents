@@ -113,10 +113,7 @@ PCA.plot <- plot(x = nc.res.PCA$pc.scores[, 1],
                  cex.lab = 1.3)
 legend("bottomright", legend = c("Arboreal", "Terrest.", "Hopping"), col = "black", border = NULL, pch = c(24, 22, 21))
 legend("topright", legend = c("Frugivorous", "Granivorous", "Foliverous", "Omnivorous"), col = col.diet, border = NULL, pch = 15)
-#text(nc.res.PCA$pc.scores[, 1], nc.res.PCA$pc.scores[, 2], labels = nc.info.means.tree$Taxa)
 ```
-
-
 
 ## Plot warp grids of PC1
 Uses Dr Thomas Guillerme's new package, `landvR` to see how landmarks vary within and between the two protocols. Much of the below was adapted from [this vignette written by Dr Guillerme](https://cdn.rawgit.com/TGuillerme/landvR/8a6a6bd5/inst/vignettes/Landmark_partition_test.html).
@@ -194,7 +191,6 @@ rgl.snapshot("../Data/Processed/heatmap_PC2_lat.png")
 
 
 ## Remove *Notomys* because differences are known
-
 ```{r}
 # No Notomys = not
 not <- which(nc.info.means.tree$Genus == "Not")
@@ -203,6 +199,9 @@ not.residuals <- nc.residuals[, , -not]  # shape data
 not.alpha.cols <- nc.alpha.cols[-not]  # colors
 not.alpha.pch <- nc.alpha.pch[-not]  # pch synbols
 not.alpha.names <- nc.alpha.names[-not]  # names (for plot labels)
+
+not.col.diet <- nc.col.diet[-not]  # diet colors
+not.pch.gld <- nc.pch.gld[-not]  # guild point symbols
 
 # For legend
 noto <- which(grepl("N_", names(nc.phylo.cols)))
@@ -228,16 +227,37 @@ PCA.plot <- plot(x = not.res.PCA$pc.scores[, 1],
                  y = not.res.PCA$pc.scores[, 2], 
                  xlab = PCx.lab, 
                  ylab = PCy.lab,
-                 xlim = c(-0.12, 0.2),
-                 ylim = c(-.1, .1),
+                 xlim = c(-0.12, 0.16),
+                 ylim = c(-0.07, 0.08),
                  col = not.alpha.cols, 
                  pch = not.alpha.pch, 
                  bg = not.alpha.cols,
                  cex = 1.5,
                  cex.axis = 1.3, 
                  cex.lab = 1.3)
-legend("bottomright", not.phylo.names, col = not.phylo.cols, pch = not.phylo.pch, pt.bg = not.phylo.cols, cex = .57, pt.cex = 1.5, ncol = 2)
+legend("topright", not.phylo.names, col = not.phylo.cols, pch = not.phylo.pch, pt.bg = not.phylo.cols, cex = .63, pt.cex = 1.5, ncol = 2)
 ```
+
+### Plot residuals with diet and locomotion
+```{r}
+# Pretty plot
+PCA.plot <- plot(x = not.res.PCA$pc.scores[, 1],
+                 y = not.res.PCA$pc.scores[, 2], 
+                 xlab = PCx.lab, 
+                 ylab = PCy.lab,
+                 xlim = c(-0.12, 0.16),
+                 ylim = c(-0.07, 0.08),
+                 col = not.col.diet, 
+                 pch = not.pch.gld, 
+                 bg = not.col.diet,
+                 cex = 1.5,
+                 cex.axis = 1.3, 
+                 cex.lab = 1.3)
+legend("bottomright", legend = c("Arboreal", "Terrest."), col = "black", border = NULL, pch = c(24, 22))
+legend("topright", legend = c("Frugivorous", "Granivorous", "Foliverous", "Omnivorous"), col = col.diet, border = NULL, pch = 15)
+
+```
+
 
 ## Plot warp grids of PC1
 Uses Dr Thomas Guillerme's new package, `landvR` to see how landmarks vary within and between the two protocols. Much of the below was adapted from [this vignette written by Dr Guillerme](https://cdn.rawgit.com/TGuillerme/landvR/8a6a6bd5/inst/vignettes/Landmark_partition_test.html).
