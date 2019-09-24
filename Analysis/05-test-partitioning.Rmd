@@ -171,6 +171,14 @@ PlotPCA(res.PCA, 1, 2, alpha.cols, alpha.pch)
 legend("bottomright", phylo.names, col = phylo.cols, pch = phylo.pch, pt.bg = phylo.cols, cex = .53, pt.cex = 1.5, ncol = 2)
 ```
 
+```{r}
+res.PCA <- plotTangentSpace(allom.resid, groups = alpha.cols)
+PlotPCA(res.PCA, 1, 2, alpha.cols, alpha.pch)
+legend("bottomright", phylo.names, col = phylo.cols, pch = phylo.pch, pt.bg = phylo.cols, cex = .53, pt.cex = 1.5, ncol = 2)
+
+```
+
+
 ### Finally, plot residuals by region
 ```{r}
 # Set up loop for particular regions in Australia
@@ -184,7 +192,7 @@ PCx.lab <- paste("PC1 (", PCx.per, "%)", sep = "")
 PCy.per <- round(PCs[2, 2] * 100, digits = 1)
 PCy.lab <- paste("PC2 (", PCy.per, "%)", sep = "")
 
-par(mfrow=c(4,2), mar = c(2,2,2,2))
+par(mfrow = c(4, 2), mar = c(2, 2, 2, 2))
 # Loop through all 7 regions to plot morphospace of species found in each
 for (i in 1:7) {
         # Subset info.traits and PCA by region
@@ -221,7 +229,7 @@ for (i in 1:7) {
 
 ### Save intermediate data
 ```{r}
-save(alpha.cols, alpha.pch, alpha.names, res.PCA, Allom.all.plus.consensus, file = "../Data/Processed/05-residual-data.rda")
+save(alpha.cols, alpha.pch, alpha.names, res.PCA, allom.resid, Allom.all.plus.consensus, file = "../Data/Processed/05-residual-data.rda")
 ```
 
 ### Recycle Bin ###

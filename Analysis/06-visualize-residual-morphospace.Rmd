@@ -211,7 +211,6 @@ not.phylo.names <- nc.phylo.names[-noto]  # names
 ```
 
 ### Plot residuals without *Notomys*
-
 ```{r}
 not.res.PCA <- plotTangentSpace(not.residuals, groups = not.alpha.cols, label = not.alpha.names)
 
@@ -255,7 +254,6 @@ PCA.plot <- plot(x = not.res.PCA$pc.scores[, 1],
                  cex.lab = 1.3)
 legend("bottomright", legend = c("Arboreal", "Terrest."), col = "black", border = NULL, pch = c(24, 22))
 legend("topright", legend = c("Frugivorous", "Granivorous", "Foliverous", "Omnivorous"), col = col.diet, border = NULL, pch = 15)
-
 ```
 
 
