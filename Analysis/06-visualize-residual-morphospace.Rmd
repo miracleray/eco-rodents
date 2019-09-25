@@ -37,10 +37,15 @@ load(file = "../Data/Processed/05-residual-data.rda")
 ### Remove aquatic carnivores because differences are known
 Two species: *Hydromys_chrysogaster* (H_chr) and *Xeromys_myoides* (X_myo)
 ```{r}
-# no carnivores = nc
+# No carnivores = nc
 nc.info.means.tree <- info.means.tree[c(-2, -36), ]  # metadata
 #nc.residuals <- Allom.all.plus.consensus[, , c(-2, -36)]  # shape data
-nc.residuals <- allom.resid[, , c(-2, -36)]
+
+## Decide here whether to use the hypothetical shape or not
+nc.residuals <- allom.resid[, , c(-2, -36)]  # Hypothetical shape
+#nc.residuals <- Allom.all.plus.consensus[, , c(-2, -36)]  # Actual shape
+
+# For plotting
 nc.alpha.cols <- alpha.cols[c(-2,-36)]  # colors
 nc.alpha.pch <- alpha.pch[c(-2,-36)]  # pch synbols
 nc.alpha.names <- alpha.names[c(-2,-36)]  # names (for plot labels)
