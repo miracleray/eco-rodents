@@ -138,6 +138,11 @@ row.names(table) <- region.names
 write.table(table, "../Data/Results/Table_RegionPhySig_Csize.csv", sep = ",", col.names = NA)
 ```
 
+## PCA with mean shape for comparison
+```{r}
+mean.pca <- plotTangentSpace(mean.shapes.tree, axis1 = 1, axis2 = 2, verbose = T)
+PlotPCA(mean.pca, 1, 2, alpha.cols, alpha.pch, flip.axis1 = T)
+```
 
 ## 3) Check biome partitioning WITHOUT allometry and WITH phylogenetic correction
 First, extract residuals - code thanks to Dr Vera Weisbecker
