@@ -1,5 +1,5 @@
 # Australian rodent cranial ecomorphology (Chapter 4 of Thesis) - data and code
-Code authors: Ariel E. Marcy, Dr Gabriele Sansalone, Dr Thomas Guillerme
+Code authors: Ariel E. Marcy, Dr Thomas Guillerme, Dr Vera Weisbecker
 
 To cite the paper, data, and/or code:
 > Coming soonish
@@ -37,4 +37,5 @@ All of the scripts below are in RMarkdown format (.Rmd), which can be opened in 
 * **02-calculate-user-error.Rmd** Allows users to view outliers and find major landmarking errors. Takes out replicated specimens from the shape data, finds their duplicates, and calculates user error based on repeatability for both patch datasets. 
 * **03-compare-patch-protocols.Rmd** Plots PCAs colored by genus and runs shape ~ genus * centroid size ANOVAs for both patch protocols. Visualizes landmark variation differences with Dr Thomas Guillerme's new package, `landvR`, in color-coded heatmaps for both patch protocols and for both PC1 and PC2. 
 * **04-plot-exploratory-PCAs.Rmd** Allows users to quickly plot PCAs with point colors and shapes according to taxa or trait information provided in the metadata table. Also loops through the 7 Australian regions to plot the PCA morphospace by region.
-* **05-test-partitioning.Rmd** Tests for a phylogenetic signal difference between the 7 regional biomes and uses `sepregr.R` function by Dr Gabriele Sansalone to test for differences in allometry by biome.
+* **05-test-partitioning.Rmd** Tests for a phylogenetic signal difference between the 7 regional biomes and tests for partitioning by region when size-less shape (i.e. the residuals) are used instead; includes phylogenetic correction. 
+* **06-visualize-residual-morphospace.Rmd** Plots morphospace differences in PCA of residuals by phylogenetic and guild (diet/locomotion) and generates landvR heatplots of shape changes over the PC axes.
