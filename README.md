@@ -4,7 +4,7 @@ Code authors: Ariel E. Marcy, Dr Thomas Guillerme, Dr Vera Weisbecker
 To cite the paper, data, and/or code:
 > Coming soonish
 
-As of September 2019, this is still a work in progress.
+As of October 2019, this is still a work in progress.
 
 After cloning this repo, remember to either set your working directory to the aus-rodent-skulls folder on your computer, or open an RStudio project from that folder.
 
