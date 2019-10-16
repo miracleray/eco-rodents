@@ -21,6 +21,7 @@ Tree, mean shape, and metadata for phylogenetic analyses come from the allometry
 library(geomorph)
 library(data.table)
 library(vegan)
+library(geiger)  # for phylogenies
 library(png)  # needed to work with screenshots
 library(colorspace)  # plot colors
 # Load libraries (and install if necessary) for landvR package
@@ -28,6 +29,7 @@ if(!require(devtools)) install.packages("devtools")
 if(!require(dispRity)) install.packages("dispRity")
 if(!require(landvR)) install_github("TGuillerme/landvR")
 source("../Functions/utilities.R")  # custom functions
+source("../Functions/plotGMPhyloMorphoSpace_plotmod.R")  # modified geomorph function
 load(file = "../Data/Processed/03-sm-PCA-with-color.rda")
 load(file = "../Data/Processed/04-sm-data-with-traits.rda")
 load(file = "../Data/Processed/allometry_rodents_04-phylo-data.rda")  # phylogenetic tree from Allometry Rodents paper / repo
@@ -241,6 +243,20 @@ PCA.plot <- plot(x = not.res.PCA$pc.scores[, 1],
                  cex.axis = 1.3, 
                  cex.lab = 1.3)
 legend("topright", not.phylo.names, col = not.phylo.cols, pch = not.phylo.pch, pt.bg = not.phylo.cols, cex = .63, pt.cex = 1.5, ncol = 2)
+```
+
+### Plot phylomorphospace on residuals without *Notomys*
+```{r}
+# Prep Aus tree by removing species removed from shape data
+concord <- name.check(aus.tree, aus.tree$tip.label, dimnames(not.residuals)[[3]])  # check concordance
+no.not.tree <- drop.tip(aus.tree, concord$tree_not_data)  # prune tree to Aus sample
+
+# Run with trimmed tree (31 spp) using modified function from `geomorph`
+gray.branches.10 <- rep("dark gray", length(gray.branches.10)) # needed handle decision to no longer color the branches
+
+plotGMPhyloMorphoSpace_plotmod(no.not.tree, not.residuals, xaxis = 1, yaxis = -2, tip.labels = FALSE, node.labels = FALSE, plot.param = list(t.bg = not.alpha.cols, t.pch = not.alpha.pch, t.cex = 1.5, n.cex = .75, lwd = 2, l.col = "gray", main = "PCA Phylomorphospace (residuals no Notomys)", xlim = c(-0.12, 0.16), ylim = c(-0.07, 0.08)))
+
+
 ```
 
 ### Plot residuals with diet and locomotion
