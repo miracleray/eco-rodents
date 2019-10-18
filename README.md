@@ -10,8 +10,8 @@ After cloning this repo, remember to either set your working directory to the au
 
 ## Data
 **Landmarking data:**
-* 3D surface scanned meshes for all skulls in the study [available via MorphoSource](https://www.morphosource.org/MyProjects/Dashboard/dashboard/select_project_id/561)
-* [Raw_Coordinates.csv](Data/Raw/Raw_Coord_Data.csv) - the shape coordinates from landmarking 3D  skulls in Viewbox 
+* [MorphoSource Project 561](https://www.morphosource.org/MyProjects/Dashboard/dashboard/select_project_id/561) publically provides 3D meshes for all surface scanned crania in the study
+* [Raw_Coordinates.csv](Data/Raw/Raw_Coord_Data.csv) provides the shape coordinates from landmarking 3D skulls in Viewbox 
 
 **Ecological metadata:**
 * [Trait data from Breed & Ford 2007](/Data/Processed/in_ex_traits.csv)
