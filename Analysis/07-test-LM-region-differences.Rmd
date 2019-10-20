@@ -1,0 +1,14 @@
+---
+title: "07-test-LM-region-differences"
+author: "Ariel Marcy"
+date: "10/21/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = '../eco-rodents')
+```
+
+## Test variation within morphospace
+What is causing high levels of allometry? Is it functional integration of the gnawing apparatus (mostly in the cranium-rostrum area)? If so, we would expect to see the cranium-rostrum to be the least variable across species compared to basicranium-cranium and basicranium-rostrum comparisons. 
