@@ -8,6 +8,7 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_knit$set(root.dir = '../eco-rodents')
+#par(mfrow=c(1,1))
 ```
 
 # Test variation within morphospace
@@ -35,14 +36,33 @@ The three partitions will need to be designated from the LM numbers. The first t
 
 ### Choose the partitions for the first time
 ```{r}
-modules <- define.modules(shape[, , 1], nmodules = 3)
-
+modules <- define.modules(shape[, , 1], nmodules = 3)  # see numbers on skull
+write.table(pt.names, "../Data/Processed/Landmark_names.csv", sep = ",", col.names = NA)  # exports landmark names and numbers
 ```
-
 
 ### Load in the partitions for all subsequent times
 ```{r}
-
-
+lm.modules <- read.csv("../Data/Processed/Landmark_modules.csv", sep = ",", header = TRUE)
 ```
 
+### Visualize the partitions
+```{r}
+# Deconstruct function from Thomas's code in Landmark-test
+lm.modules[,3]
+ref <- mshape(shape)  
+PartLevels <- unique(lm.modules[, 3])
+Colors <- rainbow(length(PartLevels))
+Colors <- c("blue", "orange", "green")
+
+# subset the landmarks according to the partitions
+Part <- list()
+for(i in 1:length(PartLevels)){
+        Part[[i]] <- which(lm.modules[, 3] == PartLevels[[i]])
+  }
+
+# 3D plot of the partitions
+open3d()
+for (i in 1:length(PartLevels)){
+        spheres3d(ref[Part[[i]], 1], ref[Part[[i]], 2], ref[Part[[i]], 3], col = Colors[i], lit = TRUE, radius = 0.001, asp = FALSE)
+        }
+```

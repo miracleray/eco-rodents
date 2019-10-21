@@ -384,5 +384,5 @@ PCA <- sm.pca
 PCs <- sm.PCs
 pt.names <- sm.pt.names
 
-save(shape, info, PCA, PCs, col.gen, sp.col.gen, col.phylo, genera.phylo, file = "../Data/Processed/03-sm-PCA-with-color.rda")
+save(shape, info, PCA, PCs, col.gen, sp.col.gen, col.phylo, genera.phylo, pt.names, file = "../Data/Processed/03-sm-PCA-with-color.rda")
 ```

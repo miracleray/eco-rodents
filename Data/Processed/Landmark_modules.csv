@@ -1,0 +1,326 @@
+Number,Landmark,Module
+1,SUR2 parietal interpar suture R 2,2
+2,SUR2 parietal interpar suture R 1,2
+3,SUR2 parietal interpar suture L 2,2
+4,SUR2 parietal interpar suture L 1,2
+5,SUR2 interpar occipital suture R 3,2
+6,SUR2 interpar occipital suture R 2,2
+7,SUR2 interpar occipital suture R 1,2
+8,SUR2 interpar occipital suture L 3,2
+9,SUR2 interpar occipital suture L 2,2
+10,SUR2 interpar occipital suture L 1,2
+11,SUR2 frontal parietal suture R 3,2
+12,SUR2 frontal parietal suture R 2,2
+13,SUR2 frontal parietal suture R 1,2
+14,SUR2 frontal parietal suture L 3,2
+15,SUR2 frontal parietal suture L 2,2
+16,SUR2 frontal parietal suture L 1,2
+17,SUR V edge foramen magnum R 3,3
+18,SUR V edge foramen magnum R 2,3
+19,SUR V edge foramen magnum R 1,3
+20,SUR V edge foramen magnum L 3,3
+21,SUR V edge foramen magnum L 2,3
+22,SUR V edge foramen magnum L 1,3
+23,SUR rim of premaxilla supraorbital R 3,1
+24,SUR rim of premaxilla supraorbital R 2,1
+25,SUR rim of premaxilla supraorbital R 1,1
+26,SUR rim of premaxilla supraorbital L 3,1
+27,SUR rim of premaxilla supraorbital L 2,1
+28,SUR rim of premaxilla supraorbital L 1,1
+29,SUR rim of maxilla supraorbital R 1,1
+30,SUR rim of maxilla supraorbital L 1,1
+31,SUR pterygoid R 2,3
+32,SUR pterygoid R 1,3
+33,SUR pterygoid L 2,3
+34,SUR pterygoid L 1,3
+35,SUR pos zygo cxn R 2,2
+36,SUR pos zygo cxn R 1,2
+37,SUR pos zygo cxn L 2,2
+38,SUR pos zygo cxn L 1,2
+39,SUR periotic cap R 3,2
+40,SUR periotic cap R 2,2
+41,SUR periotic cap R 1,2
+42,SUR periotic cap L 3,2
+43,SUR periotic cap L 2,2
+44,SUR periotic cap L 1,2
+45,SUR parietal squamosal suture R 6,2
+46,SUR parietal squamosal suture R 5,2
+47,SUR parietal squamosal suture R 4,2
+48,SUR parietal squamosal suture R 3,2
+49,SUR parietal squamosal suture R 2,2
+50,SUR parietal squamosal suture R 1,2
+51,SUR parietal squamosal suture L 6,2
+52,SUR parietal squamosal suture L 5,2
+53,SUR parietal squamosal suture L 4,2
+54,SUR parietal squamosal suture L 3,2
+55,SUR parietal squamosal suture L 2,2
+56,SUR parietal squamosal suture L 1,2
+57,SUR P outline aud bulla R 5,3
+58,SUR P outline aud bulla R 4,3
+59,SUR P outline aud bulla R 3,3
+60,SUR P outline aud bulla R 2,3
+61,SUR P outline aud bulla R 1,3
+62,SUR P outline aud bulla L 5,3
+63,SUR P outline aud bulla L 4,3
+64,SUR P outline aud bulla L 3,3
+65,SUR P outline aud bulla L 2,3
+66,SUR P outline aud bulla L 1,3
+67,SUR P most edge maxilla R 3,2
+68,SUR P most edge maxilla R 2,2
+69,SUR P most edge maxilla R 1,2
+70,SUR P most edge maxilla L 3,2
+71,SUR P most edge maxilla L 2,2
+72,SUR P most edge maxilla L 1,2
+73,SUR nasal premaxilla suture R 5,1
+74,SUR nasal premaxilla suture R 4,1
+75,SUR nasal premaxilla suture R 3,1
+76,SUR nasal premaxilla suture R 2,1
+77,SUR nasal premaxilla suture R 1,1
+78,SUR nasal premaxilla suture L 5,1
+79,SUR nasal premaxilla suture L 4,1
+80,SUR nasal premaxilla suture L 3,1
+81,SUR nasal premaxilla suture L 2,1
+82,SUR nasal premaxilla suture L 1,1
+83,SUR lingual tooth row R 3,1
+84,SUR lingual tooth row R 2,1
+85,SUR lingual tooth row R 1,1
+86,SUR lingual tooth row L 3,1
+87,SUR lingual tooth row L 2,1
+88,SUR lingual tooth row L 1,1
+89,SUR lateral boundary R 3,2
+90,SUR lateral boundary R 2,2
+91,SUR lateral boundary R 1,2
+92,SUR lateral boundary L 3,2
+93,SUR lateral boundary L 2,2
+94,SUR lateral boundary L 1,2
+95,SUR lat edge frontal R 3,1
+96,SUR lat edge frontal R 2,1
+97,SUR lat edge frontal R 1,1
+98,SUR lat edge frontal L 3,1
+99,SUR lat edge frontal L 2,1
+100,SUR lat edge frontal L 1,1
+101,SUR lat most edge maxilla R 2,2
+102,SUR lat most edge maxilla R 1,2
+103,SUR lat most edge maxilla L 2,2
+104,SUR lat most edge maxilla L 1,2
+105,SUR edge rostrum R 3,1
+106,SUR edge rostrum R 2,1
+107,SUR edge rostrum R 1,1
+108,SUR edge rostrum L 3,1
+109,SUR edge rostrum L 2,1
+110,SUR edge rostrum L 1,1
+111,SUR D edge foramen magnum R 2,3
+112,SUR D edge foramen magnum R 1,3
+113,SUR D edge foramen magnum L 2,3
+114,SUR D edge foramen magnum L 1,3
+115,SUR C parietals 2,2
+116,SUR C parietals 1,2
+117,SUR C occipitals 2,2
+118,SUR C occipitals 1,2
+119,SUR C nasal 3,1
+120,SUR C nasal 2,1
+121,SUR C nasal 1,1
+122,SUR C line hard palate 3,1
+123,SUR C line hard palate 2,1
+124,SUR C line hard palate 1,1
+125,SUR C interparietals 1,2
+126,SUR C frontals 4,1
+127,SUR C frontals 3,1
+128,SUR C frontals 2,1
+129,SUR C frontals 1,1
+130,SUR C basisphenoid suture 2,3
+131,SUR C basisphenoid suture 1,3
+132,SUR A outline aud bulla R 3,3
+133,SUR A outline aud bulla R 2,3
+134,SUR A outline aud bulla R 1,3
+135,SUR A outline aud bulla L 3,3
+136,SUR A outline aud bulla L 2,3
+137,SUR A outline aud bulla L 1,3
+138,SUR A edge maxilla R 2,2
+139,SUR A edge maxilla R 1,2
+140,SUR A edge maxilla L 2,2
+141,SUR A edge maxilla L 1,2
+142,PAT2 parietal R 11d,2
+143,PAT2 parietal R 6d,2
+144,PAT2 parietal R 7d,2
+145,PAT2 parietal R 8d,2
+146,PAT2 parietal R 4d,2
+147,PAT2 parietal R 5d,2
+148,PAT2 parietal R 3d,2
+149,PAT2 parietal R 2d,2
+150,PAT2 parietal R 12d,2
+151,PAT2 parietal R 13d,2
+152,PAT2 parietal R 14d,2
+153,PAT2 parietal R 9d,2
+154,PAT2 parietal R 10d,2
+155,PAT2 parietal R 1d,2
+156,PAT2 parietal L 1d,2
+157,PAT2 parietal L 3d,2
+158,PAT2 parietal L 13d,2
+159,PAT2 parietal L 10d,2
+160,PAT2 parietal L 9d,2
+161,PAT2 parietal L 12d,2
+162,PAT2 parietal L 11d,2
+163,PAT2 parietal L 4d,2
+164,PAT2 parietal L 5d,2
+165,PAT2 parietal L 8d,2
+166,PAT2 parietal L 6d,2
+167,PAT2 parietal L 14d,2
+168,PAT2 parietal L 2d,2
+169,PAT2 parietal L 7d,2
+170,PAT2 occipital R 5d,2
+171,PAT2 occipital R 2d,2
+172,PAT2 occipital R 1d,2
+173,PAT2 occipital R 3d,2
+174,PAT2 occipital R 4d,2
+175,PAT2 occipital R 6d,2
+176,PAT2 occipital R 7d,2
+177,PAT2 occipital R 8d,2
+178,PAT2 occipital L 7d,2
+179,PAT2 occipital L 3d,2
+180,PAT2 occipital L 1d,2
+181,PAT2 occipital L 2d,2
+182,PAT2 occipital L 6d,2
+183,PAT2 occipital L 8d,2
+184,PAT2 occipital L 4d,2
+185,PAT2 occipital L 5d,2
+186,PAT2 interparietal R 3,2
+187,PAT2 interparietal R 2,2
+188,PAT2 interparietal R 1,2
+189,PAT2 interparietal L 3,2
+190,PAT2 interparietal L 2,2
+191,PAT2 interparietal L 1,2
+192,PAT2 frontal R 7d,1
+193,PAT2 frontal R 5d,1
+194,PAT2 frontal R 6d,1
+195,PAT2 frontal R 4d,1
+196,PAT2 frontal R 3d,1
+197,PAT2 frontal R 2d,1
+198,PAT2 frontal R 1d,1
+199,PAT2 frontal L 7d,1
+200,PAT2 frontal L 4d,1
+201,PAT2 frontal L 5d,1
+202,PAT2 frontal L 3d,1
+203,PAT2 frontal L 1d,1
+204,PAT2 frontal L 6d,1
+205,PAT2 frontal L 2d,1
+206,PAT V maxilla R 7,2
+207,PAT V maxilla R 8,2
+208,PAT V maxilla R 4,2
+209,PAT V maxilla R 2,2
+210,PAT V maxilla R 6,2
+211,PAT V maxilla R 5,2
+212,PAT V maxilla R 1,2
+213,PAT V maxilla R 3,2
+214,PAT V maxilla L 1,2
+215,PAT V maxilla L 2,2
+216,PAT V maxilla L 3,2
+217,PAT V maxilla L 4,2
+218,PAT V maxilla L 8,2
+219,PAT V maxilla L 6,2
+220,PAT V maxilla L 5,2
+221,PAT V maxilla L 7,2
+222,PAT nasal R 5,1
+223,PAT nasal R 4,1
+224,PAT nasal R 3,1
+225,PAT nasal R 2,1
+226,PAT nasal R 1,1
+227,PAT nasal L 4,1
+228,PAT nasal L 5,1
+229,PAT nasal L 2,1
+230,PAT nasal L 1,1
+231,PAT nasal L 3,1
+232,PAT lat squa R 2,2
+233,PAT lat squa R 4,2
+234,PAT lat squa R 7,2
+235,PAT lat squa R 1,2
+236,PAT lat squa R 6,2
+237,PAT lat squa R 3,2
+238,PAT lat squa R 5,2
+239,PAT lat squa L 7,2
+240,PAT lat squa L 5,2
+241,PAT lat squa L 1,2
+242,PAT lat squa L 6,2
+243,PAT lat squa L 3,2
+244,PAT lat squa L 2,2
+245,PAT lat squa L 4,2
+246,PAT auditory bulla R 4,3
+247,PAT auditory bulla R 9,3
+248,PAT auditory bulla R 3,3
+249,PAT auditory bulla R 7,3
+250,PAT auditory bulla R 6,3
+251,PAT auditory bulla R 2,3
+252,PAT auditory bulla R 1d,3
+253,PAT auditory bulla R 5,3
+254,PAT auditory bulla R 10,3
+255,PAT auditory bulla R 8,3
+256,PAT auditory bulla L 1d,3
+257,PAT auditory bulla L 2,3
+258,PAT auditory bulla L 8,3
+259,PAT auditory bulla L 6,3
+260,PAT auditory bulla L 3,3
+261,PAT auditory bulla L 4,3
+262,PAT auditory bulla L 7,3
+263,PAT auditory bulla L 5,3
+264,PAT auditory bulla L 9,3
+265,PAT auditory bulla L 10,3
+266,LM Paraoccip proc R,3
+267,LM Paraoccip proc L,3
+268,LM par interpar occip R,2
+269,LM par interpar occip L,2
+270,LM P pt tooth row R,1
+271,LM P pt tooth row L,1
+272,LM P pt pterygoid R,3
+273,LM P pt pterygoid L,3
+274,LM P pt of A maxilla R,1
+275,LM P pt of A maxilla L,1
+276,LM P pt ext auditory meatus R,3
+277,LM P pt ext auditory meatus L,3
+278,LM P most pt supraorbital R,1
+279,LM P most pt supraorbital L,1
+280,LM P int premax & maxilla R,1
+281,LM P int premax & maxilla L,1
+282,LM P & D most pt dentary R,3
+283,LM P & D most pt dentary L,3
+284,LM lingual tip of bulla R,3
+285,LM lingual tip of bulla L,3
+286,LM lat occ cond&f mag R,3
+287,LM lat occ cond&f mag L,3
+288,LM int squa&parietal R,2
+289,LM int squa&parietal L,2
+290,LM int pariet&occip R,2
+291,LM int pariet&occip L,2
+292,LM front squa pariet R,2
+293,LM front squa pariet L,2
+294,LM D ext aud meatus R,3
+295,LM D ext aud meatus L,3
+296,LM CV pt nasal opening,1
+297,LM CV most pt for mag,3
+298,LM CP pt incisor alveola R,1
+299,LM CP pt incisor alveola L,1
+300,LM CP pt btwn palatine foramen,1
+301,LM CD pt foramen magnum,2
+302,LM CA pt btwn palantine foramen,1
+303,LM C int parietal & interparietal,2
+304,LM C int nasal & frontal,1
+305,LM C int interparietal & occipital,2
+306,LM C int frontal & parietal,2
+307,LM C int basioccip&basisphen,3
+308,LM C & P most pt palantine,1
+309,LM AV pt incisor&premax R,1
+310,LM AV pt incisor&premax L,1
+311,LM AV pt ext aud meat R,3
+312,LM AV pt ext aud meat L,3
+313,LM AL pt zygo arch R,1
+314,LM AL pt zygo arch L,1
+315,LM AL premax&nas R,1
+316,LM AL premax&nas L,1
+317,LM A pt tooth row R,1
+318,LM A pt tooth row L,1
+319,LM A most pt nasal C,1
+320,LM A most pt infraorb R,1
+321,LM A most pt infraorb L,1
+322,LM A int zygo&squa R,2
+323,LM A int zygo&squa L,2
+324,LM A int zygo&max R,2
+325,LM A int zygo&max L,2
