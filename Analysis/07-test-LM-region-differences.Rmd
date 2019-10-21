@@ -48,11 +48,12 @@ lm.modules <- read.csv("../Data/Processed/Landmark_modules.csv", sep = ",", head
 ### Visualize the partitions
 ```{r}
 # Deconstruct function from Thomas's code in Landmark-test
-lm.modules[,3]
+lm.modules[, 3]
 ref <- mshape(shape)  
 PartLevels <- unique(lm.modules[, 3])
 Colors <- rainbow(length(PartLevels))
-Colors <- c("blue", "orange", "green")
+Colors <- c("pink", "gray", "brown")  # Pink gallah
+Colors <- c("hot pink", "violet", "purple") # Vera's request :P
 
 # subset the landmarks according to the partitions
 Part <- list()
@@ -66,3 +67,17 @@ for (i in 1:length(PartLevels)){
         spheres3d(ref[Part[[i]], 1], ref[Part[[i]], 2], ref[Part[[i]], 3], col = Colors[i], lit = TRUE, radius = 0.001, asp = FALSE)
         }
 ```
+
+## Test morphological integration
+```{r}
+# Define coordinates that refer to modules
+rostrum <- which(lm.modules[, 3] == 1)
+top.cran <- which(lm.modules[, 3] == 2) 
+basicran <- which(lm.modules[, 3] == 3)
+
+# Rostrum versus top cranium and basicranium
+int.test.1 <- integration.test(shape, partition.gp = (lm.modules[, 3]))
+
+```
+
+
