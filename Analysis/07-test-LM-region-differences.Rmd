@@ -10,5 +10,39 @@ knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_knit$set(root.dir = '../eco-rodents')
 ```
 
-## Test variation within morphospace
-What is causing high levels of allometry? Is it functional integration of the gnawing apparatus (mostly in the cranium-rostrum area)? If so, we would expect to see the cranium-rostrum to be the least variable across species compared to basicranium-cranium and basicranium-rostrum comparisons. 
+# Test variation within morphospace
+What is causing high levels of allometry? Is it functional integration of the gnawing apparatus (mostly in the top cranium-rostrum area)? 
+
+If so, we would expect to see the top cranium-rostrum to be the least variable across species compared to the basicranium-top cranium and basicranium-rostrum comparisons. 
+
+### Load packages, functions, and data from previous steps
+```{r message = FALSE}
+library(png)  # needed to work with screenshots
+library(colorspace)  # plot colors
+# Load libraries (and install if necessary) for landvR package
+if(!require(devtools)) install.packages("devtools")
+if(!require(dispRity)) install.packages("dispRity")
+if(!require(landvR)) install_github("TGuillerme/landvR")
+library(data.table)
+library(vegan)
+library(geomorph)
+source("../Functions/utilities.R")  # custom functions
+load(file = "../Data/Processed/03-sm-PCA-with-color.rda")
+```
+
+## Choose the partitions
+The three partitions will need to be designated from the LM numbers. The first time, this was done with `define.modules()` but each module was then saved in a .csv file so this step can be repeated much more quickly. 
+
+### Choose the partitions for the first time
+```{r}
+modules <- define.modules(shape[, , 1], nmodules = 3)
+
+```
+
+
+### Load in the partitions for all subsequent times
+```{r}
+
+
+```
+
