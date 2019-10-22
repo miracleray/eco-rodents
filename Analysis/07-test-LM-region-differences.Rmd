@@ -97,4 +97,9 @@ summary(rost.v.basi)
 summary(tcran.v.basi)
 ```
 
+## Triple check with compare evolutionary rates of traits within the crania
+```{r}
+cme.rates <- compare.multi.evol.rates(mean.shapes.tree, gp = as.character(lm.modules[, 3]), aus.tree)
 
+cme.rates$pairwise.pvalue  # results
+```
