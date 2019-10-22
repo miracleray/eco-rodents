@@ -97,9 +97,44 @@ summary(rost.v.basi)
 summary(tcran.v.basi)
 ```
 
+### Two-Block Least Squared analysis on old vs new endemics
+```{r}
+# Subset shape 
+non.old.end <- which(info.traits$Clade == "Rattini" | info.traits$Clade == "invRattini" | info.traits$Clade == "Mus")
+
+end.shape <- shape[, , -non.old.end]  # only old endemics (n = 233)
+
+end.shape <- shape[, , non.old.end]  # only new endemics (n = )
+
+# Do pairwise comparisons between each of the modules
+rost.v.tcran <- two.b.pls(end.shape[rostrum, , ], end.shape[top.cran, ,])
+rost.v.basi <- two.b.pls(end.shape[rostrum, , ], end.shape[basicran, ,])
+tcran.v.basi <- two.b.pls(end.shape[top.cran, , ], end.shape[basicran, ,])
+
+# See results
+summary(rost.v.tcran)
+summary(rost.v.basi)
+summary(tcran.v.basi)
+
+
+# Do on new endemics
+end.shape <- shape[, , non.old.end]  # only new endemics (n = 83)
+
+# Do pairwise comparisons between each of the modules
+rost.v.tcran <- two.b.pls(end.shape[rostrum, , ], end.shape[top.cran, ,])
+rost.v.basi <- two.b.pls(end.shape[rostrum, , ], end.shape[basicran, ,])
+tcran.v.basi <- two.b.pls(end.shape[top.cran, , ], end.shape[basicran, ,])
+
+# See results
+summary(rost.v.tcran)
+summary(rost.v.basi)
+summary(tcran.v.basi)
+```
+
 ## Triple check with compare evolutionary rates of traits within the crania
 ```{r}
 cme.rates <- compare.multi.evol.rates(mean.shapes.tree, gp = as.character(lm.modules[, 3]), aus.tree)
-
-cme.rates$pairwise.pvalue  # results
+ 
+summary(cme.rates)  # results
+cme.rates$pairwise.pvalue  
 ```
