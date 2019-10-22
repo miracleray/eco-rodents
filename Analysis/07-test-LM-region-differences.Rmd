@@ -29,6 +29,7 @@ library(vegan)
 library(geomorph)
 source("../Functions/utilities.R")  # custom functions
 load(file = "../Data/Processed/03-sm-PCA-with-color.rda")
+load(file = "../Data/Processed/allometry_rodents_04-phylo-data.rda")  # phylogenetic tree from Allometry Rodents paper / repo
 ```
 
 ## Choose the partitions
@@ -68,16 +69,15 @@ for (i in 1:length(PartLevels)){
         }
 ```
 
-## Test morphological integration
+## Test modularity
 ```{r}
-# Define coordinates that refer to modules
-rostrum <- which(lm.modules[, 3] == 1)
-top.cran <- which(lm.modules[, 3] == 2) 
-basicran <- which(lm.modules[, 3] == 3)
-
 # Rostrum versus top cranium and basicranium
-int.test.1 <- integration.test(shape, partition.gp = (lm.modules[, 3]))
+mod.test.1 <- modularity.test(shape, partition.gp = (lm.modules[, 3]))
+mod.test.1$CR.mat  # results
 
+# And now a test with the phylogentic tree (and mean shapes)
+mod.test.phy <- phylo.modularity(mean.shapes.tree, partition.gp = lm.modules[, 3], aus.tree)
 ```
 
-
+## Double check with Two-Block Least Squared analysis
+```
