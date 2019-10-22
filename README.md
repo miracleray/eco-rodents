@@ -36,6 +36,7 @@ All of the scripts below are in RMarkdown format (.Rmd), which can be opened in 
 * **04-plot-exploratory-PCAs.Rmd** Allows users to quickly plot PCAs with point colors and shapes according to taxa or trait information provided in the metadata table. Also loops through the 7 Australian regions to plot the PCA morphospace by region.
 * **05-test-partitioning.Rmd** Tests for a phylogenetic signal difference between the 7 regional biomes and tests for partitioning by region when size-less shape (i.e. the residuals) are used instead; includes phylogenetic correction. 
 * **06-visualize-residual-morphospace.Rmd** Plots morphospace differences in PCA of residuals by phylogenetic and guild (diet/locomotion) and generates landvR heatplots of shape changes over the PC axes.
+* **07-test-LM-region-differences.Rmd** Sets modules by landmarks and creates 3D plot. Tests covariation via modularity and 2B-PLS. Compares evolutionary rates of modules within crania.
 
 ### Custom functions
 The analyses call custom functions, most of which are defined in the [..Data/Functions/utilities.R](/Data/Functions/utilities.R) file. A modified version of `geomorph`'s function `plotGMPhyloMorphoSpace` is defined in the [..Data/Functions/plotGMPhyloMorphoSpace_plotmod.R](/Data/Functions/plotGMPhyloMorphoSpace_plotmod.R) file.
