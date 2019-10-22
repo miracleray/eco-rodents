@@ -80,4 +80,21 @@ mod.test.phy <- phylo.modularity(mean.shapes.tree, partition.gp = lm.modules[, 3
 ```
 
 ## Double check with Two-Block Least Squared analysis
+```{r}
+# Define coords that refer to modules
+rostrum <- which(lm.modules[, 3] == 1)  
+top.cran <- which(lm.modules[, 3] == 2) 
+basicran <- which(lm.modules[, 3] == 3)
+
+# Do pairwise comparisons between each of the modules
+rost.v.tcran <- two.b.pls(shape[rostrum, , ], shape[top.cran, ,])
+rost.v.basi <- two.b.pls(shape[rostrum, , ], shape[basicran, ,])
+tcran.v.basi <- two.b.pls(shape[top.cran, , ], shape[basicran, ,])
+
+# See results
+summary(rost.v.tcran)
+summary(rost.v.basi)
+summary(tcran.v.basi)
 ```
+
+
