@@ -33,13 +33,7 @@ load(file = "../Data/Processed/allometry_rodents_04-phylo-data.rda")  # phylogen
 ```
 
 ## Choose the partitions
-The three partitions will need to be designated from the LM numbers. The first time, this was done with `define.modules()` but each module was then saved in a .csv file so this step can be repeated much more quickly. 
-
-### Choose the partitions for the first time
-```{r}
-modules <- define.modules(shape[, , 1], nmodules = 3)  # see numbers on skull
-write.table(pt.names, "../Data/Processed/Landmark_names.csv", sep = ",", col.names = NA)  # exports landmark names and numbers
-```
+The three partitions will need to be designated from the LM numbers. The first time, this was done with `define.modules()` but each module was then saved in a .csv file so this step can be repeated much more quickly.
 
 ### Load in the partitions for all subsequent times
 ```{r}
