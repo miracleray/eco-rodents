@@ -9,6 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_knit$set(root.dir = '../eco-rodents')
 ```
+
 # Calculate user error
 Geometric morphometric studies usually require a lot of user-generated data and it's important to assess how much user error is created during the landmarking process. 
 
@@ -35,15 +36,14 @@ Done in previous manuscript (see allometry-rodents repo)
 Three specimens had major landmarking errors -- landmarks consistently placed in the wrong places. Therefore, we opted to remove these specimens.
 ```{r}
 # Find indices (same for both big and small datasets)
-mel.out <- which(sm.sp.info$CatNum == "J22537")  # Melomys burtoni
 rat.out <- which(sm.sp.info$CatNum == "C11381")  # Rattus norvegicus
 uro.out <- which(sm.sp.info$CatNum == "J17610")  # Uromys caudimaculatus
 
 # Remove from both big and small datasets
-sm.sp.info <- sm.sp.info[-c(mel.out, rat.out, uro.out), ]
-big.sp.info <- big.sp.info[-c(mel.out, rat.out, uro.out), ]
-sm.bY.shape <- sm.bY.shape[, , -c(mel.out, rat.out, uro.out)]
-big.bY.shape <- big.bY.shape[, , -c(mel.out, rat.out, uro.out)]
+sm.sp.info <- sm.sp.info[-c(rat.out, uro.out), ]
+big.sp.info <- big.sp.info[-c(rat.out, uro.out), ]
+sm.bY.shape <- sm.bY.shape[, , -c(rat.out, uro.out)]
+big.bY.shape <- big.bY.shape[, , -c(rat.out, uro.out)]
 ```
 
 ## 2) Calculate intra-observer error
