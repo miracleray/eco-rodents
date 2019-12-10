@@ -18,17 +18,16 @@ We found in Marcy et al. 2018, that using bilateral shape data improved the reli
 Almost all upcoming analyses are done in the geometric morphometric R package, _geomorph_(Adams 2016; Adams & Otarola-Castillo 2013).
 
 ### Load packages
+Custom functions are defined in utilities.R for conciseness.
 ```{r message = FALSE}
+library(devtools)
+devtools::install_github("geomorphR/geomorph", ref = "Stable")
+library(geomorph)
 library(dplyr)
 library(stringr)
 library(stringi)
 library(data.table)
-library(geomorph)
-```
-
-### Load custom functions written for these analyses
-```{r}
-source("../Functions/utilities.R")  # defined in utilities.R for conciseness.
+source("../Functions/utilities.R")  # custom functions
 ```
 
 ## Prepare shape data for analyses in _geomorph_
@@ -81,7 +80,7 @@ for (i in 1:dim(A)[3]){  # 1 to highest number of specimens
 
 # Make list of replicated specimens for later
 names <- gsub("_small", "", names)
-names <- gsub("_big", "", names)
+names <- gsub("_big", "", names)  # these two lines remove patch protocol distinctions (not relevant for this paper)
 rep.spec <- unique(names[is.rep])
 ```
 
