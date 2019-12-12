@@ -1,5 +1,5 @@
 ---
-title: "03-compare-patch-protocols"
+title: "App02-compare-patch-protocols"
 author: "Ariel Marcy"
 date: "2018-10-15"
 output: html_document
@@ -29,7 +29,8 @@ library(data.table)
 library(vegan)
 library(geomorph)
 source("../Functions/utilities.R")  # custom functions
-load(file = "../Data/Processed/02-main-data-both-protocols.rda")
+load(file = "../Data/Processed/02-no-error-data-sm.rda")
+load(file = "../Data/Processed/02-no-error-data-big.rda")
 ```
 
 ## Landmark variation heatmaps for big patch protocol

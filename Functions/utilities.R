@@ -383,17 +383,15 @@ FoundInRegion <- function(spec.info, regions, inc.partial = FALSE) {
 ##########################
 # PointOutDiffSpp
 ##########################
-PointOutDiffSpp <- function(spec.info) {
+PointOutDiffSpp <- function(unique.taxa) {
         # Makes a vector of pch values where species of the same genus have different types of plot points.
         #
         # Args:
-        #     spec.info: table of specimen information including columns named, "Genus" and "Species".
+        #     spec.info: vector with unique taxa organized by genus
         #
         # Returns:
         #     A numeric vector of pch values which can be fed to PlotByGroup() such that species from the same genus have different points. 
         
-        spec.info$Taxa <- paste(str_sub(spec.info$EGenus, 1, 3), str_sub(spec.info$Species, 1, 3), sep = "_")  # Mus musculus -> Mus_mus
-        unique.taxa <- levels(as.factor(spec.info$Taxa))
         pch.taxa <- rep(21, length(unique.taxa))  # default pch = #21 circle
         
         # Give genera with multiple species different points for each spp
