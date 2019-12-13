@@ -4,9 +4,9 @@ Code authors: Ariel E. Marcy, Dr Thomas Guillerme, Dr Vera Weisbecker
 To cite the paper, data, and/or code:
 > Coming soonish
 
-As of December 2019, this is still a work in progress. Uses R (v. 3.6.1) and geomorph (v. 3.1.2).
+As of December 2019, this is still a work in progress. Uses `R` (v. 3.6.1), `geomorph` (v. 3.1.3), and `landvR` (v. 0.4).
 
-After cloning this repo, remember to either set your working directory to the aus-rodent-skulls folder on your computer, or open an RStudio project from that folder.
+*All of the scripts are in RMarkdown format (.Rmd), which can be opened in RStudio. There, you can edit and run code chunks as normal, or you can click the Knit button to create HTML versions with both code and output. After cloning this repo, remember to either set your working directory to the allometry-rodents folder on your computer, or open an RStudio project from that folder.*
 
 ## Data
 **Landmarking data:**
@@ -27,8 +27,6 @@ If you use these data, please cite the original authors:
     
 ## Analyses
 The analysis workflow is broken down into smaller scripts explained below. Each script loads data created by the script before, so this workflow requires you to run the scripts in order. The intermediate data -- stored as .rda files in the /Data/Processed folder -- are too large to upload to GitHub. 
-
-All of the scripts below are in RMarkdown format (.Rmd), which can be opened in RStudio. There, you can edit and run code chunks as normal, or you can click the Knit button to create HTML versions with both code and output.
 
 * **01-extract-data-for-analyses.Rmd** Extracts both 3D coordinate data as well as the metadata data from Viewbox and prepares it for analysis in `geomorph`. Separates coordinate data into big and small patch protocol datasets. Runs GPA with bilateral symmetry, merges the symmetric shape component with centroid size, and calculates asymmetric variation for both patch datasets.
 * **02-calculate-user-error.Rmd** Allows users to view outliers and find major landmarking errors. Takes out replicated specimens from the shape data, finds their duplicates, and calculates user error based on repeatability for both patch datasets. 
