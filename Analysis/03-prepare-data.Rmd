@@ -180,6 +180,16 @@ P.lor <- which(str_detect(no.cat.tree$tip.label, "Pogonomys_loriae"))
 relabel.tree$tip.label[P.lor] <- paste("Pogonomys_mollipilosis")
 ```
 
+**Correct Rattus**
+R. lutreolus and R. leucopus were switched relative to Rowe et al 2011 and other recent phylogenies. Likely due to a simple labling error in phylogenetic preparation. Here we correct it. 
+```{r}
+R.lut <- which(str_detect(relabel.tree$tip.label, "Rattus_lutreolus"))
+R.leu <- which(str_detect(relabel.tree$tip.label, "Rattus_leucopus"))
+
+relabel.tree$tip.label[R.lut] <- paste("Rattus_leucopus")
+relabel.tree$tip.label[R.leu] <- paste("Rattus_lutreolus")
+```
+
 ### Prune the tree and shape datasets to match each other
 Now that the names in the Smissen & Rowe tree can be compared to our info.phylo metadata, we can prune both datasets to have the same species.
 ```{r}
