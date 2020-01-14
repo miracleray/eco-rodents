@@ -237,7 +237,7 @@ save(alpha.col, alpha.pch, res.PCA, allom.resid, Allom.all.plus.consensus, file 
 
 ### A look at ANOVA differences in centroid sizes
 ```{r}
-test.data <- info.traits[, c("Taxa", "Genus", "Species", "CatNum", "Order", "Csize", "Feeding", "Guild")]  # relevant columns
+test.data <- info[, c("Taxa", "Genus", "Species", "CatNum", "Order", "Csize", "Feeding", "Guild")]  # relevant columns
 
 # Take out aquatic carnivores, which skew data
 #aquatic <- which(info.traits$Guild == "Aquatic")
