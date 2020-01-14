@@ -29,12 +29,16 @@ load(file = "../Data/Processed/03-graphing-vectors.rda")
 ## Plot PCA by genus for small patch dataset
 The function `PlotPCA()` quickly plots a PCA with specimens colored by groups and optionally given different point shapes for other attributes. The function also reports PC axis variation in %. 
 ```{r}
+PCA <- plotTangentSpace(shape)
+
 # Plot PCA by genus and export as .eps into ../Data/Results folder
-### setEPS()
-### postscript("../Data/Results/PCA_genus.eps")
-PlotPCA(PCA, 1, 2, sp.col.gen, sp.pch.taxa)
-legend("bottomright", legend = phylo.names, col = phylo.cols, pt.bg = phylo.cols, pch = phylo.pch, cex = .35, pt.cex = 1.5, ncol = 2)
-### dev.off()
+setEPS()
+postscript("../Data/Results/PCA_genus.eps")
+
+PlotPCA(PCA, 1, 2, sp.col.gen, pch.spp)
+legend("bottomright", legend = phylo.names, col = col.unique.spp, pch = pch.unique.spp, pt.bg = col.unique.spp, cex = .35, pt.cex = .7, ncol = 2)
+
+dev.off()
 ```
 
 ## PCA plot by ancestor group
@@ -43,18 +47,19 @@ There are two main tribes on Australia: Hydromini and Rattini, which represent t
 Within Hydromini, there are 5 groups with unique ancestors and arrivals from New Guinea to Australia. Most had unique radiations that centered on different biomes. 
 ```{r}
 # Set up colors, using distinct colors from above. 
-col.Hyd <- phylo.cols[which(names(phylo.cols) == "H_chr")]  # Hydromys 
+col.Hyd <- col.unique.spp[which(phylo.names == "H chr")]  # Hydromys 
 col.invR <- "black"  # to distinguish between native and invasive Rattus rats 
-col.Mes <- phylo.cols[which(names(phylo.cols) == "M_gou")]  # Mesembriomys
-col.mus <- phylo.cols[which(names(phylo.cols) == "M_mus")]  # Mus musculus
-col.Pog <- phylo.cols[which(names(phylo.cols) == "P_mol")]  # Pogonomys
-col.Pse <- phylo.cols[which(names(phylo.cols) == "L_for")]  # Pseudomys
-col.Rat <- phylo.cols[which(names(phylo.cols) == "R_vil")]  # native Rattus
-col.Uro <- phylo.cols[which(names(phylo.cols) == "M_bur")]  # Uromys
+col.Mes <- col.unique.spp[which(phylo.names == "M gou")]  # Mesembriomys
+col.mus <- col.unique.spp[which(phylo.names == "M mus")]  # Mus musculus
+col.Pog <- col.unique.spp[which(phylo.names == "P mol")]  # Pogonomys
+col.Pse <- col.unique.spp[which(phylo.names == "L for")]  # Pseudomys
+col.Rat <- col.unique.spp[which(phylo.names == "R vil")]  # native Rattus
+col.Uro <- col.unique.spp[which(phylo.names == "M bur")]  # Uromys
+
 col.clade <- c(col.Hyd, col.invR, col.Mes, col.mus, col.Pog, col.Pse, col.Rat, col.Uro)
 
 # Colors matching each specimen in order of shape dataset
-col.by.clade <- PlotByGroup(info.traits, "Clade", col.clade)
+col.by.clade <- PlotByGroup(info, "Clade", col.clade)
 
 # PCA 
 PlotPCA(PCA, 1, 2, col.by.clade)
@@ -73,22 +78,22 @@ col.omni <- sequential_hcl(5, "Grays")[3]  # gray for anything goes
 
 # Define color pallete for diets of all specimens
 col.diet <- c(col.carn, col.frug, col.gran, col.herb, col.omni)
-col.diet <- PlotByGroup(info.traits, "Feeding", col.diet)
+col.diet <- PlotByGroup(info, "Feeding", col.diet)
 
 # Points: Aquatic (circle), Arboreal (triangle), Terrestrial (square)
 pch.gld <- c(19, 24, 22)
-pch.gld <- PlotByGroup(info.traits, "Guild", pch.gld)
+pch.gld <- PlotByGroup(info, "Guild", pch.gld)
 ```
 
 Plot PC1 vs PC2 and add custom legends.
 ```{r}
 PlotPCA(PCA, 1, 2, col.diet, pch.gld)
 legend("bottomright", legend = c("Aquatic", "Arboreal", "Terrest."), col = "black", border = NULL, pch = c(21, 24, 22))
-text(-0.01, -0.09, "Carnivore", col = col.carn)
+text(0.02, -0.09, "Carnivore", col = col.carn)
 text(0.11, -0.02, "Frugivore", col = col.frug)
 text(0.08, 0.045, "Herbivore", col = col.herb)
-text(-0.07, -0.06, "Omnivore", col = col.omni)
-text(-0.117, 0.01, "Granivore", col = col.gran)
+text(-0.06, -0.05, "Omnivore", col = col.omni)
+text(-0.11, 0.01, "Granivore", col = col.gran)
 ```
 
 ## Morphospace partitioning by habitat
@@ -115,13 +120,13 @@ par(mfrow=c(4,2), mar = c(2,2,2,2))
 # Loop through all 7 regions to plot morphospace of species found in each
 for (i in 1:7) {
         # Subset info.traits and PCA by region
-        in.region <- FoundInRegion(info.traits, regions = i)
-        info.region <- info.traits[in.region, ]
+        in.region <- FoundInRegion(info, regions = i)
+        info.region <- info[in.region, ]
         pc.region <- as.data.frame(pc.scores[in.region, ])
         
         # Subset plotting colors and pch symbols for spp in region
         col.taxa.region <- sp.col.gen[in.region]  # colors for all spp
-        pch.taxa.region <- sp.pch.taxa[in.region]  # pch for all spp
+        pch.taxa.region <- pch.spp[in.region]  # pch for all spp
         
         # Plot PCA with legend and labels
         PCA.plot <- plot(x = pc.region$PC1,
@@ -141,19 +146,19 @@ for (i in 1:7) {
 ```
 
 ## Remove specialists from PCAs
-This step is to see whether the PCA changes to highlight morphological differences among the less specialized species
+This step is to see whether the PCA changes to highlight morphological differences among the less specialized species.
 
 ### No aquatic carnivores
 These are the most specialized so most likely to skew the visualization / hide variation in other areas of the PCA
 ```{r}
-test.data <- info.traits[, c("Taxa", "Genus", "Species", "CatNum", "Order", "Csize", "Clade", "Feeding", "Guild")]  # relevant columns
+test.data <- info[, c("Taxa", "Genus", "Species", "CatNum", "Order", "Csize", "Clade", "Feeding", "Guild")]  # relevant columns
 
 # Subset out Hydromys and Xeromys
-aquatic <- which(info.traits$Guild == "Aquatic")  # specimens to remove
+aquatic <- which(info$Guild == "Aquatic")  # specimens to remove
 test.data <- test.data[-aquatic, ]  # metadata
 test.shape <- shape[, , -aquatic]  # shape data
 test.col.gen <- sp.col.gen[-aquatic]  # color information
-test.pch.gen <- sp.pch.taxa[-aquatic]  # point shape information
+test.pch.gen <- pch.spp[-aquatic]  # point shape information
 
 # Run PCA
 no.aq.pca <- plotTangentSpace(test.shape, groups = test.col.gen, axis1 = 1, axis2 = 2, verbose = T)
@@ -183,5 +188,5 @@ PlotPCA(no.aq.pca, 1, 2, test.col.gen, test.pch.gen)
 
 ### Save intermediate data
 ```{r}
-save(traits, info.traits, phylo.names, phylo.cols, phylo.pch, sp.pch.taxa, col.diet, pch.gld, col.by.clade, col.clade, file = "../Data/Processed/04-sm-data-with-traits.rda")
+save(PCA, file = "../Data/Processed/04-PCA.rda")
 ```

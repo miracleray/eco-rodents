@@ -28,7 +28,7 @@ load(file = "../Data/Processed/02-no-error-data-sm.rda")  # small patch shape da
 ```{r}
 # Remove unnecessary columns
 drops <- c("Patch", "Rep", "All")
-info <- info[, !(names(info) %in% drops)]
+info <- sm.info[, !(names(sm.info) %in% drops)]
 
 # Add trait info from Native Mice and Rats (Breed & Ford 2007)
 traits <- read.csv("../Data/Processed/in_ex_traits.csv", header = TRUE)
@@ -48,6 +48,7 @@ info$FullName <- paste(info$Genus.y, info$Species.y, sep = "_")
 ## Prepare shape dataset dimnames for phylogenetic analyses
 Rename shape dataset dimnames to only "Genus_species". This is so we can re-order the shape data to match the tree later on. (We can still reference the CatNum in the metadata.)
 ```{r}
+shape <- sm.shape
 dimnames(shape)[[3]] <- as.list(paste(info$FullName))
 ```
 
