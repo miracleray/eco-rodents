@@ -28,8 +28,10 @@ library(data.table)
 library(vegan)
 library(geomorph)
 source("../Functions/utilities.R")  # custom functions
-load(file = "../Data/Processed/03-sm-PCA-with-color.rda")
-load(file = "../Data/Processed/allometry_rodents_04-phylo-data.rda")  # phylogenetic tree from Allometry Rodents paper / repo
+load(file = "../Data/Processed/03-main-data.rda")
+load(file = "../Data/Processed/03-tree-data.rda")
+load(file = "../Data/Processed/03-graphing-vectors.rda")
+load(file = "../Data/Processed/05-residual-data.rda")
 ```
 
 ## Choose the partitions
@@ -67,7 +69,7 @@ for (i in 1:length(PartLevels)){
 ref <- mshape(shape)  
 PartLevels <- unique(lm.modules[, 3])
 Colors <- rainbow(length(PartLevels))
-Colors <- c("pink", "gray", "brown")  # Pink gallah
+Colors <- c("brown", "gray",  "#79ABE2")  
 
 # Subset the landmarks according to the partitions
 Part <- list()
@@ -89,7 +91,7 @@ mod.test.1 <- modularity.test(shape, partition.gp = (lm.modules[, 3]))
 mod.test.1$CR.mat  # results
 
 # And now a test with the phylogentic tree (and mean shapes)
-mod.test.phy <- phylo.modularity(mean.shapes.tree, partition.gp = lm.modules[, 3], aus.tree)
+mod.test.phy <- phylo.modularity(mean.shapes, partition.gp = lm.modules[, 3], aus.tree)
 ```
 
 ### Visualize the 6 partitions from Goswami 2006/7
@@ -119,11 +121,11 @@ mod.test.1 <- modularity.test(shape, partition.gp = (lm.modules[, 4]))
 
 # Make pairwise comparison table
 mod.result <- mod.test.1$CR.mat  # results
-colnames(mod.result) <- c("vault", "orbital", "basicran", "rostrum", "molar")
+colnames(mod.result) <- c("vault", "orbital", "basicran", "rostrum")
 rownames(mod.result) <- c("orbital", "basicran", "rostrum", "molar")
 
 # And now a test with the phylogentic tree (and mean shapes)
-mod.test.phy <- phylo.modularity(mean.shapes.tree, partition.gp = lm.modules[, 4], aus.tree)
+mod.test.phy <- phylo.modularity(mean.shapes, partition.gp = lm.modules[, 4], aus.tree)
 ```
 
 ## Double check with Two-Block Least Squared analysis
@@ -147,7 +149,7 @@ summary(tcran.v.basi)
 ### Two-Block Least Squared analysis on old vs new endemics
 ```{r}
 # Subset shape 
-non.old.end <- which(info.traits$Clade == "Rattini" | info.traits$Clade == "invRattini" | info.traits$Clade == "Mus")
+non.old.end <- which(info$Clade == "Rattini" | info$Clade == "invRattini" | info$Clade == "Mus")
 
 end.shape <- shape[, , -non.old.end]  # only old endemics (n = 233)
 
@@ -162,7 +164,6 @@ tcran.v.basi <- two.b.pls(end.shape[top.cran, , ], end.shape[basicran, ,])
 summary(rost.v.tcran)
 summary(rost.v.basi)
 summary(tcran.v.basi)
-
 
 # Do on new endemics
 end.shape <- shape[, , non.old.end]  # only new endemics (n = 83)
@@ -180,7 +181,7 @@ summary(tcran.v.basi)
 
 ## Triple check with compare evolutionary rates of traits within the crania
 ```{r}
-cme.rates <- compare.multi.evol.rates(mean.shapes.tree, gp = as.character(lm.modules[, 3]), aus.tree)
+cme.rates <- compare.multi.evol.rates(mean.shapes, gp = as.character(lm.modules[, 3]), aus.tree)
  
 summary(cme.rates)  # results
 cme.rates$pairwise.pvalue  
