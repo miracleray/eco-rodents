@@ -1,0 +1,32 @@
+---
+title: "08-visualize-phylo-distances"
+author: "Ariel Marcy"
+date: "1/15/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = '../eco-rodents')
+#par(mfrow=c(1,1))
+```
+
+# Test biome pairs
+
+
+### Load packages, functions, and data from previous steps
+```{r message = FALSE}
+library(picante) 
+source("../Functions/utilities.R")  # custom functions
+load(file = "../Data/Processed/03-main-data.rda")
+load(file = "../Data/Processed/03-tree-data.rda")
+load(file = "../Data/Processed/03-graphing-vectors.rda")
+load(file = "../Data/Processed/05-residual-data.rda")
+```
+
+# Find phylogenetic distance
+
+```{r}
+dist.matrix <- cophenetic(aus.tree)
+
+```
