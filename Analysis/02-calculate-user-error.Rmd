@@ -84,7 +84,7 @@ RepAbility(sm.err.shape, sm.err.info$CatNum, n.Rep = 2)
 ### Save intermediate data 
 These are the main datasets for both protocols without replicates
 ```{r}
-save(sm.shape, sm.info, sm.pt.names, file = "../Data/Processed/02-no-error-data-sm.rda")
+save(sm.shape, sm.info, sm.pt.names, shape.matrix, file = "../Data/Processed/02-no-error-data-sm.rda")
 
 save(big.shape, big.info, big.pt.names, file = "../Data/Processed/02-no-error-data-big.rda")
 ```

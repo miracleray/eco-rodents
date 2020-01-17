@@ -8,7 +8,6 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_knit$set(root.dir = '../eco-rodents')
-#par(mfrow=c(1,1))
 ```
 
 # Test biome pairs
@@ -16,7 +15,9 @@ knitr::opts_knit$set(root.dir = '../eco-rodents')
 
 ### Load packages, functions, and data from previous steps
 ```{r message = FALSE}
-library(picante) 
+library(geomorph)
+library(stringr)
+library(picante)  # needed for distance matrix
 source("../Functions/utilities.R")  # custom functions
 load(file = "../Data/Processed/03-main-data.rda")
 load(file = "../Data/Processed/03-tree-data.rda")
@@ -24,9 +25,51 @@ load(file = "../Data/Processed/03-graphing-vectors.rda")
 load(file = "../Data/Processed/05-residual-data.rda")
 ```
 
-# Find phylogenetic distance
-
+## Analyze phylogenetic and morphological distance matrices
+To analyze phylogenetic and morphological distance in the context of biomes, we first need to generate distances matrices that can be comparable.
 ```{r}
-dist.matrix <- cophenetic(aus.tree)
+phylo.matrix <- cophenetic(aus.tree)  # Phylo distance matrix
 
+# Morphological distance matrix
+mean.gpa <- gpagen(mean.shapes, ProcD = TRUE)  # use mean shapes of species
+morph.matrix <- as.matrix(mean.gpa$procD) 
+
+# Make names shorter
+phylo.names <- str_sort(phylo.names)  # alphabetical
+row.names(phylo.matrix) <- phylo.names[1:37]  # last spp, Z ped not in tree
+colnames(phylo.matrix) <- phylo.names[1:37]
+
+row.names(morph.matrix) <- phylo.names[1:37]
+colnames(morph.matrix) <- phylo.names[1:37]
+```
+
+### Turn distance matrices into dataframes and then combine
+```{r}
+# Write function that creates the same, comparable table structure taking in the distance matrices from above, and the name for the distance in the matrix.
+make.table <- function(matrix, d.name) {
+        new.table <- as.data.frame(as.table(matrix))
+        new.table[, 4] <- NA  # initialize pair name column
+        colnames(new.table) <- c("spp1", "spp2", d.name, "pair")
+        
+        # Remove same-same comparisons (where distance = 0)
+        new.table <- new.table[which(new.table[, d.name] > 0), ]
+        
+        # Remove permutations by alphabetizing the species names for each pair
+        for(i in 1:dim(new.table)[1]) {
+                pair.index <- str_order(c(new.table[i, 1], new.table[i, 2]))
+                new.table[i, 4] <- paste(new.table[i, pair.index[1]], new.table[i, pair.index[2]], sep = "-")  # pair names in alpha order
+        }
+        new.table <- new.table[!duplicated(new.table[, 3:4]), ]  # only unique pair combinations
+
+        return(new.table)
+}
+
+# Run on both matrices & merge by pair
+phylo.table <- make.table(phylo.matrix, "phylo.d")
+morph.table <- make.table(morph.matrix, "morph.d")
+master.table <- merge(phylo.table, morph.table, by = "pair")
+
+# 
+
+plot(master.table$phylo.d, master.table$morph.d, pch = 16, xlab = "Phylogenetic distance", ylab = "Morphological distance")
 ```
