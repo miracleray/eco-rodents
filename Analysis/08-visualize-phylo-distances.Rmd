@@ -67,9 +67,17 @@ make.table <- function(matrix, d.name) {
 # Run on both matrices & merge by pair
 phylo.table <- make.table(phylo.matrix, "phylo.d")
 morph.table <- make.table(morph.matrix, "morph.d")
-master.table <- merge(phylo.table, morph.table, by = "pair")
+master.table <- merge(phylo.table, morph.table[, 3:4], by = "pair")
+```
 
+## Experimental plotting
+```{r}
 # 
 
+# Points coded for each individual specimen
+alpha.col.spp <- col.unique.spp[order(names(col.unique.spp))][1:37]
+names(alpha.col.spp) <- unique(master.table$spp2)
+
+# Plot
 plot(master.table$phylo.d, master.table$morph.d, pch = 16, xlab = "Phylogenetic distance", ylab = "Morphological distance")
 ```
