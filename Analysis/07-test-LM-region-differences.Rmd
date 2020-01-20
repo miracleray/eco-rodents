@@ -152,7 +152,7 @@ plot(mod.test.5.noHyd)
 ```{r}
 cor.matrix <- dotcorr(mean.shapes)  # correlation matrix using congruence coeffienct
 
-EMMLi(cor.matrix, 37, lm.modules[, -1])
+EMMLi(cor.matrix, 37, lm.modules[, c(2, 3, 4)])
 ```
 
 ## Double check with Two-Block Least Squared analysis
