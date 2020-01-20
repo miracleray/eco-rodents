@@ -70,7 +70,7 @@ morph.table <- make.table(morph.matrix, "morph.d")
 master.table <- merge(phylo.table, morph.table[, 3:4], by = "pair")
 ```
 
-## Experimental plotting
+## Plot phylo-morph distance pairs
 ```{r}
 # Get color vectors by names
 names <- as.vector(master.table[,"spp1"])[1:36]
@@ -86,3 +86,5 @@ col.spp2 <- PlotByGroup(master.table, "spp2", alpha.col.spp2)
 # Plot
 plot(master.table$phylo.d, master.table$morph.d, col = col.spp2, bg = col.spp1, pch = 21, xlab = "Phylogenetic distance", ylab = "Morphological distance")
 ```
+
+

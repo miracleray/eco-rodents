@@ -20,6 +20,8 @@ If so, we would expect to see the top cranium-rostrum to be the least variable a
 ```{r message = FALSE}
 library(png)  # needed to work with screenshots
 library(colorspace)  # plot colors
+library(EMMLi)
+library(paleomorph)
 # Load libraries (and install if necessary) for landvR package
 if(!require(devtools)) install.packages("devtools")
 if(!require(dispRity)) install.packages("dispRity")
@@ -138,12 +140,19 @@ rownames(mod.result.phy) <- c("vault", "orbital", "basicran", "rostrum", "molar"
 plot(mod.test.5.phy)
 
 
-
 # Test without hydromys
 shape.noHyd <- shape[, , -which(dimnames(shape)[[3]] == "Hydromys_chrysogaster")]
 mod.test.5.noHyd <- modularity.test(shape.noHyd, partition.gp = (lm.modules[, 4]))
 plot(mod.test.5.noHyd)
 # barely a difference is made
+```
+
+## Check with EMMLi
+
+```{r}
+cor.matrix <- dotcorr(mean.shapes)  # correlation matrix using congruence coeffienct
+
+EMMLi(cor.matrix, 37, lm.modules[, -1])
 ```
 
 ## Double check with Two-Block Least Squared analysis
