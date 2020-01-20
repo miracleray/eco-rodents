@@ -72,12 +72,17 @@ master.table <- merge(phylo.table, morph.table[, 3:4], by = "pair")
 
 ## Experimental plotting
 ```{r}
-# 
+# Get color vectors by names
+names <- as.vector(master.table[,"spp1"])[1:36]
+names<- c("C pen", names)
+names(alpha.col) <- names
+alpha.col.spp1 <- alpha.col[2:37]  # subset because C pen isn't in this col
+alpha.col.spp2 <- alpha.col
 
 # Points coded for each individual specimen
-alpha.col.spp <- col.unique.spp[order(names(col.unique.spp))][1:37]
-names(alpha.col.spp) <- unique(master.table$spp2)
+col.spp1 <- PlotByGroup(master.table, "spp1", alpha.col.spp1)
+col.spp2 <- PlotByGroup(master.table, "spp2", alpha.col.spp2)
 
 # Plot
-plot(master.table$phylo.d, master.table$morph.d, pch = 16, xlab = "Phylogenetic distance", ylab = "Morphological distance")
+plot(master.table$phylo.d, master.table$morph.d, col = col.spp2, bg = col.spp1, pch = 21, xlab = "Phylogenetic distance", ylab = "Morphological distance")
 ```
