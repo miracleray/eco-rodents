@@ -35,12 +35,20 @@ mean.gpa <- gpagen(mean.shapes, ProcD = TRUE)  # use mean shapes of species
 morph.matrix <- as.matrix(mean.gpa$procD) 
 
 # Make names shorter
-phylo.names <- str_sort(phylo.names)  # alphabetical
-row.names(phylo.matrix) <- phylo.names[1:37]  # last spp, Z ped not in tree
-colnames(phylo.matrix) <- phylo.names[1:37]
+long.names <- colnames(phylo.matrix)
+short.names <- NULL 
+for(i in 1:length(long.names)) {
+        sep <- strsplit(long.names[i], "_")
+        new.name <- paste(str_sub(sep[[1]][1], 1, 1), str_sub(sep[[1]][2], 1, 3), sep = "_")
+        short.names <- c(short.names, new.name)
+}
 
-row.names(morph.matrix) <- phylo.names[1:37]
-colnames(morph.matrix) <- phylo.names[1:37]
+# Replace with short names
+row.names(phylo.matrix) <- short.names
+colnames(phylo.matrix) <- short.names
+
+row.names(morph.matrix) <- short.names
+colnames(morph.matrix) <- short.names
 ```
 
 ### Turn distance matrices into dataframes and then combine
@@ -87,4 +95,5 @@ col.spp2 <- PlotByGroup(master.table, "spp2", alpha.col.spp2)
 plot(master.table$phylo.d, master.table$morph.d, col = col.spp2, bg = col.spp1, pch = 21, xlab = "Phylogenetic distance", ylab = "Morphological distance")
 ```
 
+## 
 
