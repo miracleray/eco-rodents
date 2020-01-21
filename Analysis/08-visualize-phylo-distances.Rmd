@@ -94,14 +94,15 @@ gen.col[5] <- gen.col[16]  # Fix Mastacomys color
 alpha.col.spp1 <- gen.col[2:37]  # subset because C pen isn't in this col
 alpha.col.spp2 <- gen.col
 
-col.spp1 <- PlotByGroup(master.table, "spp1", alpha.col.spp1)
-col.spp2 <- PlotByGroup(master.table, "spp2", alpha.col.spp2)
+# Save in table for ease in plotting later on
+master.table$col.spp1 <- PlotByGroup(master.table, "spp1", alpha.col.spp1)
+master.table$col.spp2 <- PlotByGroup(master.table, "spp2", alpha.col.spp2)
 
 # Plot
-plot(master.table$phylo.d, master.table$morph.d, col = col.spp2, bg = col.spp1, pch = 21, xlab = "Phylogenetic distance (~million years since common ancestor)", ylab = "Morphological distance")
+plot(master.table$phylo.d, master.table$morph.d, col = master.table$col.spp1, bg = master.table$col.spp2, pch = 21, xlab = "Phylogenetic distance (~million years since common ancestor)", ylab = "Morphological distance")
 ```
 
-## Repeat Phylo/Morph distance plot but using residuals
+## Repeat Phylo/Morph distance plot using residuals
 ```{r}
 # Morphological distance matrix for residuals
 mean.gpa.res <- gpagen(Allom.all.plus.consensus, ProcD = TRUE)
@@ -116,22 +117,38 @@ morph.table.r <- make.table(morph.matrix.res, "morph.d.r")
 master.table.r <- merge(phylo.table, morph.table.r[, 3:4], by = "pair")
 
 # Plot
-plot(master.table.r$phylo.d, master.table.r$morph.d.r, col = col.spp2, bg = col.spp1, pch = 21, xlab = "Phylogenetic distance (~million years since common ancestor)", ylab = "Morphological distance of residuals")
+plot(master.table.r$phylo.d, master.table.r$morph.d.r, col = master.table$col.spp1, bg = master.table$col.spp2, pch = 21, xlab = "Phylogenetic distance (~million years since common ancestor)", ylab = "Morphological distance of residuals")
 ```
 
 ## Plot phylo/morph distance tables by species in biome paired with others in same biome
 ```{r}
-### Set up graphical parameters for a multi-part figure (see script 04)
+# Set up loop for multi-part figure broken down by 7 regions in Australia
+region.names <- c("Savannah", "Arid Zone", "NE Wet Forest", "NE Dry Forest", "Pilbara", "South West", "South East")
 
-## For loop to cycle through each biome
+par(mfrow=c(4,2), mar = c(2,2,2,2))
 
-# Prune spp1 column to only species in each biome
+# For loop to cycle through each biome and plot phylo/morph distance 
+for (i in 1:length(region.names)) {
+        # Prune spp1 column to only species in each biome
+        in.region <- FoundInRegion(info, regions = i)
+        info.region <- unique(info[in.region, c("Genus", "Species")])
+        info.region$spp1 <- paste(info.region$Genus, info.region$Species, sep = "_")
+        spp1.region <- merge(master.table, info.region, by = "spp1")
 
-# Repeat with spp2 column (leaving only same-biome pairs)
+        # Repeat with spp2 column (leaving only same-biome pairs)
+        info.region$spp2 <- paste(info.region$Genus, info.region$Species, sep = "_")
+        same.region.pairs <- merge(spp1.region, info.region, by = "spp2")
+        
+        # Plot
+        plot(same.region.pairs$phylo.d, 
+             same.region.pairs$morph.d, 
+             col = same.region.pairs$col.spp1, 
+             bg = same.region.pairs$col.spp2, 
+             pch = 21,
+             main = paste(region.names[i], "phylo/morph distance plot"),
+             xlab = "Phylogenetic distance (~million years since common ancestor)",  ylab = "Morphological distance")
 
-# Subset graphical parameters
-
-# Plot 
+}
 ```
 
 
