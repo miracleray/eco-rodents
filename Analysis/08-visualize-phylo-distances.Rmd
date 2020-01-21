@@ -28,11 +28,12 @@ load(file = "../Data/Processed/05-residual-data.rda")
 ## Analyze phylogenetic and morphological distance matrices
 To analyze phylogenetic and morphological distance in the context of biomes, we first need to generate distances matrices that can be comparable.
 ```{r}
-phylo.matrix <- cophenetic(aus.tree)  # Phylo distance matrix
+# Phylo distance matrix
+phylo.matrix <- cophenetic(aus.tree) / 2  # divide by two to convert distance to millions of years since Last Common Ancestor
 
 # Morphological distance matrix
 mean.gpa <- gpagen(mean.shapes, ProcD = TRUE)  # use mean shapes of species
-morph.matrix <- as.matrix(mean.gpa$procD) 
+morph.matrix <- as.matrix(mean.gpa$procD)
 
 # Make names shorter
 long.names <- colnames(phylo.matrix)
@@ -44,10 +45,9 @@ for(i in 1:length(long.names)) {
 }
 
 # Replace with short names
-row.names(phylo.matrix) <- short.names
+row.names(phylo.matrix) <- short.names  # phylo matrix
 colnames(phylo.matrix) <- short.names
-
-row.names(morph.matrix) <- short.names
+row.names(morph.matrix) <- short.names  # morph matrix
 colnames(morph.matrix) <- short.names
 ```
 
@@ -78,21 +78,17 @@ morph.table <- make.table(morph.matrix, "morph.d")
 master.table <- merge(phylo.table, morph.table[, 3:4], by = "pair")
 ```
 
-## Plot phylo-morph distance pairs
+## Plot phylo-morph distance pairs (Figure TK)
 ```{r}
-# Get color vectors by names
-names <- as.vector(master.table[,"spp1"])[1:36]
-names <- c("Con_pen", names)
-
 # Create color key
 just.genera <- NULL
-for(i in 1:length(names)){
-        sep <- strsplit(names[i], "_")
+for(i in 1:length(short.names)){
+        sep <- strsplit(short.names[i], "_")
         just.genera <- c(just.genera, sep[[1]][1])
 }
 gen.col <- col.phylo[match(just.genera, names(col.phylo))]
-gen.col[5] <- gen.col[16]  # Fix mastacomys
 names(gen.col)[5] <- "Mas"
+gen.col[5] <- gen.col[16]  # Fix Mastacomys color
 
 # Points coded for each individual specimen
 alpha.col.spp1 <- gen.col[2:37]  # subset because C pen isn't in this col
@@ -102,8 +98,54 @@ col.spp1 <- PlotByGroup(master.table, "spp1", alpha.col.spp1)
 col.spp2 <- PlotByGroup(master.table, "spp2", alpha.col.spp2)
 
 # Plot
-plot(master.table$phylo.d, master.table$morph.d, col = col.spp2, bg = col.spp1, pch = 21, xlab = "Phylogenetic distance", ylab = "Morphological distance")
+plot(master.table$phylo.d, master.table$morph.d, col = col.spp2, bg = col.spp1, pch = 21, xlab = "Phylogenetic distance (~million years since common ancestor)", ylab = "Morphological distance")
 ```
 
-## 
+## Repeat Phylo/Morph distance plot but using residuals
+```{r}
+# Morphological distance matrix for residuals
+mean.gpa.res <- gpagen(Allom.all.plus.consensus, ProcD = TRUE)
+morph.matrix.res <- as.matrix(mean.gpa.res$procD)
 
+# Shorten row and column names
+row.names(morph.matrix.res) <- short.names
+colnames(morph.matrix.res) <- short.names
+
+# Make comparable table to phylo distance using function defined above
+morph.table.r <- make.table(morph.matrix.res, "morph.d.r")
+master.table.r <- merge(phylo.table, morph.table.r[, 3:4], by = "pair")
+
+# Plot
+plot(master.table.r$phylo.d, master.table.r$morph.d.r, col = col.spp2, bg = col.spp1, pch = 21, xlab = "Phylogenetic distance (~million years since common ancestor)", ylab = "Morphological distance of residuals")
+```
+
+## Plot phylo/morph distance tables by species in biome paired with others in same biome
+```{r}
+### Set up graphical parameters for a multi-part figure (see script 04)
+
+## For loop to cycle through each biome
+
+# Prune spp1 column to only species in each biome
+
+# Repeat with spp2 column (leaving only same-biome pairs)
+
+# Subset graphical parameters
+
+# Plot 
+```
+
+
+## Plot phylo/morph distance tables by species in biome paired with others in same biome
+```{r}
+### Set up graphical parameters for a multi-part figure (see script 04)
+
+## For loop to cycle through each biome
+
+# Prune spp1 column to only species in each biome
+
+## For each species left in spp1, ID spp that never overlap and keep only those pairs
+
+# Subset graphical parameters
+
+# Plot 
+```
