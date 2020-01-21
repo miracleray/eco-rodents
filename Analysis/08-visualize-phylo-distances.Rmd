@@ -146,23 +146,42 @@ for (i in 1:length(region.names)) {
              bg = same.region.pairs$col.spp2, 
              pch = 21,
              main = paste(region.names[i], "phylo/morph distance plot"),
-             xlab = "Phylogenetic distance (~million years since common ancestor)",  ylab = "Morphological distance")
-
+             xlab = "Phylogenetic distance (~million years since LCA)",  ylab = "Morphological distance")
 }
 ```
 
 
 ## Plot phylo/morph distance tables by species in biome paired with others in same biome
 ```{r}
-### Set up graphical parameters for a multi-part figure (see script 04)
+# Set up loop for multi-part figure broken down by 7 regions in Australia
+region.names <- c("Savannah", "Arid Zone", "NE Wet Forest", "NE Dry Forest", "Pilbara", "South West", "South East")
 
-## For loop to cycle through each biome
+par(mfrow=c(4,2), mar = c(2,2,2,2))
 
-# Prune spp1 column to only species in each biome
+# For loop to cycle through each biome and plot phylo/morph distance 
+for (i in 1:length(region.names)) {
+        # Prune spp1 column to only species in each biome
+        in.region <- FoundInRegion(info, regions = i)
+        info.region <- unique(info[in.region, c("Genus", "Species")])
+        info.region$spp1 <- paste(info.region$Genus, info.region$Species, sep = "_")
+        spp1.region <- merge(master.table, info.region, by = "spp1")
 
-## For each species left in spp1, ID spp that never overlap and keep only those pairs
-
-# Subset graphical parameters
-
-# Plot 
+       ## For each species left in spp1, ID spp that never overlap and keep only those pairs (different biome pairs)
+        for(i in 1:dim(spp1.region)[1]){
+                # Make region.vector of regions each spp is in
+                
+                # Test for spp that A) exist in one or more of these regions AND B) don't exist in vector above; include passing spp in diff.vector
+                
+                # Keep only pairs with species[i] and spp in diff.vector
+        }
+        
+        # Plot
+        plot(diff.region.pairs$phylo.d, 
+             diff.region.pairs$morph.d, 
+             col = diff.region.pairs$col.spp1, 
+             bg = diff.region.pairs$col.spp2, 
+             pch = 21,
+             main = paste(region.names[i], "phylo/morph distance plot"),
+             xlab = "Phylogenetic distance (~million years since LCA)",  ylab = "Morphological distance")
+}
 ```
