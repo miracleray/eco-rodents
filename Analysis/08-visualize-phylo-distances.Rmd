@@ -64,11 +64,13 @@ make.table <- function(matrix, d.name) {
         
         # Remove permutations by alphabetizing the species names for each pair
         for(i in 1:dim(new.table)[1]) {
-                pair.index <- str_order(c(new.table[i, 1], new.table[i, 2]))
-                new.table[i, 4] <- paste(new.table[i, pair.index[1]], new.table[i, pair.index[2]], sep = "-")  # pair names in alpha order
+                pair.names <- c(as.character(new.table[i, "spp1"]), as.character(new.table[i, "spp2"]))
+                pair.index <- str_order(c(as.character(new.table[i, "spp1"]), as.character(new.table[i, "spp2"])))
+                pair <- paste(pair.names[pair.index[1]], pair.names[pair.index[2]], sep = "-")  # pair names in alpha order
+                new.table[i, "pair"] <- pair
         }
-        new.table <- new.table[!duplicated(new.table[, 3:4]), ]  # only unique pair combinations
-
+        
+        new.table <- new.table[!duplicated(new.table[, "pair"]), ]  # only unique pair combinations
         return(new.table)
 }
 
@@ -171,17 +173,17 @@ for (i in 1:length(region.names)) {
 
        # For each species in region, ID spp that never overlap and keep only those pairs (different region pairs)
         info.in.region <- info.r[in.region, ]  # all region presence/absence
+        diff.spp <- info.r[!in.region, ]
         diff.reg.pairs <- NULL
-        for(s in 1:dim(spp1.region)[1]){  # For each species in a region...
+        for(s in 1:dim(info.in.region)[1]){  # For each species in a region...
                 # Make vector of regions it can be found
                 region.vector <- info.in.region[s, ]
                 exist.in <- which(region.vector == 1)
                 
                 # Find DIFF pairs that don't exist any of the same regions 
-                diff.spp <- info.r[!in.region, ] 
                 for(r in 1:length(exist.in)){  # ...ID different pairs
-                        col.interest <- diff.spp[, exist.in[r]]
-                        diff.spp <- diff.spp[col.interest < 1, ]
+                        presence <- diff.spp[, exist.in[r]]
+                        diff.spp <- diff.spp[presence < 1, ]
                         
                         # Alphabetize pair names
                         for(p in 1:dim(diff.spp)[1]){
@@ -191,10 +193,11 @@ for (i in 1:length(region.names)) {
                         }
                         
                         # Find pair data for region's plot
-                        diff.spp.pairs <- master.table[which(master.table["pair"] == pair)]
-                        diff.reg.pairs <- c(diff.reg.pairs, diff.spp.pairs)
+                        diff.spp.pairs <- master.table[which(master.table$pair == pair), ]
                 }
-        }
+                
+                diff.reg.pairs <- c(diff.reg.pairs, diff.spp.pairs)
+                }
         
         # Plot
         plot(diff.reg.pairs$phylo.d, 
