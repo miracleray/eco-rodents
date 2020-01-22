@@ -136,8 +136,8 @@ par(mfrow=c(4,2), mar = c(2,2,2,2))
 # For loop to cycle through each biome and plot phylo/morph distance 
 for (i in 1:length(region.names)) {
         # Prune spp1 column to only species in each biome
-        in.region <- FoundInRegion(info, regions = i)
-        info.region <- unique(info[in.region, c("Genus", "Species")])
+        in.region <- FoundInRegion(info.r, regions = i)
+        info.region <- unique(info.r[in.region, c("Genus", "Species")])
         info.region$spp1 <- paste(info.region$Genus, info.region$Species, sep = "_")
         spp1.region <- merge(master.table, info.region, by = "spp1")
 
@@ -148,8 +148,8 @@ for (i in 1:length(region.names)) {
         # Plot
         plot(same.region.pairs$phylo.d, 
              same.region.pairs$morph.d, 
-             col = same.region.pairs$col.spp1, 
-             bg = same.region.pairs$col.spp2, 
+             col = same.region.pairs$col.spp2, 
+             bg = same.region.pairs$col.spp1, 
              pch = 21,
              main = paste(region.names[i], "phylo/morph distance plot"),
              xlab = "Phylogenetic distance (~million years since LCA)",  ylab = "Morphological distance")
@@ -202,15 +202,15 @@ for (i in 1:length(region.names)) {
                 }
         
         # Plot
-        print(region.names[i])
-        print(dim(diff.reg.pairs))
-        print(dim(diff.all.pairs))
         plot(diff.all.pairs$phylo.d, 
              diff.all.pairs$morph.d, 
-             col = diff.all.pairs$col.spp1, 
-             bg = diff.all.pairs$col.spp2, 
+             col = diff.all.pairs$col.spp2, 
+             bg = diff.all.pairs$col.spp1, 
              pch = 21,
              main = paste(region.names[i], "phylo/morph distance plot"),
              xlab = "Phylogenetic distance (~million years since LCA)",  ylab = "Morphological distance")
+        # text(diff.all.pairs$phylo.d, 
+             # diff.all.pairs$morph.d + 0.003, 
+             # labels = diff.all.pairs$pair, cex = 0.7)
 }
 ```
