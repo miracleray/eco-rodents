@@ -175,6 +175,7 @@ for (i in 1:length(region.names)) {
         info.in.region <- info.r[in.region, ]  # all region presence/absence
         diff.spp <- info.r[!in.region, ]
         diff.reg.pairs <- NULL
+        diff.all.pairs <- NULL
         for(s in 1:dim(info.in.region)[1]){  # For each species in a region...
                 # Make vector of regions it can be found
                 region.vector <- info.in.region[s, ]
@@ -194,16 +195,20 @@ for (i in 1:length(region.names)) {
                         
                         # Find pair data for region's plot
                         diff.spp.pairs <- master.table[which(master.table$pair == pair), ]
+                        diff.all.pairs <- rbind(diff.all.pairs, diff.spp.pairs)
                 }
+                diff.reg.pairs <- rbind(diff.reg.pairs, diff.all.pairs)
                 
-                diff.reg.pairs <- c(diff.reg.pairs, diff.spp.pairs)
                 }
         
         # Plot
-        plot(diff.reg.pairs$phylo.d, 
-             diff.reg.pairs$morph.d, 
-             col = diff.reg.pairs$col.spp1, 
-             bg = diff.reg.pairs$col.spp2, 
+        print(region.names[i])
+        print(dim(diff.reg.pairs))
+        print(dim(diff.all.pairs))
+        plot(diff.all.pairs$phylo.d, 
+             diff.all.pairs$morph.d, 
+             col = diff.all.pairs$col.spp1, 
+             bg = diff.all.pairs$col.spp2, 
              pch = 21,
              main = paste(region.names[i], "phylo/morph distance plot"),
              xlab = "Phylogenetic distance (~million years since LCA)",  ylab = "Morphological distance")
