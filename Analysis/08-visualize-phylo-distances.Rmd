@@ -119,7 +119,7 @@ morph.table.r <- make.table(morph.matrix.res, "morph.d.r")
 master.table.r <- merge(phylo.table, morph.table.r[, 3:4], by = "pair")
 
 # Plot
-plot(master.table.r$phylo.d, master.table.r$morph.d.r, col = master.table$col.spp1, bg = master.table$col.spp2, pch = 21, xlab = "Phylogenetic distance (~million years since common ancestor)", ylab = "Morphological distance of residuals")
+plot(master.table.r$phylo.d, master.table.r$morph.d.r, col = master.table$col.spp1, bg = master.table$col.spp2, pch = 21, xlab = "Phylogenetic distance (~million years since common ancestor)", ylab = "Morphological distance RESIDUALS")
 ```
 
 ## Plot phylo/morph distance tables by species in biome paired with others in SAME BIOME

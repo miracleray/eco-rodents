@@ -186,20 +186,65 @@ rgl.snapshot("../Data/Processed/heatmap_PC1_dor.png")  # save screenshot for mul
 open3d(windowRect = c(0, 0, 600, 600))
 res.PC1.var.plot <- procrustes.var.plot(res.hypothetical.1, res.hypothetical.2, col = heat.colors, col.val = res.PC1.var[, "radius"], labels = F)
 view3d(phi = 90)
-rgl.snapshot("../Data/Processed/heatmap_PC1_lat.png")
+rgl.snapshot("../Data/Processed/res_heatmap_PC1_lat.png")
 
 # PC2 Dorsal view
 open3d(windowRect = c(0, 0, 600, 600))
 res.PC2.var.plot <- procrustes.var.plot(res.hypothetical.3, res.hypothetical.4, col = heat.colors, col.val = res.PC2.var[, "length"], labels = F)
 view3d(phi = 0)  # flip cranium
-rgl.snapshot("../Data/Processed/heatmap_PC2_dor.png")
+rgl.snapshot("../Data/Processed/res_heatmap_PC2_dor.png")
 
 # PC2 Lateral view
 open3d(windowRect = c(0, 0, 600, 600))
 res.PC2.var.plot <- procrustes.var.plot(res.hypothetical.3, res.hypothetical.4, col = heat.colors, col.val = res.PC2.var[, "length"], labels = F)
 view3d(phi = 90)
-rgl.snapshot("../Data/Processed/heatmap_PC2_lat.png")
+rgl.snapshot("../Data/Processed/res_heatmap_PC2_lat.png")
 ```
+
+### Make quick figure comparing PC1 of with allometry vs without (residuals)
+NOTE: this needs to be reproducible. Currently uses PNGs from allometry rodent side
+```{r}
+# Load in images
+morph.dor.1 <- readPNG("../Data/Processed/PC1heatmap_dor.png")
+morph.lat.1 <- readPNG("../Data/Processed/PC1heatmap_lat.png")
+
+system("mogrify ../Data/Processed/res_heatmap_PC1_*.png -trim ../Data/Processed/*.png")  # removes whitespace (requires ImageMagik)
+res.dor.1 <- readPNG("../Data/Processed/res_heatmap_PC1_dor.png")
+res.lat.1 <- readPNG("../Data/Processed/res_heatmap_PC1_lat.png")
+
+# Set up muli-panel figure
+mat <- matrix(c(1, 2, 3, 4), 2, 2, byrow = TRUE)  # 2 rows, 2 columns
+layout(mat, widths = c(1, 1, 1), heights = c(0.65, 0.75, 0.5))  
+
+# 1) With Allometry: PC1 lateral view
+par(mar = c(0, 0, 1, 0))  # sets the margins
+plot(c(0, dim(morph.dor.1)[2]), c(0, dim(morph.dor.1)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
+rasterImage(morph.dor.1, 0, 0, dim(morph.dor.1)[2], dim(morph.dor.1)[1])
+text(0, dim(morph.dor.1)[1]-10, "A", cex = 2)
+
+# 2) Without Allometry: PC1 lateral view
+par(mar = c(0, 0, 1, 0))
+plot(c(0, dim(morph.lat.1)[2]), c(0, dim(morph.lat.1)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
+rasterImage(morph.lat.1, 0, 0, dim(morph.lat.1)[2], dim(morph.lat.1)[1])
+text(0, dim(morph.lat.1)[1]-10, "B", cex = 2)
+
+# 3) With Allometry: PC1 dorsal view
+par(mar = c(0, 0, 1, 0)) 
+plot(c(0, dim(res.dor.1)[2]), c(0, dim(res.dor.1)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
+rasterImage(res.dor.1, 0, 0, dim(res.dor.1)[2], dim(res.dor.1)[1])
+text(0, dim(res.dor.1)[1]-10, "C", cex = 2)
+
+# 4) Without Allometry: PC1 dorsal view
+par(mar = c(0, 0, 1, 0))  
+plot(c(0, dim(res.lat.1)[2]), c(0, dim(res.lat.1)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
+rasterImage(res.lat.1, 0, 0, dim(res.lat.1)[2], dim(res.lat.1)[1])
+text(0, dim(res.lat.1)[1]-10, "D", cex = 2)
+
+```
+
+### Make figure comparing PC2 of with-allometry vs residuals
+NOTE: would be best if residuals were generated in script 03
+
 
 ## Remove *Notomys* because differences are known
 ```{r}
