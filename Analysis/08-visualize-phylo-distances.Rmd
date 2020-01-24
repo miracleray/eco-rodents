@@ -131,7 +131,7 @@ info.r <- info[, c("Genus", "Species", "Savannah", "AridZone", "NEWetForest", "N
 info.r$Taxa <- paste(info.r$Genus, info.r$Species, sep = "_")
 info.r <- unique(info.r)  # remove extra spp entries
 
-par(mfrow=c(4,2), mar = c(2,2,2,2))
+par(mfrow=c(4,2), mar = c(3,3,3,3))
 
 # For loop to cycle through each biome and plot phylo/morph distance 
 for (i in 1:length(region.names)) {
@@ -151,7 +151,7 @@ for (i in 1:length(region.names)) {
              col = same.region.pairs$col.spp2, 
              bg = same.region.pairs$col.spp1, 
              pch = 21,
-             main = paste(region.names[i], "phylo/morph distance plot"),
+             main = region.names[i],
              xlab = "Phylogenetic distance (~million years since LCA)",  ylab = "Morphological distance")
 }
 ```
@@ -159,7 +159,7 @@ for (i in 1:length(region.names)) {
 ## Plot phylo/morph distance tables by species in biome paired with others in DIFFERENT BIOME
 ```{r}
 # Figure set up
-par(mfrow=c(4,2), mar = c(2,2,2,2))  
+par(mfrow=c(4,2), mar = c(3,3,3,3))  
 
 # For loop to cycle through each region and plot phylo/morph distance 
 diff.reg.pairs <- NULL
@@ -207,7 +207,7 @@ for (i in 1:length(region.names)) {
              col = diff.all.pairs$col.spp2, 
              bg = diff.all.pairs$col.spp1, 
              pch = 21,
-             main = paste(region.names[i], "phylo/morph distance plot"),
+             main = paste(region.names[i], "same-different"),
              xlab = "Phylogenetic distance (~million years since LCA)",  ylab = "Morphological distance")
         # text(diff.all.pairs$phylo.d, 
              # diff.all.pairs$morph.d + 0.003, 
