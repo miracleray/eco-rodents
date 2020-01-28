@@ -40,7 +40,6 @@ load(file = "../Data/Processed/05-residual-data.rda")
 ### Plot residuals - IMPORTANT FIGURE
 Color and legend by species
 ```{r}
-residuals <- Allom.all.plus.consensus  # shape data
 alpha.names <- dimnames(mean.shapes)[[3]]
 
 res.PCA <- plotTangentSpace(residuals, groups = alpha.col, label = alpha.names)
@@ -67,42 +66,6 @@ PCA.plot <- plot(x = -res.PCA$pc.scores[, 1],  # Flip for consistency
                  cex.axis = 1.3, 
                  cex.lab = 1.3)
 legend("bottomright", phylo.names, col = col.unique.spp, pch = pch.unique.spp, pt.bg = col.unique.spp, cex = .57, pt.cex = .7, ncol = 2)
-```
-
-### Plot PCA by diet / guild -- NEEDS HELP
-```{r}
-# Set up colors by diet
-warm <- sequential_hcl(5, "LaJolla")  
-col.carn <- warm[4]  # meat colored red
-col.frug <- warm[3]  # fruit colored orange
-col.gran <- warm[2]  # grain colored gold
-col.herb <- sequential_hcl(5, "Greens 3")[2]  # green colored grass
-col.omni <- sequential_hcl(5, "Grays")[3]  # gray for anything goes
-
-# Define color pallete for diets of all specimens
-col.diet <- c(col.carn, col.frug, col.gran, col.herb, col.omni)
-col.diet <- PlotByGroup(info.means, "Feeding", col.diet)
-
-# Points: Aquatic, Arboreal (triangle), Terrestrial (square)
-pch.gld <- c(19, 24, 22)
-pch.gld <- PlotByGroup(info.means, "Guild", pch.gld)
-pch.gld[which(info.means$Genus == "Not")] <- 19  # Hopping (circle) 
-# Pretty plot
-PCA.plot <- plot(x = -res.PCA$pc.scores[, 1],
-                 y = -res.PCA$pc.scores[, 2], 
-                 xlab = PCx.lab, 
-                 ylab = PCy.lab,
-                 asp = TRUE,
-                 #xlim = c(-0.12, 0.2),
-                 #ylim = c(-0.1, 0.1),
-                 col = col.diet, 
-                 pch = pch.gld, 
-                 bg = col.diet,
-                 cex = 1.5,
-                 cex.axis = 1.3, 
-                 cex.lab = 1.3)
-legend("bottomright", legend = c("Arboreal", "Terrest.", "Hopping"), col = "black", border = NULL, pch = c(24, 22, 21))
-legend("topright", legend = c("Carnivorous", "Frugivorous", "Granivorous", "Foliverous", "Omnivorous"), col = col.diet, border = NULL, pch = 15)
 ```
 
 ## Plot warp grids of small versus large specimens
@@ -152,6 +115,7 @@ rgl.snapshot("../Data/Processed/heatmap_mean-sm_lat.png")
 # Remove whitespace (requires ImageMagik)
 system("mogrify ../Data/Processed/heatmap_*.png -trim ../Data/Processed/*.png")
 ```
+
 ### Make quick figure comparing PC1 of with allometry vs without (residuals)
 NOTE: this needs to be reproducible. Currently uses PNGs from allometry rodent side
 ```{r}
