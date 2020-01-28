@@ -106,22 +106,8 @@ legend("topright", legend = c("Carnivorous", "Frugivorous", "Granivorous", "Foli
 ```
 
 ## Plot warp grids of small versus large specimens
-Uses Dr Thomas Guillerme's new package, `landvR` to see how landmarks vary within and between the two protocols. Much of the below was adapted from [this vignette written by Dr Guillerme](https://cdn.rawgit.com/TGuillerme/landvR/8a6a6bd5/inst/vignettes/Landmark_partition_test.html).
-
+Uses Dr Thomas Guillerme's new package, `landvR` to see how landmarks vary within and between the two protocols.
 ```{r}
-
-
-
-```
-
-
-
-
-```{r}
-# Ordinate the data
-twoD.shape <- two.d.array(residuals)
-ordination <- stats::prcomp(twoD.shape)
-
 # Find mean configuration - i.e. mean shape in dataset
 all.consensus <- (select.procrustes(residuals, selector = mean))[[1]]
 
@@ -134,53 +120,38 @@ biggest.shape <- mean.shapes[, , big.index]
 sm.index <- which(info.means$Species == "del")
 smallest.shape <- mean.shapes[, , sm.index]
 
-# Force the symmetric component of shape into class "gpagen" (required for variation.range)
-res.gpagen.shape <- list()
-res.gpagen.shape$coords <- residuals
-res.gpagen.shape$consensus <- all.consensus
-class(res.gpagen.shape) <- "gpagen"
-
-
-# Plot variation
-procrustes.var.plot(all.consensus, biggest.shape, col = heat.colors, col.val = diff.from.mean$Uromys_caudimaculatus[, "radius"]) 
-procrustes.var.plot(all.consensus, smmallest.shape) 
 ```
 
-To test the hypothesis that each landmark's variation from the mean configuration is above expected, we use the smallest and largest specimens
+# Plot the variation in residual shape change
+Export images for plots
 ```{r}
-# Ordinate the data
-twoD.shape <- two.d.array(residuals)
-ordination <- stats::prcomp(twoD.shape)
+# Dorsal view of median to biggest
+open3d(windowRect = c(0, 0, 600, 600))
+procrustes.var.plot(all.consensus, biggest.shape, col = heat.colors, col.val = diff.from.mean$Uromys_caudimaculatus[, "radius"])
+view3d(phi = 0)  # flip cranium
+rgl.snapshot("../Data/Processed/heatmap_mean-big_dor.png")
 
-# Force the symmetric component of shape into class "gpagen" (required for variation.range)
-res.gpagen.shape <- list()
-res.gpagen.shape$coords <- residuals
-res.gpagen.shape$consensus <- all.consensus
-class(res.gpagen.shape) <- "gpagen"
+# Lateral view of median to biggest
+open3d(windowRect = c(0, 0, 600, 600))
+procrustes.var.plot(all.consensus, biggest.shape, col = heat.colors, col.val = diff.from.mean$Uromys_caudimaculatus[, "radius"])
+view3d(phi = 90)
+rgl.snapshot("../Data/Processed/heatmap_mean-big_lat.png")
 
-# Measure extremes of variation from mean on PC1
-#res.PC1.var <- variation.range(res.gpagen.shape, return.ID = FALSE, axis = 1, ordination = ordination, type = "spherical")
-```
 
-The next step is to make a heatmap showing the size of variation and direction of movement for each landmark in the dataset, comparing between the median to both the min and max centroid size specimens.
-```{r}
-# Wrap specimens on the tangent space
-res.wrap.PCA <- plotTangentSpace(residuals, verbose = FALSE)
+# Dorsal view of median to smallest
+open3d(windowRect = c(0, 0, 600, 600))
+procrustes.var.plot(smallest.shape, all.consensus, col = heat.colors, col.val = diff.from.mean$Pseudomys_delicatulus[, "radius"]) 
+view3d(phi = 0)  # flip cranium
+rgl.snapshot("../Data/Processed/heatmap_mean-sm_dor.png")
 
-# Select extreme specimens (the ones that make the warp-meshes) on PC1
-res.hypothetical.1 <- res.wrap.PCA$pc.shapes[[1]]  # PC1 min
-res.hypothetical.2 <- res.wrap.PCA$pc.shapes[[2]]  # PC1 max
-```
+# Lateral view of median to biggest
+open3d(windowRect = c(0, 0, 600, 600))
+procrustes.var.plot(smallest.shape, all.consensus, col = heat.colors, col.val = diff.from.mean$Pseudomys_delicatulus[, "radius"])
+view3d(phi = 90)
+rgl.snapshot("../Data/Processed/heatmap_mean-sm_lat.png")
 
-**Repeat the steps immediately above for PC2**
-The pc.shapes[1] and [2] correspond to PC1min and PC1max. Therefore we can adjust the same res.wrap.PCA to plot the heatmaps for PC2. 
-```{r}
-# Measure extremes of variation from mean on PC2
-res.PC2.var <- variation.range(res.gpagen.shape, return.ID = FALSE, axis = 2, ordination = ordination, type = "vector")  # can also try "spherical"
-
-# Select extreme specimens on PC2
-res.hypothetical.3 <- res.wrap.PCA$pc.shapes[[3]]  # PC2 min
-res.hypothetical.4 <- res.wrap.PCA$pc.shapes[[4]]  # PC2 max
+# Remove whitespace (requires ImageMagik)
+system("mogrify ../Data/Processed/heatmap_*.png -trim ../Data/Processed/*.png")
 ```
 
 ## Make heatmap plot comparisons
