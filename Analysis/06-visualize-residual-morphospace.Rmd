@@ -37,126 +37,135 @@ load(file = "../Data/Processed/03-graphing-vectors.rda")
 load(file = "../Data/Processed/05-residual-data.rda")
 ```
 
-### Remove aquatic carnivores because differences are known
-Two species: *Hydromys_chrysogaster* (H_chr) and *Xeromys_myoides* (X_myo)
-```{r}
-alpha.names <- dimnames(mean.shapes)[[3]]
-carn <- c(which(alpha.names == "H chr"), which(alpha.names == "X myo"))
-
-# No carnivores = nc
-nc.info.means <- info.means[-carn, ]  # metadata
-nc.residuals <- Allom.all.plus.consensus[, , -carn]  # shape data
-
-## Decide here whether to use the hypothetical shape or not
-nc.residuals <- allom.resid[, , -carn]  # Hypothetical shape
-nc.residuals <- Allom.all.plus.consensus[, , -carn]  # Actual shape
-
-# For plotting
-nc.alpha.col <- alpha.col[-carn]  # colors
-nc.alpha.pch <- alpha.pch[-carn]  # pch synbols
-nc.alpha.names <- alpha.names[-carn]  # names (for plot labels)
-
-# For legend (in phylogenetic order)
-carn.p <- c(which(phylo.names == "H chr"), which(phylo.names == "X myo"))
-nc.phylo.col <- col.unique.spp[-carn.p]  # colors
-nc.phylo.pch <- pch.unique.spp[-carn.p]  # pch synbols
-nc.phylo.names <- phylo.names[-carn.p]  # names
-```
-
-### Plot residuals
+### Plot residuals - IMPORTANT FIGURE
 Color and legend by species
 ```{r}
-nc.res.PCA <- plotTangentSpace(nc.residuals, groups = nc.alpha.col, label = nc.alpha.names)
+residuals <- Allom.all.plus.consensus  # shape data
+alpha.names <- dimnames(mean.shapes)[[3]]
+
+res.PCA <- plotTangentSpace(residuals, groups = alpha.col, label = alpha.names)
 
 # Make axis labels
-PCs <- nc.res.PCA$pc.summary$importance
+PCs <- res.PCA$pc.summary$importance
 PCx.per <- round(PCs[2, 1] * 100, digits = 1)  # % with 1 decimal
 PCx.lab <- paste("PC1", " (", PCx.per, "%)", sep = "")
 PCy.per <- round(PCs[2, 2] * 100, digits = 1)
 PCy.lab <- paste("PC2", " (", PCy.per, "%)", sep = "")
         
 # Pretty plot
-PCA.plot <- plot(x = nc.res.PCA$pc.scores[, 1],
-                 y = -nc.res.PCA$pc.scores[, 2],  # Flip for consistency
+PCA.plot <- plot(x = -res.PCA$pc.scores[, 1],  # Flip for consistency
+                 y = -res.PCA$pc.scores[, 2],  
                  xlab = PCx.lab, 
                  ylab = PCy.lab,
                  asp = TRUE,
-                 #xlim = c(-0.12, 0.2),
-                 #ylim = c(-0.1, 0.1),
-                 col = nc.alpha.col, 
-                 pch = nc.alpha.pch, 
-                 bg = nc.alpha.col,
+                 xlim = c(-0.12, 0.18),
+                 ylim = c(-0.18, 0.12),
+                 col = alpha.col, 
+                 pch = alpha.pch, 
+                 bg = alpha.col,
                  cex = 1.5,
                  cex.axis = 1.3, 
                  cex.lab = 1.3)
-legend("bottomright", nc.phylo.names, col = nc.phylo.col, pch = nc.phylo.pch, pt.bg = nc.phylo.col, cex = .57, pt.cex = .7, ncol = 2)
+legend("bottomright", phylo.names, col = col.unique.spp, pch = pch.unique.spp, pt.bg = col.unique.spp, cex = .57, pt.cex = .7, ncol = 2)
 ```
 
-### Plot PCA by diet / guild
+### Plot PCA by diet / guild -- NEEDS HELP
 ```{r}
 # Set up colors by diet
 warm <- sequential_hcl(5, "LaJolla")  
+col.carn <- warm[4]  # meat colored red
 col.frug <- warm[3]  # fruit colored orange
 col.gran <- warm[2]  # grain colored gold
 col.herb <- sequential_hcl(5, "Greens 3")[2]  # green colored grass
 col.omni <- sequential_hcl(5, "Grays")[3]  # gray for anything goes
 
 # Define color pallete for diets of all specimens
-col.diet <- c(col.frug, col.gran, col.herb, col.omni)
-nc.col.diet <- PlotByGroup(nc.info.means.tree, "Feeding", col.diet)
+col.diet <- c(col.carn, col.frug, col.gran, col.herb, col.omni)
+col.diet <- PlotByGroup(info.means, "Feeding", col.diet)
 
-# Points: Arboreal (triangle), Terrestrial (square)
-pch.gld <- c(24, 22)
-nc.pch.gld <- PlotByGroup(nc.info.means.tree, "Guild", pch.gld)
-nc.pch.gld[which(nc.info.means.tree$Genus == "Not")] <- 19  # Hopping (circle) 
+# Points: Aquatic, Arboreal (triangle), Terrestrial (square)
+pch.gld <- c(19, 24, 22)
+pch.gld <- PlotByGroup(info.means, "Guild", pch.gld)
+pch.gld[which(info.means$Genus == "Not")] <- 19  # Hopping (circle) 
 # Pretty plot
-PCA.plot <- plot(x = nc.res.PCA$pc.scores[, 1],
-                 y = nc.res.PCA$pc.scores[, 2], 
+PCA.plot <- plot(x = -res.PCA$pc.scores[, 1],
+                 y = -res.PCA$pc.scores[, 2], 
                  xlab = PCx.lab, 
                  ylab = PCy.lab,
                  asp = TRUE,
                  #xlim = c(-0.12, 0.2),
                  #ylim = c(-0.1, 0.1),
-                 col = nc.col.diet, 
-                 pch = nc.pch.gld, 
-                 bg = nc.col.diet,
+                 col = col.diet, 
+                 pch = pch.gld, 
+                 bg = col.diet,
                  cex = 1.5,
                  cex.axis = 1.3, 
                  cex.lab = 1.3)
 legend("bottomright", legend = c("Arboreal", "Terrest.", "Hopping"), col = "black", border = NULL, pch = c(24, 22, 21))
-legend("topright", legend = c("Frugivorous", "Granivorous", "Foliverous", "Omnivorous"), col = col.diet, border = NULL, pch = 15)
+legend("topright", legend = c("Carnivorous", "Frugivorous", "Granivorous", "Foliverous", "Omnivorous"), col = col.diet, border = NULL, pch = 15)
 ```
 
-## Plot warp grids of PC1
+## Plot warp grids of small versus large specimens
 Uses Dr Thomas Guillerme's new package, `landvR` to see how landmarks vary within and between the two protocols. Much of the below was adapted from [this vignette written by Dr Guillerme](https://cdn.rawgit.com/TGuillerme/landvR/8a6a6bd5/inst/vignettes/Landmark_partition_test.html).
-```{r}
-# Find mean configuration - i.e. mean shape in dataset
-all.consensus <- (select.procrustes(nc.residuals, selector = mean))[[1]]
 
-# Measure spherical coordinates differences from the mean for each specimen for each landmark
-diff.from.mean <- coordinates.difference(coordinates = nc.residuals, reference = all.consensus, type = "spherical")
+```{r}
+
+
+
 ```
 
-To test the hypothesis that each landmark's variation from the mean configuration is above expected, we can use the PC axes from a PCA.
+
+
+
 ```{r}
 # Ordinate the data
-twoD.shape <- two.d.array(nc.residuals)
+twoD.shape <- two.d.array(residuals)
+ordination <- stats::prcomp(twoD.shape)
+
+# Find mean configuration - i.e. mean shape in dataset
+all.consensus <- (select.procrustes(residuals, selector = mean))[[1]]
+
+# Measure spherical coordinates differences from the mean for each specimen for each landmark
+diff.from.mean <- coordinates.difference(coordinates = residuals, reference = all.consensus, type = "spherical")
+
+# Find largest and smallest native species from mean centroid size
+big.index <- which(info.means$MeanCsize == max(info.means$MeanCsize))
+biggest.shape <- mean.shapes[, , big.index]
+sm.index <- which(info.means$Species == "del")
+smallest.shape <- mean.shapes[, , sm.index]
+
+# Force the symmetric component of shape into class "gpagen" (required for variation.range)
+res.gpagen.shape <- list()
+res.gpagen.shape$coords <- residuals
+res.gpagen.shape$consensus <- all.consensus
+class(res.gpagen.shape) <- "gpagen"
+
+
+# Plot variation
+procrustes.var.plot(all.consensus, biggest.shape, col = heat.colors, col.val = diff.from.mean$Uromys_caudimaculatus[, "radius"]) 
+procrustes.var.plot(all.consensus, smmallest.shape) 
+```
+
+To test the hypothesis that each landmark's variation from the mean configuration is above expected, we use the smallest and largest specimens
+```{r}
+# Ordinate the data
+twoD.shape <- two.d.array(residuals)
 ordination <- stats::prcomp(twoD.shape)
 
 # Force the symmetric component of shape into class "gpagen" (required for variation.range)
 res.gpagen.shape <- list()
-res.gpagen.shape$coords <- nc.residuals
+res.gpagen.shape$coords <- residuals
 res.gpagen.shape$consensus <- all.consensus
 class(res.gpagen.shape) <- "gpagen"
 
 # Measure extremes of variation from mean on PC1
-res.PC1.var <- variation.range(res.gpagen.shape, return.ID = FALSE, axis = 1, ordination = ordination, type = "spherical")
+#res.PC1.var <- variation.range(res.gpagen.shape, return.ID = FALSE, axis = 1, ordination = ordination, type = "spherical")
 ```
 
-The next step is to make a heatmap showing the size of variation and direction of movement for each landmark in the dataset, comparing between the min and max specimens along PC1.
+The next step is to make a heatmap showing the size of variation and direction of movement for each landmark in the dataset, comparing between the median to both the min and max centroid size specimens.
 ```{r}
 # Wrap specimens on the tangent space
-res.wrap.PCA <- plotTangentSpace(nc.residuals, verbose = FALSE)
+res.wrap.PCA <- plotTangentSpace(residuals, verbose = FALSE)
 
 # Select extreme specimens (the ones that make the warp-meshes) on PC1
 res.hypothetical.1 <- res.wrap.PCA$pc.shapes[[1]]  # PC1 min
@@ -178,7 +187,7 @@ res.hypothetical.4 <- res.wrap.PCA$pc.shapes[[4]]  # PC2 max
 ```{r}
 # PC1 Dorsal view
 open3d(windowRect = c(0, 0, 600, 600))
-res.PC1.var.plot <- procrustes.var.plot(res.hypothetical.1, res.hypothetical.2, col = heat.colors, col.val = res.PC1.var[, "radius"], labels = F)
+res.PC1.var.plot <- procrustes.var.plot(smallest.shape, biggest.shape, col = heat.colors, col.val = diff.from.mean, labels = F)
 view3d(phi = 0)  # flip cranium
 rgl.snapshot("../Data/Processed/heatmap_PC1_dor.png")  # save screenshot for multipanel plot
 
@@ -249,21 +258,21 @@ NOTE: would be best if residuals were generated in script 03
 ## Remove *Notomys* because differences are known
 ```{r}
 # No Notomys = not
-not <- which(nc.info.means$Genus == "Not")
-not.info.means <- nc.info.means[-not, ]  # metadata
-not.residuals <- nc.residuals[, , -not]  # shape data
-not.alpha.cols <- nc.alpha.cols[-not]  # colors
-not.alpha.pch <- nc.alpha.pch[-not]  # pch synbols
-not.alpha.names <- nc.alpha.names[-not]  # names (for plot labels)
+not <- which(info.means$Genus == "Not")
+not.info.means <- info.means[-not, ]  # metadata
+not.residuals <- residuals[, , -not]  # shape data
+not.alpha.cols <- alpha.cols[-not]  # colors
+not.alpha.pch <- alpha.pch[-not]  # pch synbols
+not.alpha.names <- alpha.names[-not]  # names (for plot labels)
 
-not.col.diet <- nc.col.diet[-not]  # diet colors
-not.pch.gld <- nc.pch.gld[-not]  # guild point symbols
+not.col.diet <- col.diet[-not]  # diet colors
+not.pch.gld <- pch.gld[-not]  # guild point symbols
 
 # For legend
-noto <- which(grepl("N ", names(nc.phylo.cols)))
-not.phylo.cols <- nc.phylo.cols[-noto]  # colors
-not.phylo.pch <- nc.phylo.pch[-noto]  # pch synbols
-not.phylo.names <- nc.phylo.names[-noto]  # names
+noto <- which(grepl("N ", names(phylo.cols)))
+not.phylo.cols <- phylo.cols[-noto]  # colors
+not.phylo.pch <- phylo.pch[-noto]  # pch synbols
+not.phylo.names <- phylo.names[-noto]  # names
 ```
 
 ### Plot residuals without *Notomys*
