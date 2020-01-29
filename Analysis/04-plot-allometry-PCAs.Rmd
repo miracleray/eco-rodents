@@ -33,7 +33,7 @@ PCA <- plotTangentSpace(shape)
 
 # Plot PCA by genus and export as .eps into ../Data/Results folder
 setEPS()
-postscript("../Data/Results/PCA_genus.eps")
+postscript("../Data/Results/PCA_Allspp_allom.eps")
 
 PlotPCA(PCA, 1, 2, sp.col.gen, pch.spp)
 legend("bottomright", legend = phylo.names, col = col.unique.spp, pch = pch.unique.spp, pt.bg = col.unique.spp, cex = .35, pt.cex = .7, ncol = 2)
@@ -65,7 +65,7 @@ col.by.clade <- PlotByGroup(info, "Clade", col.clade)
 PlotPCA(PCA, 1, 2, col.by.clade)
 ```
 
-## PCA plot by diet and guild
+## PCA plot by diet and guild - IMPT FIGURE
 This PCA colors specimens by diet and assigns point shape based on guild, i.e. where they spend most of their time.
 ```{r}
 # Set up pallete for diet
