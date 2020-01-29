@@ -1,5 +1,5 @@
 ---
-title: "05-test-partitioning"
+title: "05-plot_residual_PCAs"
 author: "Ariel Marcy & Vera Weisbecker"
 date: "8/15/2019"
 output: html_document
@@ -10,10 +10,12 @@ knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_knit$set(root.dir = '../eco-rodents')
 ```
 
-# Test biome partitioning 
-First, testing for a phylogenetic signal difference in each of the 7 regional biomes. 
+# Plot residual PCAs / Test for biome partitioning 
+First, test for a phylogenetic signal difference in each of the 7 regions. 
 
-Second, testing for partitioning by region in the residual shapes (size-less shape)
+Second, plot without-allometry PCA for all residuals.
+
+Third, plot residuals by region -- a test for partitioning.
 
 ### Load packages, functions, and data
 Tree, mean shape, and metadata for phylogenetic analyses come from the allometry rodents script 04. 
@@ -27,7 +29,7 @@ load(file = "../Data/Processed/03-tree-data.rda")
 load(file = "../Data/Processed/03-graphing-vectors.rda")
 ```
 
-## Assess phylogenetic signal overall
+### Assess phylogenetic signal overall
 Baseline comparison.
 ```{r}
 # Test phylogenetic signal
@@ -92,7 +94,7 @@ row.names(table) <- region.names
 write.table(table, "../Data/Results/Table_RegionPhySig.csv", sep = ",", col.names = NA)
 ```
 
-## 2) Do same analysis but for centroid size only
+## Do same analysis but for centroid size only
 ```{r}
 # Set up blank variables again for results table
 n.taxa <- c(rep("NA", length(region.names)))
@@ -139,16 +141,7 @@ row.names(table) <- region.names
 write.table(table, "../Data/Results/Table_RegionPhySig_Csize.csv", sep = ",", col.names = NA)
 ```
 
-## PCA with mean shape WITH ALLOMETRY for comparison
-```{r}
-alpha.col <- col.unique.spp[order(phylo.names)]
-alpha.pch <- pch.unique.spp[order(phylo.names)]
-
-mean.pca <- plotTangentSpace(mean.shapes, axis1 = 1, axis2 = 2, verbose = T)
-PlotPCA(mean.pca, 1, 2, alpha.col, alpha.pch, flip.axis1 = T)
-```
-
-## 3) Check biome partitioning WITHOUT allometry and WITH phylogenetic correction
+### Extract residuals
 First, extract residuals - code thanks to Dr Vera Weisbecker
 ```{r}
 # Use pgls of coords with size to get residuals
@@ -166,22 +159,46 @@ allom.resid <- arrayspecs(allometry.all$pgls.residuals, dim(mean.shapes)[[1]], 3
 Allom.all.plus.consensus <- allom.resid + array(mean.shapes, dim(allom.resid))
 ```
 
-### Then, plot residuals with consensus (WITHOUT allometry)
-```{r}
-res.PCA <- plotTangentSpace(Allom.all.plus.consensus, groups = alpha.col)
-
-PlotPCA(res.PCA, 1, 2, alpha.col, alpha.pch, flip.axis1 = TRUE, flip.axis2 = TRUE)
-legend("bottomright", phylo.names, col = col.unique.spp, pch = pch.unique.spp, pt.bg = col.unique.spp, cex = .53, pt.cex = .7, ncol = 2)
-```
-
-### Alternately, as above but with only residuals no consensus added
+### Plot but with only residuals no consensus added
 ```{r}
 res.PCA <- plotTangentSpace(allom.resid, groups = alpha.col)
 PlotPCA(res.PCA, 1, 2, alpha.col, alpha.pch, flip.axis2 = TRUE)
 legend("bottomright", phylo.names, col = col.unique.spp, pch = pch.unique.spp, pt.bg = col.unique.spp, cex = .53, pt.cex = .7, ncol = 2)
 ```
 
-### Finally, plot residuals by region
+
+## 2) Plot residuals with consensus (WITHOUT allometry) - IMPORTANT FIGURE
+Color and legend by species
+```{r}
+alpha.names <- dimnames(mean.shapes)[[3]]
+
+res.PCA <- plotTangentSpace(Allom.all.plus.consensus, groups = alpha.col, label = alpha.names)
+
+# Make axis labels
+PCs <- res.PCA$pc.summary$importance
+PCx.per <- round(PCs[2, 1] * 100, digits = 1)  # % with 1 decimal
+PCx.lab <- paste("PC1", " (", PCx.per, "%)", sep = "")
+PCy.per <- round(PCs[2, 2] * 100, digits = 1)
+PCy.lab <- paste("PC2", " (", PCy.per, "%)", sep = "")
+        
+# Pretty plot
+PCA.plot <- plot(x = -res.PCA$pc.scores[, 1],  # Flip for consistency
+                 y = -res.PCA$pc.scores[, 2],  
+                 xlab = PCx.lab, 
+                 ylab = PCy.lab,
+                 asp = TRUE,
+                 xlim = c(-0.12, 0.18),
+                 ylim = c(-0.18, 0.12),
+                 col = alpha.col, 
+                 pch = alpha.pch, 
+                 bg = alpha.col,
+                 cex = 1.5,
+                 cex.axis = 1.3, 
+                 cex.lab = 1.3)
+legend("bottomright", phylo.names, col = col.unique.spp, pch = pch.unique.spp, pt.bg = col.unique.spp, cex = .57, pt.cex = .7, ncol = 2)
+```
+
+## 3) Finally, plot the residuals with consensus by region
 ```{r}
 # Set up loop for particular regions in Australia
 region.names <- c("Savannah", "Arid Zone", "NE Wet Forest", "NE Dry Forest", "Pilbara", "South West", "South East")

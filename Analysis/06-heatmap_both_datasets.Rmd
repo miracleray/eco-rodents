@@ -37,37 +37,6 @@ load(file = "../Data/Processed/03-graphing-vectors.rda")
 load(file = "../Data/Processed/05-residual-data.rda")
 ```
 
-### Plot residuals - IMPORTANT FIGURE
-Color and legend by species
-```{r}
-alpha.names <- dimnames(mean.shapes)[[3]]
-
-res.PCA <- plotTangentSpace(residuals, groups = alpha.col, label = alpha.names)
-
-# Make axis labels
-PCs <- res.PCA$pc.summary$importance
-PCx.per <- round(PCs[2, 1] * 100, digits = 1)  # % with 1 decimal
-PCx.lab <- paste("PC1", " (", PCx.per, "%)", sep = "")
-PCy.per <- round(PCs[2, 2] * 100, digits = 1)
-PCy.lab <- paste("PC2", " (", PCy.per, "%)", sep = "")
-        
-# Pretty plot
-PCA.plot <- plot(x = -res.PCA$pc.scores[, 1],  # Flip for consistency
-                 y = -res.PCA$pc.scores[, 2],  
-                 xlab = PCx.lab, 
-                 ylab = PCy.lab,
-                 asp = TRUE,
-                 xlim = c(-0.12, 0.18),
-                 ylim = c(-0.18, 0.12),
-                 col = alpha.col, 
-                 pch = alpha.pch, 
-                 bg = alpha.col,
-                 cex = 1.5,
-                 cex.axis = 1.3, 
-                 cex.lab = 1.3)
-legend("bottomright", phylo.names, col = col.unique.spp, pch = pch.unique.spp, pt.bg = col.unique.spp, cex = .57, pt.cex = .7, ncol = 2)
-```
-
 ## Plot warp grids of small versus large specimens
 Uses Dr Thomas Guillerme's new package, `landvR` to see how landmarks vary within and between the two protocols.
 ```{r}

@@ -1,5 +1,5 @@
 ---
-title: "04-plot-exploratory-PCAs"
+title: "04-plot-allometry-PCAs"
 author: "Ariel Marcy"
 date: "2018-10-17"
 output: html_document
@@ -143,47 +143,6 @@ for (i in 1:7) {
                          cex.axis = 1.3, 
                          cex.lab = 1.3)
 }
-```
-
-## Remove specialists from PCAs
-This step is to see whether the PCA changes to highlight morphological differences among the less specialized species.
-
-### No aquatic carnivores
-These are the most specialized so most likely to skew the visualization / hide variation in other areas of the PCA
-```{r}
-test.data <- info[, c("Taxa", "Genus", "Species", "CatNum", "Order", "Csize", "Clade", "Feeding", "Guild")]  # relevant columns
-
-# Subset out Hydromys and Xeromys
-aquatic <- which(info$Guild == "Aquatic")  # specimens to remove
-test.data <- test.data[-aquatic, ]  # metadata
-test.shape <- shape[, , -aquatic]  # shape data
-test.col.gen <- sp.col.gen[-aquatic]  # color information
-test.pch.gen <- pch.spp[-aquatic]  # point shape information
-
-# Run PCA
-no.aq.pca <- plotTangentSpace(test.shape, groups = test.col.gen, axis1 = 1, axis2 = 2, verbose = T)
-
-# Plot PCA
-PlotPCA(no.aq.pca, 1, 2, test.col.gen, test.pch.gen)
-```
-
-### Aquatic carnivores only
-These are the most specialized so most likely to skew the visualization / hide variation in other areas of the PCA
-```{r}
-test.data <- info.traits[, c("Taxa", "Genus", "Species", "CatNum", "Order", "Csize", "Clade", "Feeding", "Guild")]  # relevant columns
-
-# Subset out Hydromys and Xeromys
-aquatic <- which(info.traits$Guild == "Aquatic" | info.traits$Feeding == "Frugivorous")  # specimens to remove
-test.data <- test.data[-aquatic, ]  # metadata
-test.shape <- shape[, , -aquatic]  # shape data
-test.col.gen <- sp.col.gen[-aquatic]  # color information
-test.pch.gen <- sp.pch.taxa[-aquatic]  # point shape information
-
-# Run PCA
-no.aq.pca <- plotTangentSpace(test.shape, groups = test.col.gen, axis1 = 1, axis2 = 2, verbose = T)
-
-# Plot PCA
-PlotPCA(no.aq.pca, 1, 2, test.col.gen, test.pch.gen)
 ```
 
 ### Save intermediate data
