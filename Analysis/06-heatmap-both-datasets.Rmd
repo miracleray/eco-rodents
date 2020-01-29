@@ -1,0 +1,177 @@
+---
+title: "06-heatmap-both-datasets"
+author: "Ariel Marcy"
+date: "9/18/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = '../eco-rodents')
+```
+
+# Heatmaps both with-allometry and without-allometry 3D coordinates
+1) Make heatmaps for with-allometry.
+
+2) Make heatmaps for without-allometry aka residuals aka size-less shape.
+
+3) Make multi-panel figure for comparisons across heatmaps.
+
+4) Directly compare by subtracting residual change from allometry change.
+
+### Load packages, functions, and data
+Tree, mean shape, and metadata for phylogenetic analyses come from the allometry rodents script 04. 
+```{r message = FALSE}
+library(geomorph)
+library(data.table)
+library(vegan)
+library(geiger)  # for phylogenies
+library(png)  # needed to work with screenshots
+library(colorspace)  # plot colors
+
+# Load libraries (and install if necessary) for landvR package
+if(!require(devtools)) install.packages("devtools")
+if(!require(dispRity)) install.packages("dispRity")
+if(!require(landvR)) install_github("TGuillerme/landvR")
+source("../Functions/utilities.R")  # custom functions
+source("../Functions/plotGMPhyloMorphoSpace_plotmod.R")  # modified geomorph function
+load(file = "../Data/Processed/03-main-data.rda")
+load(file = "../Data/Processed/03-tree-data.rda")
+load(file = "../Data/Processed/03-graphing-vectors.rda")
+load(file = "../Data/Processed/05-residual-data.rda")
+```
+
+## 1) Heatmaps for allometry coordinates
+First find mean speciemen, then smallest and largest
+```{r}
+# Find mean configuration - i.e. mean shape in dataset
+allom.mean <- (select.procrustes(residuals, selector = mean))[[1]]
+
+# Measure spherical coordinates differences from the mean for each specimen for each landmark
+allom.diff.mean <- coordinates.difference(coordinates = residuals, reference = allom.mean, type = "spherical")
+
+# Find largest and smallest native species from mean centroid size
+big.index <- which(info.means$MeanCsize == max(info.means$MeanCsize))
+biggest.shape <- mean.shapes[, , big.index]
+sm.index <- which(info.means$Species == "del")
+smallest.shape <- mean.shapes[, , sm.index]
+```
+
+### Export the variation for with allometry shape change
+Export images for plots
+```{r}
+# Dorsal view of mean to smallest
+open3d(windowRect = c(0, 0, 600, 600))
+procrustes.var.plot(smallest.shape, allom.mean, col = heat.colors, col.val = allom.diff.mean$Pseudomys_delicatulus[, "radius"]) 
+view3d(phi = 0)  # flip cranium
+rgl.snapshot("../Data/Processed/heatmap_ALL_sm-mean_dor.png")
+
+# Lateral view of mean to smallest
+open3d(windowRect = c(0, 0, 600, 600))
+procrustes.var.plot(smallest.shape, allom.mean, col = heat.colors, col.val = allom.diff.mean$Pseudomys_delicatulus[, "radius"])
+view3d(phi = 90)
+rgl.snapshot("../Data/Processed/heatmap_ALL_sm-mean_lat.png")
+
+
+# Dorsal view of mean to biggest
+open3d(windowRect = c(0, 0, 600, 600))
+procrustes.var.plot(allom.mean, biggest.shape, col = heat.colors, col.val = allom.diff.mean$Uromys_caudimaculatus[, "radius"])
+view3d(phi = 0)  # flip cranium
+rgl.snapshot("../Data/Processed/heatmap_ALL_mean-big_dor.png")
+
+# Lateral view of mean to biggest
+open3d(windowRect = c(0, 0, 600, 600))
+procrustes.var.plot(allom.mean, biggest.shape, col = heat.colors, col.val = allom.diff.mean$Uromys_caudimaculatus[, "radius"])
+view3d(phi = 90)
+rgl.snapshot("../Data/Processed/heatmap_ALL_mean-big_lat.png")
+```
+
+## 2) Heatmaps for residual coordinates
+Uses Dr Thomas Guillerme's new package, `landvR` to see how landmarks vary within and between the two protocols.
+```{r}
+# Find mean configuration - i.e. mean shape in dataset
+res.mean <- (select.procrustes(residuals, selector = mean))[[1]]
+
+# Measure spherical coordinates differences from the mean for each specimen for each landmark
+res.diff.mean <- coordinates.difference(coordinates = residuals, reference = res.mean, type = "spherical")
+```
+
+### Export the variation for residual shape change
+Export images for plots
+```{r}
+# Dorsal view of mean to smallest
+open3d(windowRect = c(0, 0, 600, 600))
+procrustes.var.plot(smallest.shape, res.mean, col = heat.colors, col.val = res.diff.mean$Pseudomys_delicatulus[, "radius"]) 
+view3d(phi = 0)  # flip cranium
+rgl.snapshot("../Data/Processed/heatmap_RES_sm-mean_dor.png")
+
+# Lateral view of mean to smallest
+open3d(windowRect = c(0, 0, 600, 600))
+procrustes.var.plot(smallest.shape, res.mean, col = heat.colors, col.val = res.diff.mean$Pseudomys_delicatulus[, "radius"])
+view3d(phi = 90)
+rgl.snapshot("../Data/Processed/heatmap_RES_sm-mean_lat.png")
+
+
+# Dorsal view of mean to biggest
+open3d(windowRect = c(0, 0, 600, 600))
+procrustes.var.plot(res.mean, biggest.shape, col = heat.colors, col.val = res.diff.mean$Uromys_caudimaculatus[, "radius"])
+view3d(phi = 0)  # flip cranium
+rgl.snapshot("../Data/Processed/heatmap_RES_mean-big_dor.png")
+
+# Lateral view of mean to biggest
+open3d(windowRect = c(0, 0, 600, 600))
+procrustes.var.plot(res.mean, biggest.shape, col = heat.colors, col.val = res.diff.mean$Uromys_caudimaculatus[, "radius"])
+view3d(phi = 90)
+rgl.snapshot("../Data/Processed/heatmap_RES_mean-big_lat.png")
+```
+
+### 3) Make multipanel figure comparing shape change between smallest-to-mean and mean-to-largest, with allometry vs without (residuals)
+First, clean up and load in all the images just created
+```{r}
+# Remove whitespace from all heatmaps (requires ImageMagik installed on PC)
+system("mogrify ../Data/Processed/heatmap_*.png -trim ../Data/Processed/*.png")
+
+# Load in with allometry 
+allom.sm.dor <- readPNG("../Data/Processed/heatmap_ALL_sm-mean_dor.png")
+allom.big.dor <- readPNG("../Data/Processed/heatmap_ALL_mean-big_dor.png")
+allom.sm.lat <- readPNG("../Data/Processed/heatmap_ALL_sm-mean_lat.png")
+allom.big.dor <- readPNG("../Data/Processed/heatmap_ALL_mean-big_lat.png")
+
+# Load in without allometry residuals
+resid.sm.dor <- readPNG("../Data/Processed/heatmap_RES_sm-mean_dor.png")
+resid.big.dor <- readPNG("../Data/Processed/heatmap_RES_mean-big_dor.png")
+resid.sm.lat <- readPNG("../Data/Processed/heatmap_RES_sm-mean_lat.png")
+resid.big.dor <- readPNG("../Data/Processed/heatmap_RES_mean-big_lat.png")
+```
+
+## Make Figure TK
+```{r}
+# Set up muli-panel figure
+mat <- matrix(c(1, 2, 3, 4), 2, 2, byrow = TRUE)  # 2 rows, 2 columns
+layout(mat, widths = c(1, 1, 1), heights = c(0.65, 0.75, 0.5))  
+
+# 1) With Allometry: PC1 lateral view
+par(mar = c(0, 0, 1, 0))  # sets the margins
+plot(c(0, dim(morph.dor.1)[2]), c(0, dim(morph.dor.1)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
+rasterImage(morph.dor.1, 0, 0, dim(morph.dor.1)[2], dim(morph.dor.1)[1])
+text(0, dim(morph.dor.1)[1]-10, "A", cex = 2)
+
+# 2) Without Allometry: PC1 lateral view
+par(mar = c(0, 0, 1, 0))
+plot(c(0, dim(morph.lat.1)[2]), c(0, dim(morph.lat.1)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
+rasterImage(morph.lat.1, 0, 0, dim(morph.lat.1)[2], dim(morph.lat.1)[1])
+text(0, dim(morph.lat.1)[1]-10, "B", cex = 2)
+
+# 3) With Allometry: PC1 dorsal view
+par(mar = c(0, 0, 1, 0)) 
+plot(c(0, dim(res.dor.1)[2]), c(0, dim(res.dor.1)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
+rasterImage(res.dor.1, 0, 0, dim(res.dor.1)[2], dim(res.dor.1)[1])
+text(0, dim(res.dor.1)[1]-10, "C", cex = 2)
+
+# 4) Without Allometry: PC1 dorsal view
+par(mar = c(0, 0, 1, 0))  
+plot(c(0, dim(res.lat.1)[2]), c(0, dim(res.lat.1)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
+rasterImage(res.lat.1, 0, 0, dim(res.lat.1)[2], dim(res.lat.1)[1])
+text(0, dim(res.lat.1)[1]-10, "D", cex = 2)
+
+```
