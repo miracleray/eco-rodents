@@ -96,6 +96,40 @@ text(-0.06, -0.05, "Omnivore", col = col.omni)
 text(-0.11, 0.01, "Granivore", col = col.gran)
 ```
 
+## Check for disparity differences
+Check to see if differences seen in PCA (which squashes multi-variate variation) occur when all axes of variation are taken into account.
+
+Here we are testing the difference between the space occupied by the old endemics versus the new endemics
+```{r}
+# Remove invasives
+end.shape <- shape[, , -(which(info$Endemic == "Inv"))]
+end.info <- info[-(which(info$Endemic == "Inv")), ]
+
+#The fossil attribution needs to be a factor or geomorph.ordination below does not run
+endemic.shape <- geomorph.data.frame(coords = end.shape, endemic = as.factor(end.info$Endemic))
+
+# Force shape into class "gpagen"
+gpagen.shape <- list()
+gpagen.shape$coords <- endemic.shape$coords
+gpagen.shape$endemic <- endemic.shape$endemic
+class(gpagen.shape) <- "gpagen"
+
+# Ordinate
+traitspace <- geomorph.ordination(gpagen.shape)
+
+# This identifies the centroid of the old endemic species to then test the multidimensional position of the new endemic species against
+old.centroid <- apply(traitspace[, gpagen.shape$endemic == "Old"], 2, mean)
+
+# This computes the distance of both groups from the old endemics' center; summary gives the stats, plot gives the boxplot
+dist.from.old <- dispRity(traitspace, metric = centroids, centroid = old.centroid)
+
+summary(dist.from.old)
+plot(dist.from.old)
+
+# This t-test shows that the new species are signiricantly further away from the old centroid than the old species
+test.dispRity(dist.from.old, test = t.test, alternative = "less")
+```
+
 ## Morphospace partitioning by habitat
 So far, most of the variation in the morphospace could be explained by size and genus affiliation, with different genera of similar sizes overlapping quite a bit. There doesn't seem to be much differentiation among Australian rodents, but perhaps the differentiation is hidden by geographical region or environmental partitioning. 
 
