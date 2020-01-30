@@ -155,50 +155,50 @@ layout(mat, widths = c(1, 1, 1), heights = c(0.65, 0.75, 0.5))
 
 ## LATERAL VIEWS
 # 1) Small to Mean, with Allometry, lateral view
-par(mar = c(0, 0, 1, 0))  # sets the margins
+par(mar = c(0, 0, 0, 0))  # sets the margins
 plot(c(0, dim(allom.sm.lat)[2]), c(0, dim(allom.sm.lat)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
 rasterImage(allom.sm.lat, 0, 0, dim(allom.sm.lat)[2], dim(allom.sm.lat)[1])
 text(0, dim(allom.sm.lat)[1]-10, "A", cex = 2)
 
 # 2) Small to Mean, without Allometry, lateral view
-par(mar = c(0, 0, 1, 0))
+par(mar = c(0, 0, 0, 0))
 plot(c(0, dim(resid.sm.lat)[2]), c(0, dim(resid.sm.lat)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
 rasterImage(resid.sm.lat, 0, 0, dim(resid.sm.lat)[2], dim(resid.sm.lat)[1])
 text(0, dim(resid.sm.lat)[1]-10, "B", cex = 2)
 
 # 3) Mean to Big, with Allometry, lateral view
-par(mar = c(0, 0, 1, 0))
+par(mar = c(0, 0, 0, 0))
 plot(c(0, dim(allom.big.lat)[2]), c(0, dim(allom.big.lat)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
 rasterImage(allom.big.lat, 0, 0, dim(allom.big.lat)[2], dim(allom.big.lat)[1])
 text(0, dim(allom.big.lat)[1]-10, "C", cex = 2)
 
 # 4) Mean to Big, without Allometry, lateral view
-par(mar = c(0, 0, 1, 0))
+par(mar = c(0, 0, 0, 0))
 plot(c(0, dim(resid.big.lat)[2]), c(0, dim(resid.big.lat)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
 rasterImage(resid.big.lat, 0, 0, dim(resid.big.lat)[2], dim(resid.big.lat)[1])
 text(0, dim(resid.big.lat)[1]-10, "D", cex = 2)
 
 ## DORSAL VIEWS
 # 5) Small to Mean, with Allometry, dorsal view
-par(mar = c(0, 0, 1, 0))  # sets the margins
-plot(c(0, dim(allom.sm.dor)[2]), c(0, dim(allom.sm.dor)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
-rasterImage(allom.sm.dor, 0, 0, dim(allom.sm.dor)[2], dim(allom.sm.dor)[1])
-text(0, dim(allom.sm.dor)[1]-10, "E", cex = 2)
+par(mar = c(0, 0, 0, 0))  # sets the margins
+plot(c(0, dim(allom.big.dor)[2]), c(0, dim(allom.big.dor)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
+rasterImage(allom.sm.dor, 0, 0, dim(allom.big.dor)[2], dim(allom.big.dor)[1])
+text(0, dim(allom.big.dor)[1]-10, "E", cex = 2)
 
 # 6) Small to Mean, without Allometry, dorsal view
-par(mar = c(0, 0, 1, 0))
-plot(c(0, dim(resid.sm.dor)[2]), c(0, dim(resid.sm.dor)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
-rasterImage(resid.sm.dor, 0, 0, dim(resid.sm.dor)[2], dim(resid.sm.dor)[1])
-text(0, dim(resid.sm.dor)[1]-10, "F", cex = 2)
+par(mar = c(0, 0, 0, 0))
+plot(c(0, dim(resid.big.dor)[2]), c(0, dim(resid.big.dor)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
+rasterImage(resid.sm.dor, 0, 0, dim(resid.big.dor)[2], dim(resid.big.dor)[1])
+text(0, dim(resid.big.dor)[1]-10, "F", cex = 2)
 
 # 7) Mean to Big, with Allometry, dorsal view
-par(mar = c(0, 0, 1, 0))
+par(mar = c(0, 0, 0, 0))
 plot(c(0, dim(allom.big.dor)[2]), c(0, dim(allom.big.dor)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
 rasterImage(allom.big.dor, 0, 0, dim(allom.big.dor)[2], dim(allom.big.dor)[1])
 text(0, dim(allom.big.dor)[1]-10, "G", cex = 2)
 
 # 8) Mean to Big, without Allometry: dorsal view
-par(mar = c(0, 0, 1, 0))
+par(mar = c(0, 0, 0, 0))
 plot(c(0, dim(resid.big.dor)[2]), c(0, dim(resid.big.dor)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
 rasterImage(resid.big.dor, 0, 0, dim(resid.big.dor)[2], dim(resid.big.dor)[1])
 text(0, dim(resid.big.dor)[1]-10, "H", cex = 2)

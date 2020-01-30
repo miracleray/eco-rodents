@@ -43,6 +43,12 @@ names(info)[names(info) == "Species.x"] <- "Species"
 
 # Add long form names ("Genus_species")
 info$FullName <- paste(info$Genus.y, info$Species.y, sep = "_")
+
+# Add info relating to old vs new endemics (vs invasives)
+info$Endemic <- "Old"
+info$Endemic[which(info$Clade == "Rattini")] <- "New"
+info$Endemic[which(info$Clade == "invRattini")] <- "Inv"
+info$Endemic[which(info$Clade ==  "Mus")] <- "Inv"
 ```
 
 ## Prepare shape dataset dimnames for phylogenetic analyses
