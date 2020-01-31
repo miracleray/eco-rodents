@@ -75,7 +75,6 @@ rgl.snapshot("../Data/Processed/heatmap_ALL_mean-big_lat.png")
 # Dorsal view of smallest to mean
 open3d(windowRect = c(0, 0, 600, 600))
 procrustes.var.plot(allom.mean, smallest.shape, col = heat.colors, col.val = allom.diff.mean$Pseudomys_delicatulus[, "radius"]) 
-view3d(phi = 90)
 view3d(phi = 0)  # flip cranium
 rgl.snapshot("../Data/Processed/heatmap_ALL_sm-mean_dor.png")
 
