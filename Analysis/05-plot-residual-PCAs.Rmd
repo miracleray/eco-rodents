@@ -26,10 +26,11 @@ source("../Functions/utilities.R")  # custom functions
 load(file = "../Data/Processed/03-main-data.rda")
 load(file = "../Data/Processed/03-tree-data.rda")
 load(file = "../Data/Processed/03-graphing-vectors.rda")
+load(file = "../Data/Processed/04-PCA.rda")
 ```
 
-### Extract residuals
-First, extract residuals - code thanks to Dr Vera Weisbecker
+## 1) Extract residuals
+Code thanks to Dr Vera Weisbecker
 ```{r}
 # Use pgls of coords with size to get residuals
 allom.GDF <- geomorph.data.frame(coords = mean.shapes, Csize = info.means$MeanCsize) 
@@ -46,15 +47,14 @@ allom.resid <- arrayspecs(allometry.all$pgls.residuals, dim(mean.shapes)[[1]], 3
 Allom.all.plus.consensus <- allom.resid + array(mean.shapes, dim(allom.resid))
 ```
 
-### Plot but with only residuals no consensus added
+## 2) Plot but with only residuals no consensus added
 ```{r}
 res.PCA <- plotTangentSpace(allom.resid, groups = alpha.col)
 PlotPCA(res.PCA, 1, 2, alpha.col, alpha.pch, flip.axis2 = TRUE)
 legend("bottomright", phylo.names, col = col.unique.spp, pch = pch.unique.spp, pt.bg = col.unique.spp, cex = .53, pt.cex = .7, ncol = 2)
 ```
 
-
-## 2) Plot residuals with consensus (WITHOUT allometry) - IMPORTANT FIGURE
+## 3) Plot residuals with consensus (WITHOUT allometry) - IMPORTANT FIGURE
 Color and legend by species
 ```{r}
 alpha.names <- dimnames(mean.shapes)[[3]]
@@ -87,7 +87,34 @@ PCA.plot <- plot(x = -res.PCA$pc.scores[, 1],  # Flip for consistency
 legend("bottomright", phylo.names, col = col.unique.spp, pch = pch.unique.spp, pt.bg = col.unique.spp, cex = .57, pt.cex = .7, ncol = 2)
 ```
 
-## 3) Finally, plot the residuals with consensus by region
+## 4) Plot by guild 
+Recolor plot above with points by diet and guild
+```{r}
+# Define color pallete for diets of all specimens
+col.diet.means <- PlotByGroup(info.means, "Feeding", col.diet.5)
+
+# Points: Aquatic (circle), Arboreal (triangle), Terrestrial (square)
+pch.gld.means <- PlotByGroup(info.means, "Guild", pch.gld.3)
+
+# Pretty plot
+PCA.plot <- plot(x = -res.PCA$pc.scores[, 1],  # Flip for consistency
+                 y = -res.PCA$pc.scores[, 2],  
+                 xlab = PCx.lab, 
+                 ylab = PCy.lab,
+                 asp = TRUE,
+                 xlim = c(-0.12, 0.18),
+                 ylim = c(-0.18, 0.12),
+                 col = col.diet.means, 
+                 pch = pch.gld.means, 
+                 bg = col.diet.means,
+                 cex = 1.5,
+                 cex.axis = 1.3, 
+                 cex.lab = 1.3)
+legend("topright", legend = c("Carnivore ", "Frugivore ", "Granivore ", "Herbivore ", "Omnivore "), col = col.diet.5, border = NULL, pch = 15)
+legend("bottomright", legend = c("Aquatic", "Arboreal", "Terrestrial"), col = "black", border = NULL, pch = c(21, 24, 22))
+```
+
+## 5) Finally, plot the residuals with consensus by region
 ```{r}
 # Set up loop for particular regions in Australia
 region.names <- c("Savannah", "Arid Zone", "NE Wet Forest", "NE Dry Forest", "Pilbara", "South West", "South East")

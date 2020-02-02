@@ -109,11 +109,11 @@ col.herb <- sequential_hcl(5, "Greens 3")[2]  # green colored grass
 col.omni <- sequential_hcl(5, "Grays")[3]  # gray for anything goes
 
 # Define color pallete for diets of all specimens
-col.diet <- c(col.carn, col.frug, col.gran, col.herb, col.omni)
+col.diet.5 <- c(col.carn, col.frug, col.gran, col.herb, col.omni)
 col.diet <- PlotByGroup(info, "Feeding", col.diet)
 
 # Points: Aquatic (circle), Arboreal (triangle), Terrestrial (square)
-pch.gld <- c(19, 24, 22)
+pch.gld.3 <- c(19, 24, 22)
 pch.gld <- PlotByGroup(info, "Guild", pch.gld)
 ```
 
@@ -291,5 +291,5 @@ write.table(table, "../Data/Results/Table_RegionPhySig_Csize.csv", sep = ",", co
 
 ### Save intermediate data
 ```{r}
-save(PCA, file = "../Data/Processed/04-PCA.rda")
+save(PCA, col.diet.5, pch.gld.3, file = "../Data/Processed/04-PCA.rda")
 ```
