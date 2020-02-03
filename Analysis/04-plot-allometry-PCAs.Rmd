@@ -64,10 +64,10 @@ traitspace.gdf <- geomorph.data.frame(coords = gpagen.shape$coords, factors = gp
 traitspace <- geomorph.ordination(traitspace.gdf)
 
 # This computes the distance of both groups from the old endemics' center; summary gives the stats, plot gives the boxplot
-dist.from.old <- dispRity(traitspace, metric = centroids)
+dist.from.old <- dispRity(traitspace, metric = pairwise.dist)
 
 summary(dist.from.old)
-plot(dist.from.old)
+plot(dist.from.old, ylim = c(0.01, 0.26))
 
 # This t-test shows that the new species are signiricantly further away from the old centroid than the old species
 disp.t.test <- test.dispRity(dist.from.old, test = t.test, alternative = "less")
