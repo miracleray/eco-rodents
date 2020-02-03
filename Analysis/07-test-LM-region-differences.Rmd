@@ -129,6 +129,8 @@ mod.result <- as.matrix(mod.test.5$CR.mat)  # results
 colnames(mod.result) <- c("vault", "orbital", "basicran", "rostrum", "molar")
 rownames(mod.result) <- c("vault", "orbital", "basicran", "rostrum", "molar")
 
+plot(mod.test.5)
+
 # And now with the phylogentic tree (and mean shapes)
 mod.test.5.phy <- phylo.modularity(mean.shapes, partition.gp = lm.modules[, 4], aus.tree)
 
