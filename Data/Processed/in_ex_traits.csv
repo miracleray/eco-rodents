@@ -8,10 +8,10 @@ Melomys,capensis,Uromys,Omnivorous,Arboreal,0,0,1,0,0,0,0
 Melomys,cervinipes,Uromys,Omnivorous,Arboreal,0,0,1,0.5,0,0,0
 Mesembriomys,gouldii,Mesembriomys,Frugivorous,Arboreal,1,0,0,1,0,0,0
 Mus,musculus,Mus,Omnivorous,Terrestrial,1,1,1,1,1,1,1
-Notomys,alexis,Pseudomys,Omnivorous,Terrestrial,0,1,0,0,0.5,0.5,0
-Notomys,cervinus,Pseudomys,Omnivorous,Terrestrial,0,1,0,0,0,0,0
-Notomys,fuscus,Pseudomys,Omnivorous,Terrestrial,0,1,0,0,0,0,0
-Notomys,mitchellii,Pseudomys,Omnivorous,Terrestrial,0,1,0,0,0,1,1
+Notomys,alexis,Pseudomys,Omnivorous,Hopping,0,1,0,0,0.5,0.5,0
+Notomys,cervinus,Pseudomys,Omnivorous,Hopping,0,1,0,0,0,0,0
+Notomys,fuscus,Pseudomys,Omnivorous,Hopping,0,1,0,0,0,0,0
+Notomys,mitchellii,Pseudomys,Omnivorous,Hopping,0,1,0,0,0,1,1
 Pogonomys,mollipilosis,Pogonomys,Frugivorous,Arboreal,0,0,1,0,0,0,0
 Pseudomys,australis,Pseudomys,Granivorous,Terrestrial,0,1,0,0.5,0,0,0.5
 Pseudomys,delicatulus,Pseudomys,Granivorous,Terrestrial,1,0.5,0,1,1,0,0.5
