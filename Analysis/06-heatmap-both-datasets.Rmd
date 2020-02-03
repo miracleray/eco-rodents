@@ -202,3 +202,24 @@ plot(c(0, dim(resid.big.dor)[2]), c(0, dim(resid.big.dor)[1]), type = "n", axes 
 rasterImage(resid.big.dor, 0, 0, dim(resid.big.dor)[2], dim(resid.big.dor)[1])
 text(0, dim(resid.big.dor)[1]-10, "H", cex = 2)
 ```
+
+## Heatmap species of interest
+Export images for plots
+```{r}
+notomys <- mean.shapes[, , which(info.means$Taxa == "N_fus")]
+
+# Lateral view of smallest to mean
+open3d(windowRect = c(0, 0, 600, 600))
+procrustes.var.plot(allom.mean, notomys, col = heat.colors, col.val = allom.diff.mean$Notomys_fuscus[, "radius"])
+view3d(phi = 90)
+rgl.snapshot("../Data/Processed/heatmap_ALL_not-mean_lat.png")
+
+# Dorsal view of smallest to mean
+open3d(windowRect = c(0, 0, 600, 600))
+procrustes.var.plot(allom.mean, notomys, col = heat.colors, col.val = allom.diff.mean$Notomys_fuscus[, "radius"]) 
+view3d(phi = 0)  # flip cranium
+rgl.snapshot("../Data/Processed/heatmap_ALL_no-mean_dor.png")
+
+```
+
+

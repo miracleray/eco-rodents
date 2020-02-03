@@ -51,17 +51,17 @@ Here we are testing the difference between the space occupied by the old endemic
 end.shape <- shape[, , -(which(info$Endemic == "Inv"))]
 end.info <- info[-(which(info$Endemic == "Inv")), ]
 
-#The fossil attribution needs to be a factor or geomorph.ordination below does not run
-endemic.shape <- geomorph.data.frame(coords = end.shape, endemic = as.factor(end.info$Endemic))
-
 # Force shape into class "gpagen"
 gpagen.shape <- list()
 gpagen.shape$coords <- endemic.shape$coords
-gpagen.shape$endemic <- endemic.shape$endemic
+gpagen.shape$endemic <- endemic.shape$endemic  # subsets
 class(gpagen.shape) <- "gpagen"
 
+# Make into geomorph data frame - need to use "coords" and "factors" 
+traitspace.gdf <- geomorph.data.frame(coords = gpagen.shape$coords, factors = gpagen.shape$endemic)
+
 # Ordinate
-traitspace <- geomorph.ordination(gpagen.shape)
+traitspace <- geomorph.ordination(traitspace.gdf)
 
 # This computes the distance of both groups from the old endemics' center; summary gives the stats, plot gives the boxplot
 dist.from.old <- dispRity(traitspace, metric = centroids)
@@ -70,7 +70,7 @@ summary(dist.from.old)
 plot(dist.from.old)
 
 # This t-test shows that the new species are signiricantly further away from the old centroid than the old species
-test.dispRity(dist.from.old, test = t.test, alternative = "less")
+disp.t.test <- test.dispRity(dist.from.old, test = t.test, alternative = "less")
 ```
 
 ## 3) PCA plot by ancestor group

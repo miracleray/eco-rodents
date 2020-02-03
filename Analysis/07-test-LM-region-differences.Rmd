@@ -141,7 +141,6 @@ rownames(mod.result.phy) <- c("vault", "orbital", "basicran", "rostrum", "molar"
 
 plot(mod.test.5.phy)
 
-
 # Test without hydromys
 shape.noHyd <- shape[, , -which(dimnames(shape)[[3]] == "Hydromys_chrysogaster")]
 mod.test.5.noHyd <- modularity.test(shape.noHyd, partition.gp = (lm.modules[, 4]))
@@ -208,7 +207,7 @@ summary(tcran.v.basi)
 
 ## Triple check with compare evolutionary rates of traits within the crania
 ```{r}
-cme.rates <- compare.multi.evol.rates(mean.shapes, gp = as.character(lm.modules[, 3]), aus.tree)
+cme.rates <- compare.multi.evol.rates(mean.shapes, gp = as.character(lm.modules[, 4]), aus.tree)
  
 summary(cme.rates)  # results
 cme.rates$pairwise.pvalue  
