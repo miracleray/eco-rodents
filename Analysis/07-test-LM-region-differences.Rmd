@@ -148,14 +148,6 @@ plot(mod.test.5.noHyd)
 # barely a difference is made
 ```
 
-## Check with EMMLi
-
-```{r}
-cor.matrix <- dotcorr(mean.shapes)  # correlation matrix using congruence coeffienct
-
-EMMLi(cor.matrix, 37, lm.modules[, c(2, 3, 4)])
-```
-
 ## Double check with Two-Block Least Squared analysis
 ```{r}
 # Define coords that refer to modules
