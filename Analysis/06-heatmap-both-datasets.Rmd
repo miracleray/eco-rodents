@@ -41,23 +41,27 @@ load(file = "../Data/Processed/03-graphing-vectors.rda")
 load(file = "../Data/Processed/05-residual-data.rda")
 ```
 
-## 1) Heatmaps for allometry coordinates
+## 1) Heatmaps for fitted allometry coordinates
 First find mean speciemen, then smallest and largest. Uses Dr Thomas Guillerme's new package, `landvR` to see how landmarks vary between these specimens.
 ```{r}
+# Fit specimens
+allom.fit <- procD.lm(mean.shapes~info.means$MeanCsize)
+fit.shapes <- arrayspecs(allom.fit$fitted, 325, 3)
+
 # Find mean configuration - i.e. mean shape in dataset
-allom.mean <- (select.procrustes(mean.shapes, selector = mean))[[1]]
+allom.mean <- (select.procrustes(fit.shapes, selector = mean))[[1]]
 
 # Measure spherical coordinates differences from the mean for each specimen for each landmark
-allom.diff.mean <- coordinates.difference(coordinates = mean.shapes, reference = allom.mean, type = "spherical")
+allom.diff.mean <- coordinates.difference(coordinates = fit.shapes, reference = allom.mean, type = "spherical")
 
 # Find largest and smallest native species from mean centroid size
 big.index <- which(info.means$MeanCsize == max(info.means$MeanCsize))
-biggest.shape <- mean.shapes[, , big.index]
+biggest.shape <- fit.shapes[, , big.index]
 sm.index <- which(info.means$Species == "del")
-smallest.shape <- mean.shapes[, , sm.index]
+smallest.shape <- fit.shapes[, , sm.index]
 ```
 
-### Export the variation for with Allometry shape change
+### Export the variation for with allometry shape change
 Export images for plots
 ```{r}
 # Lateral view of smallest to mean
@@ -85,7 +89,10 @@ view3d(phi = 0)  # flip cranium
 rgl.snapshot("../Data/Processed/heatmap_ALL_mean-big_dor.png")
 ```
 
-## 2) Heatmaps for residual coordinates
+## 2) Heatmaps for PC1 with allometry
+
+
+## 3) Heatmaps for PC1 with residual coordinates
 Steps as above.
 ```{r}
 # Find mean configuration - i.e. mean shape in dataset
@@ -100,7 +107,7 @@ res.big.shape <- residuals[, , big.index]
 ```
 
 ### Export the variation for residual shape change
-Export images for plots
+Export images for plots.
 ```{r}
 # Lateral view of mean to smallest
 open3d(windowRect = c(0, 0, 600, 600))
@@ -127,7 +134,7 @@ view3d(phi = 0)  # flip cranium
 rgl.snapshot("../Data/Processed/heatmap_RES_mean-big_dor.png")
 ```
 
-### 3) Make multipanel figure comparing shape change between smallest-to-mean and mean-to-largest, with allometry vs without (residuals)
+### 4) Make multipanel figure comparing shape change between smallest-to-mean and mean-to-largest, with allometry vs without (residuals)
 First, clean up and load in all the images just created
 ```{r}
 # Remove whitespace from all heatmaps (requires ImageMagik installed on PC)
@@ -222,4 +229,9 @@ rgl.snapshot("../Data/Processed/heatmap_ALL_no-mean_dor.png")
 
 ```
 
+```{r}
+# Find mean configuration - i.e. mean shape in dataset
+allom.mean <- (select.procrustes(mean.shapes, selector = mean))[[1]]
 
+# Measure spherical coordinates differences from the mean for each specimen for each landmark
+allom.diff.mean <- coordinates.difference(coordinates = mean.shapes, reference = allom.mean, type = "spherical")
