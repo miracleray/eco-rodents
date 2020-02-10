@@ -57,10 +57,6 @@ legend("bottomright", phylo.names, col = col.unique.spp, pch = pch.unique.spp, p
 ## 3) Plot residuals with consensus (WITHOUT allometry) - IMPORTANT FIGURE
 Color and legend by species
 ```{r}
-alpha.names <- dimnames(mean.shapes)[[3]]
-alpha.col <- col.unique.spp[order(phylo.names)]
-alpha.pch <- pch.unique.spp[order(phylo.names)]
-
 res.PCA <- plotTangentSpace(Allom.all.plus.consensus, groups = alpha.col, label = alpha.names)
 
 # Make axis labels
@@ -116,7 +112,7 @@ PCA.plot <- plot(x = -PCA.mean.allo$pc.scores[, 1],  # Flip for consistency
                  asp = TRUE,
                  xlim = c(-0.1, 0.2),
                  col = alpha.col,
-                 pch = 16,
+                 pch = alpha.pch,
                  bg = alpha.col,
                  #col = col.diet.means, 
                  #pch = pch.gld.means, 
@@ -142,7 +138,7 @@ PCA.plot <- plot(x = -res.PCA$pc.scores[, 1],  # Flip for consistency
                  xlim = c(-0.12, 0.18),
                  ylim = c(-0.18, 0.12),
                  col = alpha.col,
-                 pch = 16,
+                 pch = alpha.pch,
                  bg = alpha.col,
                  #col = col.diet.means, 
                  #pch = pch.gld.means, 
