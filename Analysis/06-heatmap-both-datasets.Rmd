@@ -38,6 +38,7 @@ source("../Functions/plotGMPhyloMorphoSpace_plotmod.R")  # modified geomorph fun
 load(file = "../Data/Processed/03-main-data.rda")
 load(file = "../Data/Processed/03-tree-data.rda")
 load(file = "../Data/Processed/03-graphing-vectors.rda")
+load(file = "../Data/Processed/04-PCA.rda")
 load(file = "../Data/Processed/05-residual-data.rda")
 ```
 
@@ -65,32 +66,72 @@ smallest.shape <- fit.shapes[, , sm.index]
 Export images for plots
 ```{r}
 # Lateral view of smallest to mean
-open3d(windowRect = c(0, 0, 600, 600))
+open3d(windowRect = c(0, 0, 400, 400))
 procrustes.var.plot(allom.mean, smallest.shape, col = heat.colors, col.val = allom.diff.mean$Pseudomys_delicatulus[, "radius"])
 view3d(phi = 90)
 rgl.snapshot("../Data/Processed/heatmap_ALL_sm-mean_lat.png")
 
 # Lateral view of mean to biggest
-open3d(windowRect = c(0, 0, 600, 600))
+open3d(windowRect = c(0, 0, 400, 400))
 procrustes.var.plot(allom.mean, biggest.shape, col = heat.colors, col.val = allom.diff.mean$Uromys_caudimaculatus[, "radius"])
 view3d(phi = 90)
 rgl.snapshot("../Data/Processed/heatmap_ALL_mean-big_lat.png")
 
 # Dorsal view of smallest to mean
-open3d(windowRect = c(0, 0, 600, 600))
+open3d(windowRect = c(0, 0, 400, 400))
 procrustes.var.plot(allom.mean, smallest.shape, col = heat.colors, col.val = allom.diff.mean$Pseudomys_delicatulus[, "radius"]) 
 view3d(phi = 0)  # flip cranium
 rgl.snapshot("../Data/Processed/heatmap_ALL_sm-mean_dor.png")
 
 # Dorsal view of mean to biggest
-open3d(windowRect = c(0, 0, 600, 600))
+open3d(windowRect = c(0, 0, 400, 400))
 procrustes.var.plot(allom.mean, biggest.shape, col = heat.colors, col.val = allom.diff.mean$Uromys_caudimaculatus[, "radius"])
 view3d(phi = 0)  # flip cranium
 rgl.snapshot("../Data/Processed/heatmap_ALL_mean-big_dor.png")
 ```
 
 ## 2) Heatmaps for PC1 with allometry
+```{r}
+# Find mean configuration - i.e. mean shape in dataset
+PC.allom.mean <- (select.procrustes(mean.shapes, selector = mean))[[1]]
 
+# Measure spherical coordinates differences from the mean for each specimen for each landmark
+PC.allom.diff.mean <- coordinates.difference(coordinates = mean.shapes, reference = PC.allom.mean, type = "spherical")
+
+# Find min and max shapes    
+min.name <- names(which(mean.PCA$pc.scores[, 1] == max(mean.PCA$pc.scores[, 1])))  # min because axis is flipped relative to our plots
+max.name <- names(which(mean.PCA$pc.scores[, 1] == min(mean.PCA$pc.scores[, 1])))  # max
+PC.allom.min <- mean.shapes[, , which(dimnames(mean.shapes)[[3]] == min.name)]
+PC.allom.max <- mean.shapes[, , which(dimnames(mean.shapes)[[3]] == max.name)]
+```
+
+### Export the variation for with allometry shape change
+Export images for plots
+```{r}
+# Lateral view of smallest to mean
+open3d(windowRect = c(0, 0, 400, 400))
+procrustes.var.plot(PC.allom.mean, PC.allom.min, col = heat.colors, col.val = PC.allom.diff.mean$Notomys_cervinus[, "radius"])
+view3d(phi = 90)
+rgl.snapshot("../Data/Processed/heatmap_PCA_sm-mean_lat.png")
+
+# Lateral view of mean to biggest
+open3d(windowRect = c(0, 0, 400, 400))
+procrustes.var.plot(PC.allom.mean, PC.allom.max, col = heat.colors, col.val = PC.allom.diff.mean$Uromys_caudimaculatus[, "radius"])
+view3d(phi = 90)
+rgl.snapshot("../Data/Processed/heatmap_PCA_mean-big_lat.png")
+
+# Dorsal view of smallest to mean
+open3d(windowRect = c(0, 0, 400, 400))
+procrustes.var.plot(PC.allom.mean, PC.allom.min, col = heat.colors, col.val = PC.allom.diff.mean$Notomys_cervinus[, "radius"]) 
+view3d(phi = 0)  # flip cranium
+rgl.snapshot("../Data/Processed/heatmap_PCA_sm-mean_dor.png")
+
+# Dorsal view of mean to biggest
+open3d(windowRect = c(0, 0, 400, 400))
+procrustes.var.plot(PC.allom.mean, PC.allom.max, col = heat.colors, col.val = PC.allom.diff.mean$Uromys_caudimaculatus[, "radius"])
+view3d(phi = 0)  # flip cranium
+rgl.snapshot("../Data/Processed/heatmap_PCA_mean-big_dor.png")
+```
 
 ## 3) Heatmaps for PC1 with residual coordinates
 Steps as above.
@@ -101,35 +142,39 @@ res.mean <- (select.procrustes(residuals, selector = mean))[[1]]
 # Measure spherical coordinates differences from the mean for each specimen for each landmark
 res.diff.mean <- coordinates.difference(coordinates = residuals, reference = res.mean, type = "spherical")
 
-# Find smallest and largest residual shapes
-res.sm.shape <- residuals[, , sm.index]
-res.big.shape <- residuals[, , big.index]
+# Find min and max shapes    
+r.min.name <- names(which(res.PCA$pc.scores[, 1] == min(res.PCA$pc.scores[, 1])))
+r.max.name <- names(which(res.PCA$pc.scores[, 1] == max(res.PCA$pc.scores[, 1])))
+PC.res.min <- residuals[, , which(dimnames(residuals)[[3]] == r.min.name)]
+PC.res.max <- residuals[, , which(dimnames(residuals)[[3]] == r.max.name)]
+
+#plot(res.PCA$pc.scores[,1], res.PCA$pc.scores[,2], col = alpha.col, pch = alpha.pch)
 ```
 
 ### Export the variation for residual shape change
 Export images for plots.
 ```{r}
 # Lateral view of mean to smallest
-open3d(windowRect = c(0, 0, 600, 600))
-procrustes.var.plot(res.mean, res.sm.shape, col = heat.colors, col.val = res.diff.mean$Pseudomys_delicatulus[, "radius"])
+open3d(windowRect = c(0, 0, 400, 400))
+procrustes.var.plot(res.mean, PC.res.min, col = heat.colors, col.val = res.diff.mean$Conilurus_penicillatus[, "radius"])
 view3d(phi = 90)
 rgl.snapshot("../Data/Processed/heatmap_RES_sm-mean_lat.png")
 
 # Lateral view of mean to biggest
-open3d(windowRect = c(0, 0, 600, 600))
-procrustes.var.plot(res.mean, res.big.shape, col = heat.colors, col.val = res.diff.mean$Uromys_caudimaculatus[, "radius"])
+open3d(windowRect = c(0, 0, 400, 400))
+procrustes.var.plot(res.mean, PC.res.max, col = heat.colors, col.val = res.diff.mean$Hydromys_chrysogaster[, "radius"])
 view3d(phi = 90)
 rgl.snapshot("../Data/Processed/heatmap_RES_mean-big_lat.png")
 
 # Dorsal view of mean to smallest
-open3d(windowRect = c(0, 0, 600, 600))
-procrustes.var.plot(res.mean, res.sm.shape, col = heat.colors, col.val = res.diff.mean$Pseudomys_delicatulus[, "radius"]) 
+open3d(windowRect = c(0, 0, 400, 400))
+procrustes.var.plot(res.mean, PC.res.min, col = heat.colors, col.val = res.diff.mean$Conilurus_penicillatus[, "radius"]) 
 view3d(phi = 0)  # flip cranium
 rgl.snapshot("../Data/Processed/heatmap_RES_sm-mean_dor.png")
 
 # Dorsal view of mean to biggest
-open3d(windowRect = c(0, 0, 600, 600))
-procrustes.var.plot(res.mean, res.big.shape, col = heat.colors, col.val = res.diff.mean$Uromys_caudimaculatus[, "radius"])
+open3d(windowRect = c(0, 0, 400, 400))
+procrustes.var.plot(res.mean, PC.res.max, col = heat.colors, col.val = res.diff.mean$Hydromys_chrysogaster[, "radius"])
 view3d(phi = 0)  # flip cranium
 rgl.snapshot("../Data/Processed/heatmap_RES_mean-big_dor.png")
 ```
@@ -145,6 +190,12 @@ allom.sm.lat <- readPNG("../Data/Processed/heatmap_ALL_sm-mean_lat.png")
 allom.big.lat <- readPNG("../Data/Processed/heatmap_ALL_mean-big_lat.png")
 allom.sm.dor <- readPNG("../Data/Processed/heatmap_ALL_sm-mean_dor.png")
 allom.big.dor <- readPNG("../Data/Processed/heatmap_ALL_mean-big_dor.png")
+
+# Load in with allometry PCA
+allPC.sm.lat <- readPNG("../Data/Processed/heatmap_PCA_sm-mean_lat.png")
+allPC.big.lat <- readPNG("../Data/Processed/heatmap_PCA_mean-big_lat.png")
+allPC.sm.dor <- readPNG("../Data/Processed/heatmap_PCA_sm-mean_dor.png")
+allPC.big.dor <- readPNG("../Data/Processed/heatmap_PCA_mean-big_dor.png")
 
 # Load in without allometry residuals
 resid.sm.lat <- readPNG("../Data/Processed/heatmap_RES_sm-mean_lat.png")
@@ -209,29 +260,3 @@ plot(c(0, dim(resid.big.dor)[2]), c(0, dim(resid.big.dor)[1]), type = "n", axes 
 rasterImage(resid.big.dor, 0, 0, dim(resid.big.dor)[2], dim(resid.big.dor)[1])
 text(0, dim(resid.big.dor)[1]-10, "H", cex = 2)
 ```
-
-## Heatmap species of interest
-Export images for plots
-```{r}
-notomys <- mean.shapes[, , which(info.means$Taxa == "N_fus")]
-
-# Lateral view of smallest to mean
-open3d(windowRect = c(0, 0, 600, 600))
-procrustes.var.plot(allom.mean, notomys, col = heat.colors, col.val = allom.diff.mean$Notomys_fuscus[, "radius"])
-view3d(phi = 90)
-rgl.snapshot("../Data/Processed/heatmap_ALL_not-mean_lat.png")
-
-# Dorsal view of smallest to mean
-open3d(windowRect = c(0, 0, 600, 600))
-procrustes.var.plot(allom.mean, notomys, col = heat.colors, col.val = allom.diff.mean$Notomys_fuscus[, "radius"]) 
-view3d(phi = 0)  # flip cranium
-rgl.snapshot("../Data/Processed/heatmap_ALL_no-mean_dor.png")
-
-```
-
-```{r}
-# Find mean configuration - i.e. mean shape in dataset
-allom.mean <- (select.procrustes(mean.shapes, selector = mean))[[1]]
-
-# Measure spherical coordinates differences from the mean for each specimen for each landmark
-allom.diff.mean <- coordinates.difference(coordinates = mean.shapes, reference = allom.mean, type = "spherical")

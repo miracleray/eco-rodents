@@ -42,6 +42,13 @@ legend("bottomright", legend = phylo.names, col = col.unique.spp, pch = pch.uniq
 dev.off()
 ```
 
+## Do for mean shapes
+```{r}
+mean.PCA <- plotTangentSpace(mean.shapes)
+PlotPCA(mean.PCA, 1, 2, alpha.col, alpha.pch, flip.axis1 = TRUE)
+```
+
+
 ## 2) Check for disparity differences between old and new endemics
 Check to see if differences seen in PCA (which squashes multi-variate variation) occur when all axes of variation are taken into account.
 
@@ -291,5 +298,5 @@ write.table(table, "../Data/Results/Table_RegionPhySig_Csize.csv", sep = ",", co
 
 ### Save intermediate data
 ```{r}
-save(PCA, col.diet.5, pch.gld.4, file = "../Data/Processed/04-PCA.rda")
+save(PCA, col.diet.5, pch.gld.4, mean.PCA, file = "../Data/Processed/04-PCA.rda")
 ```
