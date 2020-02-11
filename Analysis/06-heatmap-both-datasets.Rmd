@@ -43,7 +43,7 @@ load(file = "../Data/Processed/05-residual-data.rda")
 ```
 
 ## 1) Heatmaps for fitted allometry coordinates
-First find mean speciemen, then smallest and largest. Uses Dr Thomas Guillerme's new package, `landvR` to see how landmarks vary between these specimens.
+First find mean specimen, then smallest and largest. Uses Dr Thomas Guillerme's new package, `landvR` to see how landmarks vary between these specimens.
 ```{r}
 # Fit specimens
 allom.fit <- procD.lm(mean.shapes~info.means$MeanCsize)

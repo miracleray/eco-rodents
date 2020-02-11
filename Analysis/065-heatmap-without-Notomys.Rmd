@@ -40,7 +40,7 @@ load(file = "../Data/Processed/05-residual-data.rda")
 ```{r}
 index.rm <- str_detect(dimnames(residuals)[[3]], "Notomys")
 res.no.not <- residuals[, , !index.rm]  # remove Notomys from shape dataset
-res.PCA.not.not <- plotTangentSpace(res.no.not)  # residuals PCA without Notomys
+res.PCA.not <- plotTangentSpace(res.no.not)  # residuals PCA without Notomys
 
 # For exploratory plotting
 alpha.col.not <- alpha.col[!index.rm]  # color
