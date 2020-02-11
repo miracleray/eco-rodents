@@ -202,13 +202,13 @@ rgl.snapshot("../Data/Processed/heatmap_RP2_sm-mean_lat.png")
 
 # Lateral view of mean to biggest
 open3d(windowRect = c(0, 0, 600, 600))
-procrustes.var.plot(res.mean, PC.res2.max, col = heat.colors, col.val = res.diff.mean$Mastacomys_fuscus[, "radius"])
+procrustes.var.plot(res.mean, PC.res2.max, col = heat.colors, col.val = res.diff.mean$Notomys_cervinus[, "radius"])
 view3d(phi = 90)
 rgl.snapshot("../Data/Processed/heatmap_RP2_mean-big_lat.png")
 
 # Dorsal view of mean to smallest
 open3d(windowRect = c(0, 0, 600, 600))
-procrustes.var.plot(res.mean, PC.res2.min, col = heat.colors, col.val = res.diff.mean$Conilurus_penicillatus[, "radius"]) 
+procrustes.var.plot(res.mean, PC.res2.min, col = heat.colors, col.val = res.diff.mean$Mastacomys_fuscus[, "radius"]) 
 view3d(phi = 0)  # flip cranium
 rgl.snapshot("../Data/Processed/heatmap_RP2_sm-mean_dor.png")
 
