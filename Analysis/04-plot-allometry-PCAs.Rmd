@@ -46,6 +46,7 @@ dev.off()
 ```{r}
 mean.PCA <- plotTangentSpace(mean.shapes)
 PlotPCA(mean.PCA, 1, 2, alpha.col, alpha.pch, flip.axis1 = TRUE)
+legend("bottomright", legend = phylo.names, col = col.unique.spp, pch = pch.unique.spp, pt.bg = col.unique.spp, cex = .45, pt.cex = .8, ncol = 2)
 ```
 
 

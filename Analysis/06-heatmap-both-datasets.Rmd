@@ -148,7 +148,8 @@ r.max.name <- names(which(res.PCA$pc.scores[, 1] == max(res.PCA$pc.scores[, 1]))
 PC.res.min <- residuals[, , which(dimnames(residuals)[[3]] == r.min.name)]
 PC.res.max <- residuals[, , which(dimnames(residuals)[[3]] == r.max.name)]
 
-#plot(res.PCA$pc.scores[,1], res.PCA$pc.scores[,2], col = alpha.col, pch = alpha.pch)
+PlotPCA(res.PCA, 1, 2, col = alpha.col, pch = alpha.pch)
+legend("bottomright", legend = phylo.names, col = col.unique.spp, pch = pch.unique.spp, pt.bg = col.unique.spp, cex = 0.535, pt.cex = .7, ncol = 2)
 ```
 
 ### Export the variation for residual shape change

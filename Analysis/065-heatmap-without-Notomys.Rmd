@@ -45,7 +45,7 @@ res.PCA.not <- plotTangentSpace(res.no.not)  # residuals PCA without Notomys
 # For exploratory plotting
 alpha.col.not <- alpha.col[!index.rm]  # color
 alpha.pch.not <- alpha.pch[!index.rm]  # points
-alpha.names.not <- alpha.names[!index.rm]  # names for legend
+phylo.names.not <- phylo.names[!index.rm]  # names for legend
 
 PlotPCA(res.PCA.not, 1, 2, alpha.col.not, alpha.pch.not)
 ```
