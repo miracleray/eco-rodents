@@ -204,5 +204,5 @@ for (i in 1:7) {
 ### Save intermediate data
 ```{r}
 residuals <- Allom.all.plus.consensus  # shape data
-save(alpha.col, alpha.pch, res.PCA, allom.resid, residuals, file = "../Data/Processed/05-residual-data.rda")
+save(res.PCA, allom.resid, residuals, file = "../Data/Processed/05-residual-data.rda")
 ```

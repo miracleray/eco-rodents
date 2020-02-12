@@ -47,7 +47,7 @@ alpha.col.not <- alpha.col[!index.rm]  # color
 alpha.pch.not <- alpha.pch[!index.rm]  # points
 alpha.names.not <- alpha.names[!index.rm]  # names for legend
 
-PlotPCA(res.PCA.not.not, 1, 2, alpha.col.not, alpha.pch.not)
+PlotPCA(res.PCA.not, 1, 2, alpha.col.not, alpha.pch.not)
 ```
 
 ## 3) Heatmaps for PC1 with residual coordinates
