@@ -20,8 +20,6 @@ If so, we would expect to see the top cranium-rostrum to be the least variable a
 ```{r message = FALSE}
 library(png)  # needed to work with screenshots
 library(colorspace)  # plot colors
-library(EMMLi)
-library(paleomorph)
 # Load libraries (and install if necessary) for landvR package
 if(!require(devtools)) install.packages("devtools")
 if(!require(dispRity)) install.packages("dispRity")
@@ -146,6 +144,21 @@ shape.noHyd <- shape[, , -which(dimnames(shape)[[3]] == "Hydromys_chrysogaster")
 mod.test.5.noHyd <- modularity.test(shape.noHyd, partition.gp = (lm.modules[, 4]))
 plot(mod.test.5.noHyd)
 # barely a difference is made
+```
+
+### Test if modularity signal is different across clades
+```{r}
+coords.clade <- coords.subset(mean.shapes, info.means$Clade)
+
+# Remove single-species clades
+clade.index <- 1:nlevels(info.means$Clade)[-c(4,5)]  # removes Mus and Pogonomys
+
+# Use lapply function to perform modularity test on 3D arrays in each clade
+mod.clade.tests <- lapply(clade.index, function(j) modularity.test(coords.clade[[j]], partition.gp = lm.modules[, 4], iter = 500, print.progress = FALSE))
+
+# Apply function from 2019 Adams & Collyer paper
+clade.CRs <- compare.CR(mod.clade.tests, CR.null = FALSE)
+clade.CRs
 ```
 
 ## Double check with Two-Block Least Squared analysis
