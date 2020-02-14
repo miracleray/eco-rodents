@@ -161,6 +161,18 @@ clade.CRs <- compare.CR(mod.clade.tests, CR.null = FALSE)
 clade.CRs
 ```
 
+### Test if modularity signal is different across tribes
+```{r}
+coords.tribe <- coords.subset(mean.shapes, info.means$Endemic)
+
+# Use lapply function to perform modularity test on 3D arrays in each tribe
+mod.tribe.tests <- lapply(c(2,3), function(j) modularity.test(coords.tribe[[j]], partition.gp = lm.modules[, 4], iter = 500, print.progress = TRUE))
+
+# Apply function from 2019 Adams & Collyer paper
+tribe.CRs <- compare.CR(mod.tribe.tests, CR.null = FALSE)
+tribe.CRs
+```
+
 ## Double check with Two-Block Least Squared analysis
 ```{r}
 # Define coords that refer to modules
