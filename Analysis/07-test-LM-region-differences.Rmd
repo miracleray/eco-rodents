@@ -174,64 +174,25 @@ tribe.CRs
 ```
 
 ## Integration test
+With 5 modules 
 ```{r}
 int.test <- integration.test(mean.shapes, partition.gp = lm.modules[, 4], iter = 500)
+summary(int.test)
+int.test$r.pls.mat
 
+# With phylogeny
+int.phylo.test <- phylo.integration(mean.shapes, phy = aus.tree, partition.gp = lm.modules[, 4], iter = 500)
+summary(int.phylo.test)
 ```
 
-## Double check with Two-Block Least Squared analysis
+## Integration test
+With 3 modules 
 ```{r}
-# Define coords that refer to modules
-rostrum <- which(lm.modules[, 3] == "rostrum")  
-top.cran <- which(lm.modules[, 3] == "topcran") 
-basicran <- which(lm.modules[, 3] == "basicran")
+int.test <- integration.test(mean.shapes, partition.gp = lm.modules[, 3], iter = 500)
+summary(int.test)
+int.test$r.pls.mat
 
-# Do pairwise comparisons between each of the modules
-rost.v.tcran <- two.b.pls(shape[rostrum, , ], shape[top.cran, ,])
-rost.v.basi <- two.b.pls(shape[rostrum, , ], shape[basicran, ,])
-tcran.v.basi <- two.b.pls(shape[top.cran, , ], shape[basicran, ,])
-
-# See results
-summary(rost.v.tcran)
-summary(rost.v.basi)
-summary(tcran.v.basi)
-```
-
-### Two-Block Least Squared analysis on old vs new endemics
-```{r}
-# Subset shape 
-non.old.end <- which(info$Clade == "Rattini" | info$Clade == "invRattini" | info$Clade == "Mus")
-
-end.shape <- shape[, , -non.old.end]  # only old endemics (n = 233)
-
-# Do pairwise comparisons between each of the modules
-rost.v.tcran <- two.b.pls(end.shape[rostrum, , ], end.shape[top.cran, ,])
-rost.v.basi <- two.b.pls(end.shape[rostrum, , ], end.shape[basicran, ,])
-tcran.v.basi <- two.b.pls(end.shape[top.cran, , ], end.shape[basicran, ,])
-
-# See results
-summary(rost.v.tcran)
-summary(rost.v.basi)
-summary(tcran.v.basi)
-
-# Do on new endemics
-end.shape <- shape[, , non.old.end]  # only new endemics (n = 83)
-
-# Do pairwise comparisons between each of the modules
-rost.v.tcran <- two.b.pls(end.shape[rostrum, , ], end.shape[top.cran, ,])
-rost.v.basi <- two.b.pls(end.shape[rostrum, , ], end.shape[basicran, ,])
-tcran.v.basi <- two.b.pls(end.shape[top.cran, , ], end.shape[basicran, ,])
-
-# See results
-summary(rost.v.tcran)
-summary(rost.v.basi)
-summary(tcran.v.basi)
-```
-
-## Triple check with compare evolutionary rates of traits within the crania
-```{r}
-cme.rates <- compare.multi.evol.rates(mean.shapes, gp = as.character(lm.modules[, 4]), aus.tree)
- 
-summary(cme.rates)  # results
-cme.rates$pairwise.pvalue  
+# With phylogeny
+int.phylo.test <- phylo.integration(mean.shapes, phy = aus.tree, partition.gp = lm.modules[, 3], iter = 500)
+summary(int.phylo.test)
 ```
