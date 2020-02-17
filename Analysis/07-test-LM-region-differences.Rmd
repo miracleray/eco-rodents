@@ -173,6 +173,12 @@ tribe.CRs <- compare.CR(mod.tribe.tests, CR.null = FALSE)
 tribe.CRs
 ```
 
+## Integration test
+```{r}
+int.test <- integration.test(mean.shapes, partition.gp = lm.modules[, 4], iter = 500)
+
+```
+
 ## Double check with Two-Block Least Squared analysis
 ```{r}
 # Define coords that refer to modules
