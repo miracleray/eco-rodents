@@ -176,12 +176,12 @@ tribe.CRs
 ## Integration test
 With 5 modules 
 ```{r}
-int.test <- integration.test(mean.shapes, partition.gp = lm.modules[, 4], iter = 500)
+int.test <- integration.test(mean.shapes, partition.gp = lm.modules[, 4], iter = 1000)
 summary(int.test)
 int.test$r.pls.mat
 
 # With phylogeny
-int.phylo.test <- phylo.integration(mean.shapes, phy = aus.tree, partition.gp = lm.modules[, 4], iter = 500)
+int.phylo.test <- phylo.integration(mean.shapes, phy = aus.tree, partition.gp = lm.modules[, 4], iter = 1000)
 summary(int.phylo.test)
 ```
 
@@ -196,3 +196,5 @@ int.test$r.pls.mat
 int.phylo.test <- phylo.integration(mean.shapes, phy = aus.tree, partition.gp = lm.modules[, 3], iter = 500)
 summary(int.phylo.test)
 ```
+
+### 
