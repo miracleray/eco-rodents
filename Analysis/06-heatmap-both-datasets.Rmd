@@ -143,8 +143,8 @@ res.mean <- (select.procrustes(residuals, selector = mean))[[1]]
 res.diff.mean <- coordinates.difference(coordinates = residuals, reference = res.mean, type = "spherical")
 
 # Find min and max shapes    
-r.min.name <- names(which(res.PCA$pc.scores[, 1] == min(res.PCA$pc.scores[, 1])))
-r.max.name <- names(which(res.PCA$pc.scores[, 1] == max(res.PCA$pc.scores[, 1])))
+r.max.name <- names(which(res.PCA$pc.scores[, 1] == min(res.PCA$pc.scores[, 1])))
+r.min.name <- names(which(res.PCA$pc.scores[, 1] == max(res.PCA$pc.scores[, 1])))
 PC.res.min <- residuals[, , which(dimnames(residuals)[[3]] == r.min.name)]
 PC.res.max <- residuals[, , which(dimnames(residuals)[[3]] == r.max.name)]
 
@@ -184,8 +184,8 @@ rgl.snapshot("../Data/Processed/heatmap_RES_mean-big_dor.png")
 Steps as above.
 ```{r}
 # Find min and max shapes on PC2   
-r2.min.name <- names(which(res.PCA$pc.scores[, 2] == min(res.PCA$pc.scores[, 2])))
-r2.max.name <- names(which(res.PCA$pc.scores[, 2] == max(res.PCA$pc.scores[, 2])))
+r2.max.name <- names(which(res.PCA$pc.scores[, 2] == min(res.PCA$pc.scores[, 2])))
+r2.min.name <- names(which(res.PCA$pc.scores[, 2] == max(res.PCA$pc.scores[, 2])))
 PC.res2.min <- residuals[, , which(dimnames(residuals)[[3]] == r2.min.name)]
 PC.res2.max <- residuals[, , which(dimnames(residuals)[[3]] == r2.max.name)]
 
@@ -198,7 +198,7 @@ Export images for plots.
 ```{r}
 # Lateral view of mean to smallest
 open3d(windowRect = c(0, 0, 600, 600))
-procrustes.var.plot(res.mean, PC.res2.min, col = heat.colors, col.val = res.diff.mean$Mastacomys_fuscus[, "radius"])
+procrustes.var.plot(res.mean, PC.res2.min, col = heat.colors, col.val = res.diff.mean$Hydromys_chrysogaster[, "radius"])
 view3d(phi = 90)
 rgl.snapshot("../Data/Processed/heatmap_RP2_sm-mean_lat.png")
 
@@ -210,7 +210,7 @@ rgl.snapshot("../Data/Processed/heatmap_RP2_mean-big_lat.png")
 
 # Dorsal view of mean to smallest
 open3d(windowRect = c(0, 0, 600, 600))
-procrustes.var.plot(res.mean, PC.res2.min, col = heat.colors, col.val = res.diff.mean$Mastacomys_fuscus[, "radius"]) 
+procrustes.var.plot(res.mean, PC.res2.min, col = heat.colors, col.val = res.diff.mean$Hydromys_chrysogaster[, "radius"]) 
 view3d(phi = 0)  # flip cranium
 rgl.snapshot("../Data/Processed/heatmap_RP2_sm-mean_dor.png")
 

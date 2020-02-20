@@ -92,6 +92,7 @@ mod.test.1$CR.mat  # results
 
 # And now a test with the phylogentic tree (and mean shapes)
 mod.test.phy <- phylo.modularity(mean.shapes, partition.gp = lm.modules[, 3], aus.tree)
+mod.test.phy$CR.mat
 ```
 
 ### Visualize the 6 partitions from Goswami 2006/7
