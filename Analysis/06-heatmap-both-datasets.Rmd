@@ -148,7 +148,7 @@ r.max.name <- names(which(res.PCA$pc.scores[, 1] == max(res.PCA$pc.scores[, 1]))
 PC.res.min <- residuals[, , which(dimnames(residuals)[[3]] == r.min.name)]
 PC.res.max <- residuals[, , which(dimnames(residuals)[[3]] == r.max.name)]
 
-PlotPCA(res.PCA, 1, 2, col = alpha.col, pch = alpha.pch)
+PlotPCA(res.PCA, 1, 2, col = alpha.col, pch = alpha.pch, flip.axis1 = TRUE, flip.axis2 = TRUE)
 legend("bottomright", legend = phylo.names, col = col.unique.spp, pch = pch.unique.spp, pt.bg = col.unique.spp, cex = 0.535, pt.cex = .7, ncol = 2)
 ```
 
@@ -157,7 +157,7 @@ Export images for plots.
 ```{r}
 # Lateral view of mean to smallest
 open3d(windowRect = c(0, 0, 600, 600))
-procrustes.var.plot(res.mean, PC.res.min, col = heat.colors, col.val = res.diff.mean$Conilurus_penicillatus[, "radius"])
+procrustes.var.plot(res.mean, PC.res.min, col = heat.colors, col.val = res.diff.mean$Notomys_cervinus[, "radius"])
 view3d(phi = 90)
 rgl.snapshot("../Data/Processed/heatmap_RES_sm-mean_lat.png")
 
@@ -169,7 +169,7 @@ rgl.snapshot("../Data/Processed/heatmap_RES_mean-big_lat.png")
 
 # Dorsal view of mean to smallest
 open3d(windowRect = c(0, 0, 600, 600))
-procrustes.var.plot(res.mean, PC.res.min, col = heat.colors, col.val = res.diff.mean$Conilurus_penicillatus[, "radius"]) 
+procrustes.var.plot(res.mean, PC.res.min, col = heat.colors, col.val = res.diff.mean$Notomys_cervinus[, "radius"]) 
 view3d(phi = 0)  # flip cranium
 rgl.snapshot("../Data/Processed/heatmap_RES_sm-mean_dor.png")
 
@@ -189,7 +189,8 @@ r2.max.name <- names(which(res.PCA$pc.scores[, 2] == max(res.PCA$pc.scores[, 2])
 PC.res2.min <- residuals[, , which(dimnames(residuals)[[3]] == r2.min.name)]
 PC.res2.max <- residuals[, , which(dimnames(residuals)[[3]] == r2.max.name)]
 
-#plot(res.PCA$pc.scores[,1], res.PCA$pc.scores[,2], col = alpha.col, pch = alpha.pch)
+PlotPCA(res.PCA, 1, 2, col = alpha.col, pch = alpha.pch, flip.axis1 = TRUE, flip.axis2 = TRUE)
+legend("bottomright", legend = phylo.names, col = col.unique.spp, pch = pch.unique.spp, pt.bg = col.unique.spp, cex = 0.535, pt.cex = .7, ncol = 2)
 ```
 
 ### Export the variation for residual shape change
@@ -203,7 +204,7 @@ rgl.snapshot("../Data/Processed/heatmap_RP2_sm-mean_lat.png")
 
 # Lateral view of mean to biggest
 open3d(windowRect = c(0, 0, 600, 600))
-procrustes.var.plot(res.mean, PC.res2.max, col = heat.colors, col.val = res.diff.mean$Notomys_cervinus[, "radius"])
+procrustes.var.plot(res.mean, PC.res2.max, col = heat.colors, col.val = res.diff.mean$Conilurus_penicillatus[, "radius"])
 view3d(phi = 90)
 rgl.snapshot("../Data/Processed/heatmap_RP2_mean-big_lat.png")
 
@@ -215,7 +216,7 @@ rgl.snapshot("../Data/Processed/heatmap_RP2_sm-mean_dor.png")
 
 # Dorsal view of mean to biggest
 open3d(windowRect = c(0, 0, 600, 600))
-procrustes.var.plot(res.mean, PC.res2.max, col = heat.colors, col.val = res.diff.mean$Notomys_cervinus[, "radius"])
+procrustes.var.plot(res.mean, PC.res2.max, col = heat.colors, col.val = res.diff.mean$Conilurus_penicillatus[, "radius"])
 view3d(phi = 0)  # flip cranium
 rgl.snapshot("../Data/Processed/heatmap_RP2_mean-big_dor.png")
 ```
@@ -363,4 +364,84 @@ par(mar = c(0, 0, 0, 0))
 plot(c(0, dim(resP2.big.dor)[2]), c(0, dim(resP2.big.dor)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
 rasterImage(resP2.big.dor, 0, 0, dim(resP2.big.dor)[2], dim(resP2.big.dor)[1])
 text(0, dim(resP2.big.dor)[1]-10, "P", cex = 2)
+```
+
+## 3) Heatmaps for PC1 with residual coordinates w/o Notomys
+Replace P. nov for N. cer and export plots of variation for residual shape change.
+```{r}
+# Find min and max shapes    
+r.min.name <- "Pseudomys_novaehollandiae"
+r.max.name <- names(which(res.PCA.not$pc.scores[, 1] == max(res.PCA.not$pc.scores[, 1])))
+PC.res.min <- res.no.not[, , which(dimnames(res.no.not)[[3]] == r.min.name)]
+PC.res.max <- res.no.not[, , which(dimnames(res.no.not)[[3]] == r.max.name)]
+
+# Lateral view of mean to smallest
+open3d(windowRect = c(0, 0, 600, 600))
+procrustes.var.plot(res.mean, PC.res.min, col = heat.colors, col.val = res.diff.mean$Pseudomys_novaehollandiae[, "radius"])
+view3d(phi = 90)
+rgl.snapshot("../Data/Processed/heatmap_RES_sm-mean_lat_NOt.png")
+
+# Lateral view of mean to biggest
+open3d(windowRect = c(0, 0, 600, 600))
+procrustes.var.plot(res.mean, PC.res.max, col = heat.colors, col.val = res.diff.mean$Hydromys_chrysogaster[, "radius"])
+view3d(phi = 90)
+rgl.snapshot("../Data/Processed/heatmap_RES_mean-big_lat_NOt.png")
+
+# Dorsal view of mean to smallest
+open3d(windowRect = c(0, 0, 600, 600))
+procrustes.var.plot(res.mean, PC.res.min, col = heat.colors, col.val = res.diff.mean$Pseudomys_novaehollandiae[, "radius"]) 
+view3d(phi = 0)  # flip cranium
+rgl.snapshot("../Data/Processed/heatmap_RES_sm-mean_dor_NOt.png")
+
+# Dorsal view of mean to biggest
+open3d(windowRect = c(0, 0, 600, 600))
+procrustes.var.plot(res.mean, PC.res.max, col = heat.colors, col.val = res.diff.mean$Hydromys_chrysogaster[, "radius"])
+view3d(phi = 0)  # flip cranium
+rgl.snapshot("../Data/Processed/heatmap_RES_mean-big_dor_NOt.png")
+```
+
+### 4) Make multipanel figure comparing shape change between smallest-to-mean and mean-to-largest, with allometry vs without (residuals)
+First, clean up and load in all the images just created
+```{r}
+# Remove whitespace from all heatmaps (requires ImageMagik installed on PC)
+system("mogrify ../Data/Processed/heatmap_*.png -trim ../Data/Processed/*.png")
+
+# Load in without allometry residuals PC1
+resid.sm.lat <- readPNG("../Data/Processed/heatmap_RES_sm-mean_lat_NOt.png")
+resid.big.lat <- readPNG("../Data/Processed/heatmap_RES_mean-big_lat_NOt.png")
+resid.sm.dor <- readPNG("../Data/Processed/heatmap_RES_sm-mean_dor_NOt.png")
+resid.big.dor <- readPNG("../Data/Processed/heatmap_RES_mean-big_dor_NOt.png")
+```
+
+## Make multi-panel Figure TK Part 3: Residuals without Notomys
+```{r}
+# Set up muli-panel figure; lateral 
+mat <- matrix(c(1:4), 4, 1, byrow = TRUE)  # 4 rows, 1 column
+layout(mat, widths = c(1, 1, 1), heights = c(0.65, 0.75, 0.5))  
+
+## LATERAL VIEWS
+# 1) Small to Mean, residuals PC1, lateral view
+par(mar = c(0, 0, 0, 0))
+plot(c(0, dim(resid.sm.lat)[2]), c(0, dim(resid.sm.lat)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
+rasterImage(resid.sm.lat, 0, 0, dim(resid.sm.lat)[2], dim(resid.sm.lat)[1])
+text(0, dim(resid.sm.lat)[1]-10, "Q", cex = 2)
+
+# 2) Mean to Big, residuals PC1, lateral view
+par(mar = c(0, 0, 0, 0))
+plot(c(0, dim(resid.big.lat)[2]), c(0, dim(resid.big.lat)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
+rasterImage(resid.big.lat, 0, 0, dim(resid.big.lat)[2], dim(resid.big.lat)[1])
+text(0, dim(resid.big.lat)[1]-10, "R", cex = 2)
+
+## DORSAL VIEWS
+# 3) Small to Mean, residuals PC1, dorsal view
+par(mar = c(0, 0, 0, 0))
+plot(c(0, dim(resid.big.dor)[2]), c(0, dim(resid.big.dor)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
+rasterImage(resid.sm.dor, 0, 0, dim(resid.big.dor)[2], dim(resid.big.dor)[1])
+text(0, dim(resid.big.dor)[1]-10, "S", cex = 2)
+
+# 4) Mean to Big, residuals PC1, dorsal view
+par(mar = c(0, 0, 0, 0))
+plot(c(0, dim(resid.big.dor)[2]), c(0, dim(resid.big.dor)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
+rasterImage(resid.big.dor, 0, 0, dim(resid.big.dor)[2], dim(resid.big.dor)[1])
+text(0, dim(resid.big.dor)[1]-10, "T", cex = 2)
 ```
