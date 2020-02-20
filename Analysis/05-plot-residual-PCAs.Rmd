@@ -153,6 +153,12 @@ legend("bottomright", legend = phylo.names, col = col.unique.spp, pch = pch.uniq
 #legend("bottomright", legend = c("Aquatic", "Arboreal", "Terrestrial", "Hopping"), col = "black", border = NULL, pch = c(21, 24, 22, 23), cex = 0.9)
 ```
 
+### Check for correlation of PC2 with centroid size
+```{r}
+cor(-res.PCA$pc.scores[, 2], info.means$MeanCsize)
+```
+
+
 ## 5) Finally, plot the residuals with consensus by region
 ```{r}
 # Set up loop for particular regions in Australia

@@ -197,4 +197,8 @@ int.phylo.test <- phylo.integration(mean.shapes, phy = aus.tree, partition.gp = 
 summary(int.phylo.test)
 ```
 
-### 
+### Whole integration test
+Test whether rodent skull is integrated as a whole
+```{r}
+globalIntegration(mean.shapes)
+```
