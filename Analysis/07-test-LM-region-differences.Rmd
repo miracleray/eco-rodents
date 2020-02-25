@@ -171,18 +171,57 @@ tribe.CRs
 ## Test to see if PCs of modules are equivalent
 Uses method by Dr Emma Sherratt
 ```{r}
-# Separate modules 
-
+# Separate modules - using 5-module framework 
+mod.1 <- mean.shapes[which(lm.modules[, 4] == "basicran"), ,]
+mod.2 <- mean.shapes[which(lm.modules[, 4] == "molar"), ,]
+mod.3 <- mean.shapes[which(lm.modules[, 4] == "orbital"), ,]
+mod.4 <- mean.shapes[which(lm.modules[, 4] == "rostrum"), ,]
+mod.5 <- mean.shapes[which(lm.modules[, 4] == "vault"), ,]
 
 # Run PCAs
+PCA.1 <- plotTangentSpace(mod.1)
+PCA.2 <- plotTangentSpace(mod.2)
+PCA.3 <- plotTangentSpace(mod.3)
+PCA.4 <- plotTangentSpace(mod.4)
+PCA.5 <- plotTangentSpace(mod.5)
+
+# Make distance matrices
+d.PCA.1 <- dist(PCA.1$pc.scores)
+d.PCA.2 <- dist(PCA.2$pc.scores)
+d.PCA.3 <- dist(PCA.3$pc.scores)
+d.PCA.4 <- dist(PCA.4$pc.scores)
+d.PCA.5 <- dist(PCA.5$pc.scores)
 
 # Run Mantel tests
-Vol.dist <- dist(PCA.vol$scores) 
-Shp.dist <- dist(PCA$pc.scores)
-mantel(Vol.dist, Shp.dist, method = "pearson", permutations = 1000) 
+m.1v2 <- mantel(d.PCA.1, d.PCA.2, method = "pearson", permutations = 1000) 
+m.1v3 <- mantel(d.PCA.1, d.PCA.3, method = "pearson", permutations = 1000)
+m.1v4 <- mantel(d.PCA.1, d.PCA.4, method = "pearson", permutations = 1000)
+m.1v5 <- mantel(d.PCA.1, d.PCA.5, method = "pearson", permutations = 1000)
+
+m.2v3 <- mantel(d.PCA.2, d.PCA.3, method = "pearson", permutations = 1000) 
+m.2v4 <- mantel(d.PCA.2, d.PCA.4, method = "pearson", permutations = 1000)
+m.2v5 <- mantel(d.PCA.2, d.PCA.5, method = "pearson", permutations = 1000)
+
+m.3v4 <- mantel(d.PCA.3, d.PCA.4, method = "pearson", permutations = 1000)
+m.3v5 <- mantel(d.PCA.3, d.PCA.5, method = "pearson", permutations = 1000)
+
+m.4v5 <- mantel(d.PCA.4, d.PCA.5, method = "pearson", permutations = 1000)
 
 # Bonferroni correction
+p.vals.bon <- round(p.adjust(c(m.1v2$signif, m.1v3$signif, m.1v4$signif, m.1v5$signif, m.2v3$signif, m.2v4$signif, m.2v5$signif, m.3v4$signif, m.3v5$signif, m.4v5$signif), method = "bonferroni"), 3)
 
+# Make results table
+col1 <- c("-", p.vals.bon[1], p.vals.bon[2], p.vals.bon[3], p.vals.bon[4])
+col2 <- c(m.1v2$statistic, "-", p.vals.bon[5], p.vals.bon[6], p.vals.bon[7])
+col3 <- c(m.1v3$statistic, m.2v3$statistic, "-", p.vals.bon[8], p.vals.bon[9])
+col4 <- c(m.1v4$statistic, m.2v4$statistic, m.3v4$statistic, "-", p.vals.bon[10])
+col5 <- c(m.1v5$statistic, m.2v5$statistic, m.3v5$statistic, m.4v5$statistic, "-")
+
+modules <- sort(unique(as.factor(lm.modules[, 4])))
+mantel.results <- data.table(basicran = col1, molar = col2, orbital = col3, rostrum = col4, vault = col5, row.names = modules)
+
+# Export Table S6
+write.table(mantel.results, "../Data/Results/Table_MantelTests.csv", sep = ",", col.names = NA)
 ```
 
 ## Integration test
