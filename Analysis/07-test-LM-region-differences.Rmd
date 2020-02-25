@@ -224,30 +224,6 @@ mantel.results <- data.table(basicran = col1, molar = col2, orbital = col3, rost
 write.table(mantel.results, "../Data/Results/Table_MantelTests.csv", sep = ",", col.names = NA)
 ```
 
-## Integration test
-With 5 modules 
-```{r}
-int.test <- integration.test(mean.shapes, partition.gp = lm.modules[, 4], iter = 1000)
-summary(int.test)
-int.test$r.pls.mat
-
-# With phylogeny
-int.phylo.test <- phylo.integration(mean.shapes, phy = aus.tree, partition.gp = lm.modules[, 4], iter = 1000)
-summary(int.phylo.test)
-```
-
-## Integration test
-With 3 modules 
-```{r}
-int.test <- integration.test(mean.shapes, partition.gp = lm.modules[, 3], iter = 500)
-summary(int.test)
-int.test$r.pls.mat
-
-# With phylogeny
-int.phylo.test <- phylo.integration(mean.shapes, phy = aus.tree, partition.gp = lm.modules[, 3], iter = 500)
-summary(int.phylo.test)
-```
-
 ### Whole integration test
 Test whether rodent skull is integrated as a whole
 ```{r}
