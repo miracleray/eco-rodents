@@ -8,7 +8,6 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_knit$set(root.dir = '../eco-rodents')
-#par(mfrow=c(1,1))
 ```
 
 # Test variation within morphospace
@@ -168,7 +167,7 @@ tribe.CRs <- compare.CR(mod.tribe.tests, CR.null = FALSE)
 tribe.CRs
 ```
 
-## Test to see if PCs of modules are equivalent
+## Mantel Test to see if PCs of modules are equivalent
 Uses method by Dr Emma Sherratt
 ```{r}
 # Separate modules - using 5-module framework 
