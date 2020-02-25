@@ -139,12 +139,6 @@ colnames(mod.result.phy) <- c("vault", "orbital", "basicran", "rostrum", "molar"
 rownames(mod.result.phy) <- c("vault", "orbital", "basicran", "rostrum", "molar")
 
 plot(mod.test.5.phy)
-
-# Test without hydromys
-shape.noHyd <- shape[, , -which(dimnames(shape)[[3]] == "Hydromys_chrysogaster")]
-mod.test.5.noHyd <- modularity.test(shape.noHyd, partition.gp = (lm.modules[, 4]))
-plot(mod.test.5.noHyd)
-# barely a difference is made
 ```
 
 ### Test if modularity signal is different across clades
@@ -172,6 +166,23 @@ mod.tribe.tests <- lapply(c(2,3), function(j) modularity.test(coords.tribe[[j]],
 # Apply function from 2019 Adams & Collyer paper
 tribe.CRs <- compare.CR(mod.tribe.tests, CR.null = FALSE)
 tribe.CRs
+```
+
+## Test to see if PCs of modules are equivalent
+Uses method by Dr Emma Sherratt
+```{r}
+# Separate modules 
+
+
+# Run PCAs
+
+# Run Mantel tests
+Vol.dist <- dist(PCA.vol$scores) 
+Shp.dist <- dist(PCA$pc.scores)
+mantel(Vol.dist, Shp.dist, method = "pearson", permutations = 1000) 
+
+# Bonferroni correction
+
 ```
 
 ## Integration test
