@@ -223,7 +223,7 @@ mantel.results <- data.table(basicran = col1, molar = col2, orbital = col3, rost
 write.table(mantel.results, "../Data/Results/Table_MantelTests.csv", sep = ",", col.names = NA)
 ```
 
-### Whole integration test
+### Whole integration test - export plot for supplementary
 Test whether rodent skull is integrated as a whole
 ```{r}
 globalIntegration(mean.shapes)
