@@ -10,8 +10,8 @@ knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_knit$set(root.dir = '../eco-rodents')
 ```
 
-# Test biome pairs
-
+# Test phylo-morpho distances
+Assess limits of morphological divergence as it relates to phylogenetic distance.
 
 ### Load packages, functions, and data from previous steps
 ```{r message = FALSE}
@@ -99,15 +99,12 @@ alpha.col.spp2 <- gen.col
 # Save in table for ease in plotting later on
 master.table$col.spp1 <- PlotByGroup(master.table, "spp1", alpha.col.spp1)
 master.table$col.spp2 <- PlotByGroup(master.table, "spp2", alpha.col.spp2)
-
-# Plot
-plot(master.table$phylo.d, master.table$morph.d, col = master.table$col.spp1, bg = master.table$col.spp2, pch = 21, xlab = "Phylogenetic distance (~million years since common ancestor)", ylab = "Morphological distance")
 ```
 
 ## Repeat Phylo/Morph distance plot using residuals
 ```{r}
 # Morphological distance matrix for residuals
-mean.gpa.res <- gpagen(Allom.all.plus.consensus, ProcD = TRUE)
+mean.gpa.res <- gpagen(residuals, ProcD = TRUE)
 morph.matrix.res <- as.matrix(mean.gpa.res$procD)
 
 # Shorten row and column names
@@ -117,9 +114,23 @@ colnames(morph.matrix.res) <- short.names
 # Make comparable table to phylo distance using function defined above
 morph.table.r <- make.table(morph.matrix.res, "morph.d.r")
 master.table.r <- merge(phylo.table, morph.table.r[, 3:4], by = "pair")
+```
 
-# Plot
-plot(master.table.r$phylo.d, master.table.r$morph.d.r, col = master.table$col.spp1, bg = master.table$col.spp2, pch = 21, xlab = "Phylogenetic distance (~million years since common ancestor)", ylab = "Morphological distance RESIDUALS")
+
+### Export Figure
+```{r}
+mat <- matrix(c(1, 2), 2, 1, byrow = TRUE)  # 2 rows, 1 column
+layout(mat, widths = c(1, 1, 1), heights = c(0.65, 0.75, 0.5))  
+
+# A) Plot with allometry
+par(mar = c(1, 4, 2, 1))
+plot(master.table$phylo.d, master.table$morph.d, col = master.table$col.spp1, bg = master.table$col.spp2, pch = 21, ylab = "Morph dist.")
+text(0.25, 0.195, "A", cex = 1.5)
+
+# B) Plot with residuals
+par(mar = c(4.5, 4, 2, 1))
+plot(master.table.r$phylo.d, master.table.r$morph.d.r, col = master.table$col.spp1, bg = master.table$col.spp2, pch = 21, xlab = "Phylogenetic dist. (~million years since common ancestor)", ylab = "Morph dist. (residuals)")
+text(0.25, 0.26, "B", cex = 1.5)
 ```
 
 ## Plot phylo/morph distance tables by species in biome paired with others in SAME BIOME
