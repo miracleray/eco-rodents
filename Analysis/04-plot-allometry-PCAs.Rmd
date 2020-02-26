@@ -13,7 +13,7 @@ knitr::opts_knit$set(root.dir = '../eco-rodents')
 # Plotting exploratory PCAs
 PCAs provide a human-friendly way to visualize shape data. They are a good way to understand what's going on in the data quickly. However, because they artificially collapse the shape variation into orthogonal PC axes, they must be considered exploratory analyses only.
 
-Here, we explore the variation in rodent skulls by coloring the PCA plots by genus, by traits, and by biome region.
+Here, we explore the variation in rodent skulls by coloring the PCA plots by genus and by traits.
 
 ### Load packages, functions, and data
 ```{r message = FALSE}
@@ -49,7 +49,6 @@ PlotPCA(mean.PCA, 1, 2, alpha.col, alpha.pch, flip.axis1 = TRUE)
 legend("bottomright", legend = phylo.names, col = col.unique.spp, pch = pch.unique.spp, pt.bg = col.unique.spp, cex = .45, pt.cex = .8, ncol = 2)
 ```
 
-
 ## 2) Check for disparity differences between old and new endemics
 Check to see if differences seen in PCA (which squashes multi-variate variation) occur when all axes of variation are taken into account.
 
@@ -61,8 +60,8 @@ end.info <- info[-(which(info$Endemic == "Inv")), ]
 
 # Force shape into class "gpagen"
 gpagen.shape <- list()
-gpagen.shape$coords <- endemic.shape$coords
-gpagen.shape$endemic <- endemic.shape$endemic  # subsets
+gpagen.shape$coords <- end.shape
+gpagen.shape$endemic <- end.info
 class(gpagen.shape) <- "gpagen"
 
 # Make into geomorph data frame - need to use "coords" and "factors" 
@@ -77,7 +76,7 @@ dist.from.old <- dispRity(traitspace, metric = pairwise.dist)
 summary(dist.from.old)
 plot(dist.from.old, ylim = c(0.01, 0.26))
 
-# This t-test shows that the new species are signiricantly further away from the old centroid than the old species
+# This t-test shows that the new species are significantly further away from the old centroid than the old species
 disp.t.test <- test.dispRity(dist.from.old, test = t.test, alternative = "less")
 ```
 
@@ -108,7 +107,7 @@ PlotPCA(PCA, 1, 2, col.by.clade)
 ## 4) PCA plot by diet and guild
 This PCA colors specimens by diet and assigns point shape based on guild, i.e. where they spend most of their time.
 ```{r}
-# Set up pallete for diet
+# Set up pallete for 5 diet types
 warm <- sequential_hcl(5, "LaJolla")  
 col.carn <- warm[4]  # meat colored red
 col.frug <- warm[3]  # fruit colored orange
@@ -120,7 +119,7 @@ col.omni <- sequential_hcl(5, "Grays")[3]  # gray for anything goes
 col.diet.5 <- c(col.carn, col.frug, col.gran, col.herb, col.omni)
 col.diet <- PlotByGroup(info, "Feeding", col.diet.5)
 
-# Points: Aquatic (circle), Arboreal (triangle), Terrestrial (square), hopping (diamond)
+# Points for 4 locomotion types: Aquatic (circle), Arboreal (triangle), Terrestrial (square), hopping (diamond)
 pch.gld.4 <- c(16, 24, 23, 22)
 pch.gld <- PlotByGroup(info, "Guild", pch.gld.4)
 ```
@@ -134,167 +133,6 @@ text(0.11, -0.02, "Frugivore", col = col.frug)
 text(0.08, 0.045, "Herbivore", col = col.herb)
 text(-0.06, -0.05, "Omnivore", col = col.omni)
 text(-0.11, 0.01, "Granivore", col = col.gran)
-```
-
-## 5) Morphospace partitioning by habitat
-So far, most of the variation in the morphospace could be explained by size and genus affiliation, with different genera of similar sizes overlapping quite a bit. There doesn't seem to be much differentiation among Australian rodents, but perhaps the differentiation is hidden by geographical region or environmental partitioning. 
-
-### Write functions to visualize rodent morphospace by region
-Here, we subset the PCA scores by species which inhabit the 7 different ecological regions of Australia. Regions and species distributions therein taken from Breed & Ford 2007. `FoundInRegion()` subsets existing PCA data by species present in given region(s).
-
-We'll use a loop to plot PCAs for each region, with unique species within each genera having a unique point shape. The legends only name the species present for a given region. 
-```{r}
-# Set up loop for particular regions in Australia
-region.names <- c("Savannah", "Arid Zone", "NE Wet Forest", "NE Dry Forest", "Pilbara", "South West", "South East")
-pc.scores <- subset(PCA$pc.scores, select = 1:3)  # only 1st 3 PCs
-
-# Write x and y labels with proportion of variance for PCx and PCy
-PCs <- PCA$pc.summary$importance
-PCx.per <- round(PCs[2, 1] * 100, digits = 1)  # % with 1 decimal
-PCx.lab <- paste("PC1 (", PCx.per, "%)", sep = "")
-PCy.per <- round(PCs[2, 2] * 100, digits = 1)
-PCy.lab <- paste("PC2 (", PCy.per, "%)", sep = "")
-
-
-par(mfrow=c(4,2), mar = c(2,2,2,2))
-# Loop through all 7 regions to plot morphospace of species found in each
-for (i in 1:7) {
-        # Subset info.traits and PCA by region
-        in.region <- FoundInRegion(info, regions = i)
-        info.region <- info[in.region, ]
-        pc.region <- as.data.frame(pc.scores[in.region, ])
-        
-        # Subset plotting colors and pch symbols for spp in region
-        col.taxa.region <- sp.col.gen[in.region]  # colors for all spp
-        pch.taxa.region <- pch.spp[in.region]  # pch for all spp
-        
-        # Plot PCA with legend and labels
-        PCA.plot <- plot(x = pc.region$PC1,
-                         y = pc.region$PC2,
-                         main = paste(region.names[i], "Region Morphospace" ),
-                         xlab = PCx.lab,
-                         ylab = PCy.lab,
-                         xlim = c(-0.11, 0.18),
-                         ylim = c(-0.095, 0.05),
-                         col = col.taxa.region, 
-                         pch = pch.taxa.region, 
-                         bg = col.taxa.region,
-                         cex = 1.5,
-                         cex.axis = 1.3, 
-                         cex.lab = 1.3)
-}
-```
-
-## 6) Assess phylogenetic signal in each region partition
-Here, again, we subset the PCA scores by species which inhabit the 7 different ecological regions of Australia. We'll use a loop to test the phylogenetic signal in each region. 
-
-### Assess phylogenetic signal overall
-Baseline comparison. Evolutionary tree comes from the Allometry Paper repo. 
-```{r}
-# Test phylogenetic signal
-physig.all <- physignal(mean.shapes, aus.tree)
-summary(physig.all)
-```
-
-### Assess phylogenetic signal in each region
-```{r}
-traits <- info[, -c(4, 5, 6)]  # remove columns that ID individuals of species
-
-info.means$Order <- c(1:nrow(info.means))  # preserves order with coordinate shape data
-
-# Set up loop for particular regions in Australia
-region.names <- c("Savannah", "Arid Zone", "NE Wet Forest", "NE Dry Forest", "Pilbara", "South West", "South East")
-n.taxa <- c(rep("NA", length(region.names)))
-K.region <- c(rep("NA", length(region.names)))
-p.region <- c(rep("NA", length(region.names)))
-
-# Loop through all 7 regions to plot morphospace of species found in each
-for (i in 1:7) {
-        # Identify species found in the region
-        spp.in.region <- FoundInRegion(traits, regions = i)
-        spp.region <- traits[spp.in.region, ]
-        
-        # Subset metadata by region
-        temp <- info.means[, c("Taxa", "MeanCsize", "FullName", "Order")]
-        meta.region <- unique(merge(spp.region, temp, by = "FullName"))
-        
-        # Subset shape coordinates by region
-        shape.region <- mean.shapes[, , meta.region$Order]
-        
-        # Subset tree by species in the region
-        concord <- name.check(aus.tree, data.names = meta.region$FullName)  # check concordance
-        region.tree <- drop.tip(aus.tree, concord$tree_not_data)  # prune tree to regional sample
-        n.taxa[i] <- length(region.tree$tip.label)
-        
-        # Re-order to match tree tip order
-        tree.order <- match(region.tree$tip.label, meta.region$FullName)
-        meta.region <- meta.region[tree.order, ]  # metadata
-        shape.region <- shape.region[, , tree.order]  # shape data
-        
-        # Test phylogenetic signal
-        physig.region <- physignal(shape.region, region.tree)
-        K.region[i] <- round(physig.region$phy.signal, 3)
-        p.region[i] <- as.numeric(physig.region$pvalue)  # round after Bonferroni correction in next code chuck
-}
-```
-
-### Make and export Table TK
-Create and export Table TK. Includes Bonferroni p-value adjustment for running 7 biomes. 
-```{r}
-p.region <- round(p.adjust(p.region, method = "bonferroni"), 3)
-
-table <- cbind(n.taxa, K.region, p.region)
-colnames(table) <- c("N Taxa", "Phy. Signal", "p Value (cor.)")
-row.names(table) <- region.names
-
-write.table(table, "../Data/Results/Table_RegionPhySig.csv", sep = ",", col.names = NA)
-```
-
-## Do same analysis but for centroid size only
-```{r}
-# Set up blank variables again for results table
-n.taxa <- c(rep("NA", length(region.names)))
-K.region <- c(rep("NA", length(region.names)))
-p.region <- c(rep("NA", length(region.names)))
-
-# Loop through all 7 regions to plot morphospace of species found in each
-for (i in 1:7) {
-        # Identify species found in the region
-        spp.in.region <- FoundInRegion(traits, regions = i)
-        spp.region <- traits[spp.in.region, ]
-        
-        # Subset metadata by region
-        temp <- info.means[, c("Taxa", "MeanCsize", "FullName", "Order")]
-        meta.region <- unique(merge(spp.region, temp, by = "FullName"))
-        
-        # Subset tree by species in the region
-        concord <- name.check(aus.tree, data.names = meta.region$FullName)  # check concordance
-        region.tree <- drop.tip(aus.tree, concord$tree_not_data)  # prune tree to regional sample
-        n.taxa[i] <- length(region.tree$tip.label)
-        
-        # Re-order to match tree tip order
-        tree.order <- match(region.tree$tip.label, meta.region$FullName)
-        meta.region <- meta.region[tree.order, ]  # metadata
-        
-        # Test phylogenetic signal with centroid size
-        Csize <- as.numeric(meta.region$MeanCsize)
-        names(Csize) <- meta.region$FullName
-        physig.region <- physignal(Csize, region.tree) 
-        K.region[i] <- round(physig.region$phy.signal, 3)
-        p.region[i] <- as.numeric(physig.region$pvalue)  # round after Bonferroni correction in next code chuck
-}
-```
-
-### Make and export Table TK
-Create and export Table TK. Includes Bonferroni p-value adjustment for running 7 biomes and filename indicating these results are for centroid size. 
-```{r}
-p.region <- round(p.adjust(p.region, method = "bonferroni"), 3)
-
-table <- cbind(n.taxa, K.region, p.region)
-colnames(table) <- c("N Taxa", "Phy. Signal", "p Value (cor.)")
-row.names(table) <- region.names
-
-write.table(table, "../Data/Results/Table_RegionPhySig_Csize.csv", sep = ",", col.names = NA)
 ```
 
 ### Save intermediate data

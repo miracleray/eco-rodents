@@ -116,7 +116,6 @@ morph.table.r <- make.table(morph.matrix.res, "morph.d.r")
 master.table.r <- merge(phylo.table, morph.table.r[, 3:4], by = "pair")
 ```
 
-
 ### Export Figure
 ```{r}
 mat <- matrix(c(1, 2), 2, 1, byrow = TRUE)  # 2 rows, 1 column
