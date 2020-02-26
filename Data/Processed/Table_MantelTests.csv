@@ -1,0 +1,6 @@
+,Basicranium,Molar,Orbital,Rostrum,Vault
+Basicranium,-,0.509,0.607,0.722,0.753
+Molar,0.01,-,0.564,0.616,0.552
+Orbital,0.01,0.01,-,0.826,0.741
+Rostrum,0.01,0.01,0.01,-,0.762
+Vault,0.01,0.01,0.01,0.01,-
