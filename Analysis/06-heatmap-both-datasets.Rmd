@@ -42,7 +42,7 @@ load(file = "../Data/Processed/04-PCA.rda")
 load(file = "../Data/Processed/05-residual-data.rda")
 ```
 
-## 1) Heatmaps for fitted allometry coordinates
+## 1) Prepare allometry heatmaps
 First find mean specimen, then smallest and largest. Uses Dr Thomas Guillerme's new package, `landvR` to see how landmarks vary between these specimens.
 ```{r}
 # Fit specimens
@@ -62,7 +62,7 @@ sm.index <- which(info.means$Species == "del")
 smallest.shape <- fit.shapes[, , sm.index]
 ```
 
-### Export the variation for with allometry shape change
+### Export the variation for fitted allometry shape change
 Export images for plots
 ```{r}
 # Lateral view of smallest to mean
@@ -90,7 +90,8 @@ view3d(phi = 0)  # flip cranium
 rgl.snapshot("../Data/Processed/heatmap_ALL_mean-big_dor.png")
 ```
 
-## 2) Heatmaps for PC1 with allometry
+### Make heatmaps for PC1 with allometry
+Using hypothetical shapes for min and max
 ```{r}
 # Find mean configuration - i.e. mean shape in dataset
 PC.allom.mean <- (select.procrustes(mean.shapes, selector = mean))[[1]]
@@ -119,7 +120,7 @@ allom.PC1.min.h <- wrap.PCA$pc.shapes[[2]]  # switched b/c axes are flipped
 allom.PC1.max.h <- wrap.PCA$pc.shapes[[1]]
 ```
 
-### Export the variation for with allometry shape change
+### Export the PC1 variation for with allometry shape change
 Export images for plots
 ```{r}
 # Lateral view of smallest to mean
@@ -147,7 +148,7 @@ view3d(phi = 0)  # flip cranium
 rgl.snapshot("../Data/Processed/heatmap_PCA_mean-big_dor.png")
 ```
 
-## 3) Heatmaps for PC1 with residual coordinates
+### Make heatmaps for PC1 with residual coordinates
 Steps as above.
 ```{r}
 # Find mean configuration - i.e. mean shape in dataset
@@ -177,14 +178,7 @@ res.PC1.min.h <- wrap.PCA.r$pc.shapes[[2]]  # Flipped b/c axes are flipped
 res.PC1.max.h <- wrap.PCA.r$pc.shapes[[1]]
 ```
 
-### Visualize PCA
-```{r}
-PlotPCA(res.PCA, 1, 2, col = alpha.col, pch = alpha.pch, flip.axis1 = TRUE, flip.axis2 = TRUE)
-legend("bottomright", legend = phylo.names, col = col.unique.spp, pch = pch.unique.spp, pt.bg = col.unique.spp, cex = 0.535, pt.cex = .7, ncol = 2)
-```
-
 ### Export the variation for residual shape change
-Export images for plots.
 ```{r}
 # Lateral view of mean to smallest
 open3d(windowRect = c(0, 0, 600, 600))
@@ -211,17 +205,8 @@ view3d(phi = 0)  # flip cranium
 rgl.snapshot("../Data/Processed/heatmap_RES_mean-big_dor.png")
 ```
 
-```{r}
-# Hydromys
-hydromys <- residuals[, , which(dimnames(residuals)[[3]] == "Hydromys_chrysogaster")]
-
-open3d(windowRect = c(0, 0, 600, 600))
-procrustes.var.plot(res.mean, hydromys, col = heat.colors, col.val = PC1.var.r[, "radius"])
-view3d(phi = 90)  # flip cranium
-```
-
-## 4) Heatmaps for PC2 with residual coordinates
-Steps as above but for PC2
+### Make heatmaps for PC2 residual coordinates
+Steps as above but for PC2; hypothetical shapes
 ```{r}
 # Measure extremes of variation from mean on PC1
 PC1.var.r2 <- variation.range(gpagen.shape, return.ID = FALSE, axis = 2, ordination = ordination.r, type = "spherical")
@@ -232,7 +217,6 @@ res.PC2.max.h <- wrap.PCA.r$pc.shapes[[3]]
 ```
 
 ### Export the variation for residual shape change
-Export images for plots.
 ```{r}
 # Lateral view of mean to smallest
 open3d(windowRect = c(0, 0, 600, 600))
@@ -259,8 +243,68 @@ view3d(phi = 0)  # flip cranium
 rgl.snapshot("../Data/Processed/heatmap_RP2_mean-big_dor.png")
 ```
 
-### 5) Make multipanel figure comparing shape change between smallest-to-mean and mean-to-largest, with allometry vs without (residuals)
-First, clean up and load in all the images just created
+### Remove Notomys and find hypothetical shapes
+```{r}
+# Remove Notomys from dataset
+index.not <- which(info.means$Genus == "Not")
+residuals.no <- residuals[, , -index.not]
+info.means.no <- info.means[-index.not, ]
+
+# Find new mean
+res.mean.no <- (select.procrustes(residuals.no, selector = mean))[[1]]
+
+# Measure spherical coordinates differences from the mean for each specimen for each landmark
+res.diff.mean.no <- coordinates.difference(coordinates = residuals.no, reference = res.mean.no, type = "spherical")
+
+# Ordinate the data
+twoD.shape.r.n <- two.d.array(residuals.no)
+ordination.r.n <- stats::prcomp(twoD.shape.r.n)
+
+# Force the symmetric component of shape into class "gpagen" (required for variation.range)
+gpagen.shape.no <- list()
+gpagen.shape.no$coords <- residuals.no
+gpagen.shape.no$consensus <- res.mean.no
+class(gpagen.shape.no) <- "gpagen"
+
+# Measure extremes of variation from mean on PC1
+PC1.var.r.n <- variation.range(gpagen.shape.no, return.ID = FALSE, axis = 1, ordination = ordination.r, type = "spherical")
+
+# Wrap specimens on the tangent space
+wrap.PCA.r.n <- plotTangentSpace(residuals.no, verbose = FALSE)
+
+# Select extreme specimens (the ones that make the warp-meshes)
+res.PC1.min.h.n <- wrap.PCA.r.n$pc.shapes[[1]] 
+res.PC1.max.h.n <- wrap.PCA.r.n$pc.shapes[[2]]
+```
+
+### Export residual no Notomys heatmaps
+```{r}
+# Lateral view of mean to smallest
+open3d(windowRect = c(0, 0, 600, 600))
+procrustes.var.plot(res.mean, res.PC1.min.h.n, col = heat.colors, col.val = PC1.var.r.n[, "radius"])
+view3d(phi = 90)
+rgl.snapshot("../Data/Processed/heatmap_RES_sm-mean_lat_NOt.png")
+
+# Lateral view of mean to biggest
+open3d(windowRect = c(0, 0, 600, 600))
+procrustes.var.plot(res.mean, res.PC1.max.h.n, col = heat.colors, col.val = PC1.var.r.n[, "radius"])
+view3d(phi = 90)
+rgl.snapshot("../Data/Processed/heatmap_RES_mean-big_lat_NOt.png")
+
+# Dorsal view of mean to smallest
+open3d(windowRect = c(0, 0, 600, 600))
+procrustes.var.plot(res.mean, res.PC1.min.h.n, col = heat.colors, col.val = PC1.var.r.n[, "radius"]) 
+view3d(phi = 0)  # flip cranium
+rgl.snapshot("../Data/Processed/heatmap_RES_sm-mean_dor_NOt.png")
+
+# Dorsal view of mean to biggest
+open3d(windowRect = c(0, 0, 600, 600))
+procrustes.var.plot(res.mean, res.PC1.max.h.n, col = heat.colors, col.val = PC1.var.r.n[, "radius"])
+view3d(phi = 0)  # flip cranium
+rgl.snapshot("../Data/Processed/heatmap_RES_mean-big_dor_NOt.png")
+```
+
+### Clean and load in all heatmaps
 ```{r}
 # Remove whitespace from all heatmaps (requires ImageMagik installed on PC)
 system("mogrify ../Data/Processed/heatmap_*.png -trim ../Data/Processed/*.png")
@@ -288,9 +332,15 @@ resP2.sm.lat <- readPNG("../Data/Processed/heatmap_RP2_sm-mean_lat.png")
 resP2.big.lat <- readPNG("../Data/Processed/heatmap_RP2_mean-big_lat.png")
 resP2.sm.dor <- readPNG("../Data/Processed/heatmap_RP2_sm-mean_dor.png")
 resP2.big.dor <- readPNG("../Data/Processed/heatmap_RP2_mean-big_dor.png")
+
+# Load in without allometry residuals PC1 - no Notomys
+resid.sm.lat.no <- readPNG("../Data/Processed/heatmap_RES_sm-mean_lat_NOt.png")
+resid.big.lat.no <- readPNG("../Data/Processed/heatmap_RES_mean-big_lat_NOt.png")
+resid.sm.dor.no <- readPNG("../Data/Processed/heatmap_RES_sm-mean_dor_NOt.png")
+resid.big.dor.no <- readPNG("../Data/Processed/heatmap_RES_mean-big_dor_NOt.png")
 ```
 
-## Make multi-panel Figure 2, heatmaps with allometry
+## 2) Make multi-panel Figure 2, heatmaps with allometry
 ```{r}
 # Set up muli-panel figure; lateral 
 mat <- matrix(c(1:8), 4, 2, byrow = TRUE)  # 4 rows, 2 columns
@@ -347,92 +397,7 @@ rasterImage(allPC.big.dor, 0, 0, dim(allPC.big.dor)[2], dim(allPC.big.dor)[1])
 text(0, dim(allPC.big.dor)[1]-10, "H", cex = 2)
 ```
 
-## 3) Heatmaps for PC1 with residual coordinates w/o Notomys
-Checking for whether postural signals remain in quadrepedal species.
-
-### Remove Notomys and find hypothetical shapes
-```{r}
-# Remove Notomys from dataset
-index.not <- which(info.means$Genus == "Not")
-residuals.no <- residuals[, , -index.not]
-info.means.no <- info.means[-index.not, ]
-
-# Find new mean
-res.mean.no <- (select.procrustes(residuals.no, selector = mean))[[1]]
-
-# Measure spherical coordinates differences from the mean for each specimen for each landmark
-res.diff.mean.no <- coordinates.difference(coordinates = residuals.no, reference = res.mean.no, type = "spherical")
-
-# Ordinate the data
-twoD.shape.r.n <- two.d.array(residuals.no)
-ordination.r.n <- stats::prcomp(twoD.shape.r.n)
-
-# Force the symmetric component of shape into class "gpagen" (required for variation.range)
-gpagen.shape.no <- list()
-gpagen.shape.no$coords <- residuals.no
-gpagen.shape.no$consensus <- res.mean.no
-class(gpagen.shape.no) <- "gpagen"
-
-# Measure extremes of variation from mean on PC1
-PC1.var.r.n <- variation.range(gpagen.shape.no, return.ID = FALSE, axis = 1, ordination = ordination.r, type = "spherical")
-
-# Wrap specimens on the tangent space
-wrap.PCA.r.n <- plotTangentSpace(residuals.no, verbose = FALSE)
-
-# Select extreme specimens (the ones that make the warp-meshes)
-res.PC1.min.h.n <- wrap.PCA.r.n$pc.shapes[[1]] 
-res.PC1.max.h.n <- wrap.PCA.r.n$pc.shapes[[2]]
-```
-
-### Visualize new PCA
-```{r}
-alpha.col.no <- alpha.col[-index.not]
-alpha.pch.no <- alpha.pch[-index.not]
-PlotPCA(wrap.PCA.r.n, 1, 2, alpha.col.no, alpha.pch.no)
-#legend("topright", legend = names(alpha.col.no), col = alpha.col.no, pch = alpha.pch.no, pt.bg = alpha.col.no, cex = 0.6, pt.cex = .7, ncol = 2)
-```
-
-### Export images
-```{r}
-# Lateral view of mean to smallest
-open3d(windowRect = c(0, 0, 600, 600))
-procrustes.var.plot(res.mean, res.PC1.min.h.n, col = heat.colors, col.val = PC1.var.r.n[, "radius"])
-view3d(phi = 90)
-rgl.snapshot("../Data/Processed/heatmap_RES_sm-mean_lat_NOt.png")
-
-# Lateral view of mean to biggest
-open3d(windowRect = c(0, 0, 600, 600))
-procrustes.var.plot(res.mean, res.PC1.max.h.n, col = heat.colors, col.val = PC1.var.r.n[, "radius"])
-view3d(phi = 90)
-rgl.snapshot("../Data/Processed/heatmap_RES_mean-big_lat_NOt.png")
-
-# Dorsal view of mean to smallest
-open3d(windowRect = c(0, 0, 600, 600))
-procrustes.var.plot(res.mean, res.PC1.min.h.n, col = heat.colors, col.val = PC1.var.r.n[, "radius"]) 
-view3d(phi = 0)  # flip cranium
-rgl.snapshot("../Data/Processed/heatmap_RES_sm-mean_dor_NOt.png")
-
-# Dorsal view of mean to biggest
-open3d(windowRect = c(0, 0, 600, 600))
-procrustes.var.plot(res.mean, res.PC1.max.h.n, col = heat.colors, col.val = PC1.var.r.n[, "radius"])
-view3d(phi = 0)  # flip cranium
-rgl.snapshot("../Data/Processed/heatmap_RES_mean-big_dor_NOt.png")
-```
-
-### 4) Make multipanel figure comparing shape change between smallest-to-mean and mean-to-largest, with allometry vs without (residuals)
-First, clean up and load in all the images just created
-```{r}
-# Remove whitespace from all heatmaps (requires ImageMagik installed on PC)
-system("mogrify ../Data/Processed/heatmap_*.png -trim ../Data/Processed/*.png")
-
-# Load in without allometry residuals PC1
-resid.sm.lat.no <- readPNG("../Data/Processed/heatmap_RES_sm-mean_lat_NOt.png")
-resid.big.lat.no <- readPNG("../Data/Processed/heatmap_RES_mean-big_lat_NOt.png")
-resid.sm.dor.no <- readPNG("../Data/Processed/heatmap_RES_sm-mean_dor_NOt.png")
-resid.big.dor.no <- readPNG("../Data/Processed/heatmap_RES_mean-big_dor_NOt.png")
-```
-
-## Make multi-panel Figure 3: Heatmaps with Residuals
+## 3) Make multi-panel Figure 3: Heatmaps with Residuals
 ```{r}
 # Set up muli-panel figure; lateral 
 mat <- matrix(c(1:12), 4, 3, byrow = TRUE)  # 12 plots, 4 rows, 3 columns
