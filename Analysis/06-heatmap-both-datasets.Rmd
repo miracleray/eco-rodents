@@ -481,76 +481,80 @@ text(0, dim(allPC.big.dor)[1]-10, "L", cex = 2)
 ## 3) Make multi-panel Figure 3: Heatmaps with Residuals
 ```{r}
 # Set up muli-panel figure; lateral 
-mat <- matrix(c(1:12), 4, 3, byrow = TRUE)  # 12 plots, 4 rows, 3 columns
+mat <- matrix(c(1:12), 4, 3, byrow = FALSE)  # 12 plots, 4 rows, 3 columns
 layout(mat, widths = c(1, 1, 1), heights = c(0.65, 0.75, 0.5))  
 
-## LATERAL VIEWS
+## PC1 Residuals
 # 1) Small to Mean, residuals PC1, lateral view
 par(mar = c(0, 0, 0, 0))
 plot(c(0, dim(resid.sm.lat)[2]), c(0, dim(resid.sm.lat)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
 rasterImage(resid.sm.lat, 0, 0, dim(resid.sm.lat)[2], dim(resid.sm.lat)[1])
 text(0, dim(resid.sm.lat)[1]-10, "A", cex = 2)
+legend("topright", inset = c(0.25, 0), legend = "PC1 Residuals", bty = "n", cex = 1.2)
 
-# 2) Small to Mean, residuals PC1, lateral view - no Notomys
-par(mar = c(0, 0, 0, 0))
-plot(c(0, dim(resid.sm.lat.no)[2]), c(0, dim(resid.sm.lat.no)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
-rasterImage(resid.sm.lat.no, 0, 0, dim(resid.sm.lat.no)[2], dim(resid.sm.lat.no)[1])
-text(0, dim(resid.sm.lat.no)[1]-10, "E", cex = 2)
-
-# 3) Small to Mean, residuals PC2, lateral view
-par(mar = c(0, 0, 0, 0))
-plot(c(0, dim(resP2.sm.lat)[2]), c(0, dim(resP2.sm.lat)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
-rasterImage(resP2.sm.lat, 0, 0, dim(resP2.sm.lat)[2], dim(resP2.sm.lat)[1])
-text(0, dim(resP2.sm.lat)[1]-10, "I", cex = 2)
-
-# 4) Mean to Big, residuals PC1, lateral view
+# 2) Mean to Big, residuals PC1, lateral view
 par(mar = c(0, 0, 0, 0))
 plot(c(0, dim(resid.big.lat)[2]), c(0, dim(resid.big.lat)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
 rasterImage(resid.big.lat, 0, 0, dim(resid.big.lat)[2], dim(resid.big.lat)[1])
 text(0, dim(resid.big.lat)[1]-10, "B", cex = 2)
 
-# 5) Mean to Big, residuals PC1, lateral view - no Notomys
-par(mar = c(0, 0, 0, 0))
-plot(c(0, dim(resid.big.lat.no)[2]), c(0, dim(resid.big.lat.no)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
-rasterImage(resid.big.lat.no, 0, 0, dim(resid.big.lat.no)[2], dim(resid.big.lat.no)[1])
-text(0, dim(resid.big.lat.no)[1]-10, "F", cex = 2)
-
-# 6) Mean to Big, residuals PC2, lateral view
-par(mar = c(0, 0, 0, 0))
-plot(c(0, dim(resP2.big.lat)[2]), c(0, dim(resP2.big.lat)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
-rasterImage(resP2.big.lat, 0, 0, dim(resP2.big.lat)[2], dim(resP2.big.lat)[1])
-text(0, dim(resP2.big.lat)[1]-10, "J", cex = 2)
-
-## DORSAL VIEWS
-# 7) Small to Mean, residuals PC1, dorsal view
+# 3) Small to Mean, residuals PC1, dorsal view
 par(mar = c(0, 0, 0, 0))
 plot(c(0, dim(resid.big.dor)[2]), c(0, dim(resid.big.dor)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
 rasterImage(resid.sm.dor, 0, 0, dim(resid.big.dor)[2], dim(resid.big.dor)[1])
 text(0, dim(resid.big.dor)[1]-10, "C", cex = 2)
 
-# 8) Small to Mean, residuals PC1, dorsal view - no Notomys
-par(mar = c(0, 0, 0, 0))
-plot(c(0, dim(resid.big.dor.no)[2]), c(0, dim(resid.big.dor.no)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
-rasterImage(resid.sm.dor.no, 0, 0, dim(resid.big.dor.no)[2], dim(resid.big.dor.no)[1])
-text(0, dim(resid.big.dor.no)[1]-10, "G", cex = 2)
-
-# 9) Small to Mean, residuals PC2, dorsal view
-par(mar = c(0, 0, 0, 0))
-plot(c(0, dim(resP2.big.dor)[2]), c(0, dim(resP2.big.dor)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
-rasterImage(resP2.sm.dor, 0, 0, dim(resP2.big.dor)[2], dim(resP2.big.dor)[1])
-text(0, dim(resP2.big.dor)[1]-10, "K", cex = 2)
-
-# 10) Mean to Big, residuals PC1, dorsal view
+# 4) Mean to Big, residuals PC1, dorsal view
 par(mar = c(0, 0, 0, 0))
 plot(c(0, dim(resid.big.dor)[2]), c(0, dim(resid.big.dor)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
 rasterImage(resid.big.dor, 0, 0, dim(resid.big.dor)[2], dim(resid.big.dor)[1])
 text(0, dim(resid.big.dor)[1]-10, "D", cex = 2)
 
-# 11) Mean to Big, residuals PC1, dorsal view - no Notomys
+## PC 1 Residuals -- without Notomys
+# 5) Small to Mean, residuals PC1, lateral view - no Notomys
+par(mar = c(0, 0, 0, 0))
+plot(c(0, dim(resid.sm.lat.no)[2]), c(0, dim(resid.sm.lat.no)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
+rasterImage(resid.sm.lat.no, 0, 0, dim(resid.sm.lat.no)[2], dim(resid.sm.lat.no)[1])
+text(0, dim(resid.sm.lat.no)[1]-10, "E", cex = 2)
+legend("topright", inset = c(-0.1, 0), legend = "PC1 Residuals (no Notomys)", bty = "n", cex = 1.2)
+
+# 6) Mean to Big, residuals PC1, lateral view - no Notomys
+par(mar = c(0, 0, 0, 0))
+plot(c(0, dim(resid.big.lat.no)[2]), c(0, dim(resid.big.lat.no)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
+rasterImage(resid.big.lat.no, 0, 0, dim(resid.big.lat.no)[2], dim(resid.big.lat.no)[1])
+text(0, dim(resid.big.lat.no)[1]-10, "F", cex = 2)
+
+# 7) Small to Mean, residuals PC1, dorsal view - no Notomys
+par(mar = c(0, 0, 0, 0))
+plot(c(0, dim(resid.big.dor.no)[2]), c(0, dim(resid.big.dor.no)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
+rasterImage(resid.sm.dor.no, 0, 0, dim(resid.big.dor.no)[2], dim(resid.big.dor.no)[1])
+text(0, dim(resid.big.dor.no)[1]-10, "G", cex = 2)
+
+# 8) Mean to Big, residuals PC1, dorsal view - no Notomys
 par(mar = c(0, 0, 0, 0))
 plot(c(0, dim(resid.big.dor.no)[2]), c(0, dim(resid.big.dor.no)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
 rasterImage(resid.big.dor.no, 0, 0, dim(resid.big.dor.no)[2], dim(resid.big.dor.no)[1])
 text(0, dim(resid.big.dor.no)[1]-10, "H", cex = 2)
+
+## PC2 (whole residual dataset)
+# 9) Small to Mean, residuals PC2, lateral view
+par(mar = c(0, 0, 0, 0))
+plot(c(0, dim(resP2.sm.lat)[2]), c(0, dim(resP2.sm.lat)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
+rasterImage(resP2.sm.lat, 0, 0, dim(resP2.sm.lat)[2], dim(resP2.sm.lat)[1])
+text(0, dim(resP2.sm.lat)[1]-10, "I", cex = 2)
+legend("topright", inset = c(0.01, 0), legend = "PC2 Residuals (all spp.)", bty = "n", cex = 1.2)
+
+# 10) Mean to Big, residuals PC2, lateral view
+par(mar = c(0, 0, 0, 0))
+plot(c(0, dim(resP2.big.lat)[2]), c(0, dim(resP2.big.lat)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
+rasterImage(resP2.big.lat, 0, 0, dim(resP2.big.lat)[2], dim(resP2.big.lat)[1])
+text(0, dim(resP2.big.lat)[1]-10, "J", cex = 2)
+
+# 11) Small to Mean, residuals PC2, dorsal view
+par(mar = c(0, 0, 0, 0))
+plot(c(0, dim(resP2.big.dor)[2]), c(0, dim(resP2.big.dor)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
+rasterImage(resP2.sm.dor, 0, 0, dim(resP2.big.dor)[2], dim(resP2.big.dor)[1])
+text(0, dim(resP2.big.dor)[1]-10, "K", cex = 2)
 
 # 12) Mean to Big, residuals PC2, dorsal view
 par(mar = c(0, 0, 0, 0))
