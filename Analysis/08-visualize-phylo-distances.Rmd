@@ -123,104 +123,13 @@ layout(mat, widths = c(1, 1, 1), heights = c(0.65, 0.75, 0.5))
 
 # A) Plot with allometry
 par(mar = c(1, 4, 2, 1))
-plot(master.table$phylo.d, master.table$morph.d, col = master.table$col.spp1, bg = master.table$col.spp2, pch = 21, ylab = "Morph dist.")
-text(0.25, 0.195, "A", cex = 1.5)
+plot(master.table$phylo.d, master.table$morph.d, col = master.table$col.spp1, bg = master.table$col.spp2, pch = 21, ylab = "Morph. distance")
+text(0.25, 0.19, "A", cex = 1.5)
+legend("topleft", legend = "with allometry", inset = c(0.0, 0), bty = "n")
 
 # B) Plot with residuals
 par(mar = c(4.5, 4, 2, 1))
-plot(master.table.r$phylo.d, master.table.r$morph.d.r, col = master.table$col.spp1, bg = master.table$col.spp2, pch = 21, xlab = "Phylogenetic dist. (~million years since common ancestor)", ylab = "Morph dist. (residuals)")
-text(0.25, 0.26, "B", cex = 1.5)
-```
-
-## Plot phylo/morph distance tables by species in biome paired with others in SAME BIOME
-```{r}
-# Set up loop for multi-part figure broken down by 7 regions in Australia
-region.names <- c("Savannah", "Arid Zone", "NE Wet Forest", "NE Dry Forest", "Pilbara", "South West", "South East")
-
-info.r <- info[, c("Genus", "Species", "Savannah", "AridZone", "NEWetForest", "NEDryForest", "Pilbara", "SW", "SE")]  # Prune to only relevant metadata cols
-info.r$Taxa <- paste(info.r$Genus, info.r$Species, sep = "_")
-info.r <- unique(info.r)  # remove extra spp entries
-
-par(mfrow=c(4,2), mar = c(3,3,3,3))
-
-# For loop to cycle through each biome and plot phylo/morph distance 
-for (i in 1:length(region.names)) {
-        # Prune spp1 column to only species in each biome
-        in.region <- FoundInRegion(info.r, regions = i)
-        info.region <- unique(info.r[in.region, c("Genus", "Species")])
-        info.region$spp1 <- paste(info.region$Genus, info.region$Species, sep = "_")
-        spp1.region <- merge(master.table, info.region, by = "spp1")
-
-        # Repeat with spp2 column (leaving only same-biome pairs)
-        info.region$spp2 <- paste(info.region$Genus, info.region$Species, sep = "_")
-        same.region.pairs <- merge(spp1.region, info.region, by = "spp2")
-        
-        # Plot
-        plot(same.region.pairs$phylo.d, 
-             same.region.pairs$morph.d, 
-             col = same.region.pairs$col.spp2, 
-             bg = same.region.pairs$col.spp1, 
-             pch = 21,
-             main = region.names[i],
-             xlab = "Phylogenetic distance (~million years since LCA)",  ylab = "Morphological distance")
-}
-```
-
-## Plot phylo/morph distance tables by species in biome paired with others in DIFFERENT BIOME
-```{r}
-# Figure set up
-par(mfrow=c(4,2), mar = c(3,3,3,3))  
-
-# For loop to cycle through each region and plot phylo/morph distance 
-diff.reg.pairs <- NULL
-
-for (i in 1:length(region.names)) {
-        # Prune spp1 column to only species in each region
-        in.region <- FoundInRegion(info.r, regions = i)
-        info.region <- info.r[in.region, ]
-        info.region$spp1 <- paste(info.region$Genus, info.region$Species, sep = "_")
-        spp1.region <- merge(master.table, info.region, by = "spp1")
-
-       # For each species in region, ID spp that never overlap and keep only those pairs (different region pairs)
-        info.in.region <- info.r[in.region, ]  # all region presence/absence
-        diff.spp <- info.r[!in.region, ]
-        diff.reg.pairs <- NULL
-        diff.all.pairs <- NULL
-        for(s in 1:dim(info.in.region)[1]){  # For each species in a region...
-                # Make vector of regions it can be found
-                region.vector <- info.in.region[s, ]
-                exist.in <- which(region.vector == 1)
-                
-                # Find DIFF pairs that don't exist any of the same regions 
-                for(r in 1:length(exist.in)){  # ...ID different pairs
-                        presence <- diff.spp[, exist.in[r]]
-                        diff.spp <- diff.spp[presence < 1, ]
-                        
-                        # Alphabetize pair names
-                        for(p in 1:dim(diff.spp)[1]){
-                                pair.names <- c(diff.spp[p, "Taxa"], region.vector[, "Taxa"])
-                                pair.index <- str_order(c(diff.spp[p, "Taxa"], region.vector[, "Taxa"]))
-                                pair <- paste(pair.names[pair.index[1]], pair.names[pair.index[2]], sep = "-")  # pair names in alpha order
-                        }
-                        
-                        # Find pair data for region's plot
-                        diff.spp.pairs <- master.table[which(master.table$pair == pair), ]
-                        diff.all.pairs <- rbind(diff.all.pairs, diff.spp.pairs)
-                }
-                diff.reg.pairs <- rbind(diff.reg.pairs, diff.all.pairs)
-                
-                }
-        
-        # Plot
-        plot(diff.all.pairs$phylo.d, 
-             diff.all.pairs$morph.d, 
-             col = diff.all.pairs$col.spp2, 
-             bg = diff.all.pairs$col.spp1, 
-             pch = 21,
-             main = paste(region.names[i], "same-different"),
-             xlab = "Phylogenetic distance (~million years since LCA)",  ylab = "Morphological distance")
-        # text(diff.all.pairs$phylo.d, 
-             # diff.all.pairs$morph.d + 0.003, 
-             # labels = diff.all.pairs$pair, cex = 0.7)
-}
+plot(master.table.r$phylo.d, master.table.r$morph.d.r, col = master.table$col.spp1, bg = master.table$col.spp2, pch = 21, xlab = "Phylogenetic distance (~million years since common ancestor)", ylab = "Morph. distance")
+text(0.25, 0.255, "B", cex = 1.5)
+legend("topleft", legend = "residuals", inset = c(0.0, 0), bty = "n")
 ```
