@@ -11,7 +11,9 @@ knitr::opts_knit$set(root.dir = '../eco-rodents')
 ```
 
 # Test phylo-morpho distances
-Assess limits of morphological divergence as it relates to phylogenetic distance.
+Assess limits of morphological distance (aka divergence) as it relates to phylogenetic distance. Calculated for shape with allometry and for shape residuals.
+
+Creates bipanel Figure 4.
 
 ### Load packages, functions, and data from previous steps
 ```{r message = FALSE}
@@ -52,10 +54,11 @@ colnames(morph.matrix) <- short.names
 ```
 
 ### Turn distance matrices into dataframes and then combine
+Write function that creates the same, comparable table structure taking in the distance matrices from above, and the name for the distance in the matrix.
 ```{r}
-# Write function that creates the same, comparable table structure taking in the distance matrices from above, and the name for the distance in the matrix.
+# Function takes matrix from above and user-provided label for dist. measured
 make.table <- function(matrix, d.name) {
-        new.table <- as.data.frame(as.table(matrix))
+        new.table <- as.data.frame(as.table(matrix))  # matrix --> dataframe
         new.table[, 4] <- NA  # initialize pair name column
         colnames(new.table) <- c("spp1", "spp2", d.name, "pair")
         
@@ -74,13 +77,29 @@ make.table <- function(matrix, d.name) {
         return(new.table)
 }
 
-# Run on both matrices & merge by pair
+# Run on both matrices, then merge by pair
 phylo.table <- make.table(phylo.matrix, "phylo.d")
 morph.table <- make.table(morph.matrix, "morph.d")
 master.table <- merge(phylo.table, morph.table[, 3:4], by = "pair")
 ```
 
-## Plot phylo-morph distance pairs (Figure TK)
+## Repeat Phylo/Morph distance plot using shape residuals
+```{r}
+# Morphological distance matrix for residuals
+mean.gpa.res <- gpagen(residuals, ProcD = TRUE)
+morph.matrix.res <- as.matrix(mean.gpa.res$procD)
+
+# Shorten row and column names
+row.names(morph.matrix.res) <- short.names
+colnames(morph.matrix.res) <- short.names
+
+# Make comparable table to phylo distance using function defined above
+morph.table.r <- make.table(morph.matrix.res, "morph.d.r")
+master.table.r <- merge(phylo.table, morph.table.r[, 3:4], by = "pair")
+```
+
+## Plots for phylo-morph distance pairs
+Set up colors
 ```{r}
 # Create color key
 just.genera <- NULL
@@ -101,35 +120,25 @@ master.table$col.spp1 <- PlotByGroup(master.table, "spp1", alpha.col.spp1)
 master.table$col.spp2 <- PlotByGroup(master.table, "spp2", alpha.col.spp2)
 ```
 
-## Repeat Phylo/Morph distance plot using residuals
+### Export Figure 4
 ```{r}
-# Morphological distance matrix for residuals
-mean.gpa.res <- gpagen(residuals, ProcD = TRUE)
-morph.matrix.res <- as.matrix(mean.gpa.res$procD)
+setEPS()
+postscript("../Data/Results/Figure4_PhyloMorph_Dist.eps")
 
-# Shorten row and column names
-row.names(morph.matrix.res) <- short.names
-colnames(morph.matrix.res) <- short.names
-
-# Make comparable table to phylo distance using function defined above
-morph.table.r <- make.table(morph.matrix.res, "morph.d.r")
-master.table.r <- merge(phylo.table, morph.table.r[, 3:4], by = "pair")
-```
-
-### Export Figure
-```{r}
 mat <- matrix(c(1, 2), 2, 1, byrow = TRUE)  # 2 rows, 1 column
 layout(mat, widths = c(1, 1, 1), heights = c(0.65, 0.75, 0.5))  
 
 # A) Plot with allometry
 par(mar = c(1, 4, 2, 1))
 plot(master.table$phylo.d, master.table$morph.d, col = master.table$col.spp1, bg = master.table$col.spp2, pch = 21, ylab = "Morph. distance")
-text(0.25, 0.19, "A", cex = 1.5)
-legend("topleft", legend = "with allometry", inset = c(0.0, 0), bty = "n")
+text(0.25, 0.197, "A", cex = 1.5)
+legend("topleft", legend = "with allometry", inset = c(0.01, 0), bty = "n")
 
 # B) Plot with residuals
 par(mar = c(4.5, 4, 2, 1))
 plot(master.table.r$phylo.d, master.table.r$morph.d.r, col = master.table$col.spp1, bg = master.table$col.spp2, pch = 21, xlab = "Phylogenetic distance (~million years since common ancestor)", ylab = "Morph. distance")
-text(0.25, 0.255, "B", cex = 1.5)
-legend("topleft", legend = "residuals", inset = c(0.0, 0), bty = "n")
+text(0.25, 0.265, "B", cex = 1.5)
+legend("topleft", legend = "residuals", inset = c(0.01, 0.01), bty = "n")
+
+dev.off()
 ```
