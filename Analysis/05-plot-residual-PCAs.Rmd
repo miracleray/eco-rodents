@@ -10,12 +10,12 @@ knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_knit$set(root.dir = '../eco-rodents')
 ```
 
-# Plot residual PCAs / Test for biome partitioning 
-First, test for a phylogenetic signal difference in each of the 7 regions. 
+# Plot PCAs for allometric and residual shape datasets
+Plot PCAs for allometric shape and residual shape, provide coloration and pch symbols by locomotion and diet, and review changes in residual shape PCA when *Notomys* species are removed. These plots are relevant to the heatplots created in script 06 / shown in Figure 2. 
 
-Second, plot without-allometry PCA for all residuals.
+Creates multipanel Figure 1.
 
-Third, plot residuals by region -- a test for partitioning.
+Produces residual shape data used in later analyses, stored in RDA file 05.
 
 ### Load packages, functions, and data
 Tree, mean shape, and metadata for phylogenetic analyses come from the allometry rodents script 04. 
@@ -29,7 +29,20 @@ load(file = "../Data/Processed/03-graphing-vectors.rda")
 load(file = "../Data/Processed/04-PCA.rda")
 ```
 
-## 1) Extract residuals
+## 1) Make PCA of mean shapes with allometry
+Plot in part A. 
+```{r}
+PCA.mean.allo <- plotTangentSpace(mean.shapes, groups = alpha.col, label = alpha.names)
+
+# Make axis labels
+PCs.allo <- PCA.mean.allo$pc.summary$importance
+PCx.per.allo <- round(PCs.allo[2, 1] * 100, digits = 1)  # % with 1 decimal
+PCx.lab.allo <- paste("PC1", " (", PCx.per.allo, "%)", sep = "")
+PCy.per.allo <- round(PCs.allo[2, 2] * 100, digits = 1)
+PCy.lab.allo <- paste("PC2", " (", PCy.per.allo, "%)", sep = "")
+```
+
+### Extract shape residuals by removing allometric shape signal
 Code thanks to Dr Vera Weisbecker
 ```{r}
 # Use pgls of coords with size to get residuals
@@ -47,16 +60,10 @@ allom.resid <- arrayspecs(allometry.all$pgls.residuals, dim(mean.shapes)[[1]], 3
 residuals <- allom.resid + array(mean.shapes, dim(allom.resid))
 ```
 
-## 2) Plot but with only residuals no consensus added
-```{r}
-res.PCA <- plotTangentSpace(allom.resid, groups = alpha.col)
-PlotPCA(res.PCA, 1, 2, alpha.col, alpha.pch, flip.axis2 = TRUE)
-legend("bottomright", phylo.names, col = col.unique.spp, pch = pch.unique.spp, pt.bg = col.unique.spp, cex = .53, pt.cex = .7, ncol = 2)
-```
-
-## 3) Plot residuals with consensus (WITHOUT allometry)
+## 2) Find coordinates for residuals with consensus (WITHOUT allometry)
 Color and legend by species
 ```{r}
+# PCA in part B and D
 res.PCA <- plotTangentSpace(residuals, groups = alpha.col, label = alpha.names)
 
 # Make axis labels
@@ -67,7 +74,7 @@ PCy.per <- round(PCs[2, 2] * 100, digits = 1)
 PCy.lab <- paste("PC2", " (", PCy.per, "%)", sep = "")
 ```
 
-## 4) Plot by guild and compare with mean allometry shapes 
+## 3) Plot by guild and compare with mean allometry shapes 
 Recolor plot above with points by diet and guild
 ```{r}
 # Define color pallete for diets of all specimens
@@ -75,46 +82,9 @@ col.diet.means <- PlotByGroup(info.means, "Feeding", col.diet.5)
 
 # Points: Aquatic (circle), Arboreal (triangle), Terrestrial (square)
 pch.gld.means <- PlotByGroup(info.means, "Guild", pch.gld.4)
-
-# Make PCA of mean shapes with allometry
-PCA.mean.allo <- plotTangentSpace(mean.shapes)
-
-# Make axis labels
-PCs.allo <- PCA.mean.allo$pc.summary$importance
-PCx.per.allo <- round(PCs.allo[2, 1] * 100, digits = 1)  # % with 1 decimal
-PCx.lab.allo <- paste("PC1", " (", PCx.per.allo, "%)", sep = "")
-PCy.per.allo <- round(PCs.allo[2, 2] * 100, digits = 1)
-PCy.lab.allo <- paste("PC2", " (", PCy.per.allo, "%)", sep = "")
 ```
 
-### Residual PCA
-```{r}
-# Pretty plot
-PCA.plot <- plot(x = -res.PCA$pc.scores[, 1],  # Flip for consistency
-                 y = -res.PCA$pc.scores[, 2],  
-                 xlab = PCx.lab, 
-                 ylab = PCy.lab,
-                 asp = TRUE,
-                 xlim = c(-0.12, 0.18),
-                 ylim = c(-0.18, 0.12),
-                 col = alpha.col,
-                 pch = alpha.pch,
-                 bg = alpha.col,
-                 #col = col.diet.means, 
-                 #pch = pch.gld.means, 
-                 #bg = col.diet.means,
-                 main = "PCA of mean residual shapes (without allometry)",
-                 cex = 1.5,
-                 cex.axis = 1.3, 
-                 cex.lab = 1.3)
-legend("bottomright", legend = phylo.names, col = col.unique.spp, pch = pch.unique.spp, pt.bg = col.unique.spp, cex = 0.535, pt.cex = .7, ncol = 2)
-
-#legend("topright", legend = c("Carnivore ", "Frugivore ", "Granivore ", "Herbivore ", "Omnivore "), col = col.diet.5, border = NULL, pch = 15, cex = 0.9)
-
-#legend("bottomright", legend = c("Aquatic", "Arboreal", "Terrestrial", "Hopping"), col = "black", border = NULL, pch = c(21, 24, 22, 23), cex = 0.9)
-```
-
-## Prepare PCA without Notomys
+## 4) Prepare PCA without Notomys
 ```{r}
 # Remove Notomys from dataset
 index.not <- which(info.means$Genus == "Not")
@@ -130,28 +100,13 @@ alpha.pch.no <- alpha.pch[-index.not]
 ## Export Figure 1
 Compare the PCAs relevant to Figure 2 heatmaps
 ```{r}
+# Set up for export and for multiple panels
+setEPS() 
+postscript("../Data/Results/Figure1_PCAs.eps")
 mat <- matrix(c(1:4), 2, 2, byrow = TRUE)  # 4 plots, 2 rows, 2 columns
 layout(mat, widths = c(1, 1, 1), heights = c(0.65, 0.75, 0.5))  
 
-# A) Plot of shape residuals PCA - genus colors
-par(mar = c(4.5, 4.5, 2, 1))
-plot(x = -res.PCA$pc.scores[, 1],  # Flip for consistency
-                 y = -res.PCA$pc.scores[, 2],  
-                 xlab = PCx.lab, 
-                 ylab = PCy.lab,
-                 asp = TRUE,
-                 xlim = c(-0.09, 0.21),
-                 ylim = c(-0.18, 0.12),
-                 col = alpha.col,
-                 pch = alpha.pch,
-                 bg = alpha.col,
-                 cex = 1.5,
-                 cex.axis = 1.3, 
-                 cex.lab = 1.3)
-legend("bottomright", legend = phylo.names, col = col.unique.spp, pch = pch.unique.spp, pt.bg = col.unique.spp, cex = 0.47, pt.cex = .8, ncol = 2, text.width = 0.04)
-text(-0.11, 0.115, "A", cex = 1.5)
-
-# B) Plot of allometry PCA - genus colors
+# A) Plot of allometry PCA - genus colors
 par(mar = c(4.5, 4.5, 2, 1))
 plot(x = -mean.PCA$pc.scores[, 1],  # Flip for consistency
                  y = mean.PCA$pc.scores[, 2],  
@@ -164,30 +119,31 @@ plot(x = -mean.PCA$pc.scores[, 1],  # Flip for consistency
                  pch = alpha.pch,
                  bg = alpha.col,
                  cex = 1.5,
-                 cex.axis = 1.3, 
+                 cex.axis = 1.1, 
                  cex.lab = 1.3)
-text(-0.07, 0.077, "B", cex = 1.5)
+text(-0.072, 0.075, "A", cex = 1.5)
+text(0.0245, 0.075, "shape with allometry by genera")
 
-# C) Plot of Shape Residuals PCA - diet colors
+# B) Plot of shape residuals PCA - genus colors
 par(mar = c(4.5, 4.5, 2, 1))
 plot(x = -res.PCA$pc.scores[, 1],  # Flip for consistency
                  y = -res.PCA$pc.scores[, 2],  
                  xlab = PCx.lab, 
                  ylab = PCy.lab,
                  asp = TRUE,
-                 xlim = c(-0.12, 0.25),
-                 ylim = c(-0.12, 0.03),
-                 col = col.diet.means, 
-                 pch = pch.gld.means, 
-                 bg = col.diet.means,
+                 xlim = c(-0.0975, 0.2025),
+                 ylim = c(-0.16, 0.14),
+                 col = alpha.col,
+                 pch = alpha.pch,
+                 bg = alpha.col,
                  cex = 1.5,
-                 cex.axis = 1.3, 
+                 cex.axis = 1.1, 
                  cex.lab = 1.3)
-legend(0.14, 0.13, legend = c("Carnivore ", "Frugivore ", "Granivore ", "Herbivore ", "Omnivore "), col = col.diet.5, border = NULL, pch = 15, cex = 0.9)
-legend(0.14, -.05, legend = c("Aquatic", "Arboreal", "Terrestrial", "Hopping"), col = "black", border = NULL, pch = c(21, 24, 22, 23), cex = 0.9)
-text(-0.115, 0.14, "C", cex = 1.5)
+legend("bottomright", legend = genera.phylo, col = col.phylo, pch = 16, pt.bg = col.unique.spp, cex = 0.85, bty = "n")
+text(-0.117, 0.13, "B", cex = 1.5)
+text(0.025, 0.13, "shape residuals by genera")
 
-# D) Plot of shape reisiduals PCA without Notomys - genus colors
+# C) Plot of shape reisiduals PCA without Notomys - genus colors
 par(mar = c(4.5, 4.5, 2, 1))
 plot(x = wrap.PCA.r.n$pc.scores[, 1],  
                  y = -wrap.PCA.r.n$pc.scores[, 2],  # Flip for consistency
@@ -195,14 +151,36 @@ plot(x = wrap.PCA.r.n$pc.scores[, 1],
                  ylab = PCy.lab,
                  asp = TRUE,
                  xlim = c(-0.09, 0.21),
-                 ylim = c(-0.18, 0.12),
+                 ylim = c(-0.14, 0.16),
                  col = alpha.col.no, 
                  pch = alpha.pch.no, 
                  bg = alpha.col.no,
                  cex = 1.5,
-                 cex.axis = 1.3, 
+                 cex.axis = 1.1, 
                  cex.lab = 1.3)
-text(-0.085, 0.12, "D", cex = 1.5)
+text(-0.083, 0.16, "C", cex = 1.5)
+text(0.036, 0.16, "residuals without Notomys")
+
+# D) Plot of Shape Residuals PCA - diet colors
+par(mar = c(4.5, 4.5, 2, 1))
+plot(x = -res.PCA$pc.scores[, 1],  # Flip for consistency
+                 y = -res.PCA$pc.scores[, 2],  
+                 xlab = PCx.lab, 
+                 ylab = PCy.lab,
+                 asp = TRUE,
+                 xlim = c(-0.12, 0.25),
+                 ylim = c(-0.11, 0.04),
+                 col = col.diet.means, 
+                 pch = pch.gld.means, 
+                 bg = col.diet.means,
+                 cex = 1.5,
+                 cex.axis = 1.1, 
+                 cex.lab = 1.3)
+legend("bottomright", legend = c("Aquatic", "Arboreal", "Terrestrial", "Hopping", "", "Carnivore", "Frugivore", "Granivore", "Herbivore", "Omnivore"), col = c(rep("black", 4), "white", col.diet.5), border = NULL, pch = c(21, 24, 22, 23, rep(15, 6)), cex = 0.9, bty = "n")
+text(-0.11, 0.15, "D", cex = 1.5)
+text(0.065, 0.15, "residuals by locomotion and diet")
+
+dev.off()
 ```
 
 ### Save intermediate data
