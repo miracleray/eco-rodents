@@ -11,13 +11,19 @@ knitr::opts_knit$set(root.dir = '../eco-rodents')
 ```
 
 # Heatmaps both with-allometry and without-allometry 3D coordinates
-1) Make heatmaps for with-allometry.
+1) Make heatmaps with shape dataset including allometry.
+        A) Smallest to mean to largest
+        B) Smallest projected shape to mean to largest projected shape
+        C) PC1 minimum to mean to PC maximum
 
-2) Make heatmaps for without-allometry aka residuals aka size-less shape.
+Produces multipanel Figure 2.
 
-3) Make multi-panel figure for comparisons across heatmaps.
+2) Make heatmaps for residuals aka size-less shape dataset.
+        A) PC1 min to mean to PC1 max
+        B) PC1 min on subset without Notomys to mean to PC1 max of this subset
+        C) PC2 min to mean to PC2 max
 
-4) Directly compare by subtracting residual change from allometry change.
+Produces multipanel Figure 3.
 
 ### Load packages, functions, and data
 Tree, mean shape, and metadata for phylogenetic analyses come from the allometry rodents script 04. 
@@ -396,6 +402,8 @@ resid.big.dor.no <- readPNG("../Data/Processed/heatmap_RES_mean-big_dor_NOt.png"
 ## 2) Make multi-panel Figure 2, heatmaps with allometry
 ```{r}
 # Set up muli-panel figure; lateral 
+setEPS() 
+postscript("../Data/Results/Figure2_Heatmap_Allometry.eps")
 mat <- matrix(c(1:12), 4, 3, byrow = FALSE)  # 12 plots, 4 rows, 3 columns
 layout(mat, widths = c(1, 1, 1), heights = c(0.65, 0.75, 0.5))  
 
@@ -406,24 +414,28 @@ plot(c(0, dim(indiv.sm.lat)[2]), c(0, dim(indiv.sm.lat)[1]), type = "n", axes = 
 rasterImage(indiv.sm.lat, 0, 0, dim(indiv.sm.lat)[2], dim(indiv.sm.lat)[1])
 text(0, dim(indiv.sm.lat)[1]-10, "A", cex = 2)
 legend("topleft", inset = c(.01, 0), legend = "Smallest/Largest Individuals", bty = "n", cex = 1.2)
+legend("bottomleft", "Mean to P. delicatulus", bty = "n", inset = c(0.1, 0.05))
 
 # 2) Mean to Big, with allometry, lateral view
-par(mar = c(0, 0, -1, 0))
+par(mar = c(0, 0, 0, 0))
 plot(c(0, dim(indiv.big.lat)[2]), c(0, dim(indiv.big.lat)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
 rasterImage(indiv.big.lat, 0, 0, dim(indiv.big.lat)[2], dim(indiv.big.lat)[1])
 text(0, dim(indiv.big.lat)[1]-10, "B", cex = 2)
+legend("bottomleft", "Mean to U. caudimaculatus", bty = "n", inset = c(0.1, 0.12))
 
 # 3) Small to Mean, with Allometry, dorsal view
 par(mar = c(0, 0, 0, 0))  # sets the margins
 plot(c(0, dim(indiv.big.dor)[2]), c(0, dim(indiv.big.dor)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
 rasterImage(indiv.sm.dor, 0, 0, dim(indiv.big.dor)[2], dim(indiv.big.dor)[1])
 text(0, dim(indiv.big.dor)[1]-10, "C", cex = 2)
+legend("bottomleft", "Dorsal view of A", bty = "n", inset = c(0.1, -0.11))
 
 # 4) Mean to Big, with allometry, dorsal view
 par(mar = c(0, 0, 0, 0))
 plot(c(0, dim(indiv.big.dor)[2]), c(0, dim(indiv.big.dor)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
 rasterImage(indiv.big.dor, 0, 0, dim(indiv.big.dor)[2], dim(indiv.big.dor)[1])
 text(0, dim(indiv.big.dor)[1]-10, "D", cex = 2)
+legend("bottomleft", "Dorsal view of B", bty = "n", inset = c(0.1, 0.18))
 
 ## Fitted allometry
 # 5) Small to Mean, with allometry, lateral view
@@ -432,24 +444,28 @@ plot(c(0, dim(allom.sm.lat)[2]), c(0, dim(allom.sm.lat)[1]), type = "n", axes = 
 rasterImage(allom.sm.lat, 0, 0, dim(allom.sm.lat)[2], dim(allom.sm.lat)[1])
 text(0, dim(allom.sm.lat)[1]-10, "E", cex = 2)
 legend("topright", inset = c(0.22, 0), legend = "Fitted Allometry", bty = "n", cex = 1.2)
+legend("bottomleft", "Mean to P. delicatulus, fitted shape", bty = "n", inset = c(0.1, 0.05))
 
 # 6) Mean to Big, with allometry, lateral view
-par(mar = c(0, 0, -1, 0))
+par(mar = c(0, 0, 0, 0))
 plot(c(0, dim(allom.big.lat)[2]), c(0, dim(allom.big.lat)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
 rasterImage(allom.big.lat, 0, 0, dim(allom.big.lat)[2], dim(allom.big.lat)[1])
 text(0, dim(allom.big.lat)[1]-10, "F", cex = 2)
+legend("bottomleft", "Mean to U. caudimaculatus, fitted shape", bty = "n", inset = c(0.1, 0.12))
 
 # 7) Small to Mean, with Allometry, dorsal view
 par(mar = c(0, 0, 0, 0))  # sets the margins
 plot(c(0, dim(allom.big.dor)[2]), c(0, dim(allom.big.dor)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
 rasterImage(allom.sm.dor, 0, 0, dim(allom.big.dor)[2], dim(allom.big.dor)[1])
 text(0, dim(allom.big.dor)[1]-10, "G", cex = 2)
+legend("bottomleft", "Dorsal view of E", bty = "n", inset = c(0.1, -0.11))
 
 # 8) Mean to Big, with allometry, dorsal view
 par(mar = c(0, 0, 0, 0))
 plot(c(0, dim(allom.big.dor)[2]), c(0, dim(allom.big.dor)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
 rasterImage(allom.big.dor, 0, 0, dim(allom.big.dor)[2], dim(allom.big.dor)[1])
 text(0, dim(allom.big.dor)[1]-10, "H", cex = 2)
+legend("bottomleft", "Dorsal view of F", bty = "n", inset = c(0.1, 0.18))
 
 ## PC1 
 # 9) Small to Mean, PCA allometry, lateral view
@@ -458,29 +474,37 @@ plot(c(0, dim(allPC.sm.lat)[2]), c(0, dim(allPC.sm.lat)[1]), type = "n", axes = 
 rasterImage(allPC.sm.lat, 0, 0, dim(allPC.sm.lat)[2], dim(allPC.sm.lat)[1])
 text(0, dim(allPC.sm.lat)[1]-10, "I", cex = 2)
 legend("topright", inset = c(0.06, 0), legend = "Principal Component 1", bty = "n", cex = 1.2)
+legend("bottomleft", "Mean to hypothetical minimum", bty = "n", inset = c(0.1, 0.05))
 
 # 10) Mean to Big, PCA allometry, lateral view
-par(mar = c(0, 0, -1, 0))
+par(mar = c(0, 0, 0, 0))
 plot(c(0, dim(allPC.big.lat)[2]), c(0, dim(allPC.big.lat)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
 rasterImage(allPC.big.lat, 0, 0, dim(allPC.big.lat)[2], dim(allPC.big.lat)[1])
 text(0, dim(allPC.big.lat)[1]-10, "J", cex = 2)
+legend("bottomleft", "Mean to hypothetical maximum", bty = "n", inset = c(0.1, 0.12))
 
 # 11) Small to Mean, PCA allometry, dorsal view
 par(mar = c(0, 0, 0, 0))  # sets the margins
 plot(c(0, dim(allPC.big.dor)[2]), c(0, dim(allPC.big.dor)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
 rasterImage(allPC.sm.dor, 0, 0, dim(allPC.big.dor)[2], dim(allPC.big.dor)[1])
 text(0, dim(allPC.big.dor)[1]-10, "K", cex = 2)
+legend("bottomleft", "Dorsal view of I", bty = "n", inset = c(0.1, -0.11))
 
 # 12) Mean to Big, PCA allometry: dorsal view
 par(mar = c(0, 0, 0, 0))
 plot(c(0, dim(allPC.big.dor)[2]), c(0, dim(allPC.big.dor)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
 rasterImage(allPC.big.dor, 0, 0, dim(allPC.big.dor)[2], dim(allPC.big.dor)[1])
 text(0, dim(allPC.big.dor)[1]-10, "L", cex = 2)
+legend("bottomleft", "Dorsal view of J", bty = "n", inset = c(0.1, 0.18))
+
+dev.off()
 ```
 
 ## 3) Make multi-panel Figure 3: Heatmaps with Residuals
 ```{r}
 # Set up muli-panel figure; lateral 
+setEPS() 
+postscript("../Data/Results/Figure3_Heatmap_Residuals.eps")
 mat <- matrix(c(1:12), 4, 3, byrow = FALSE)  # 12 plots, 4 rows, 3 columns
 layout(mat, widths = c(1, 1, 1), heights = c(0.65, 0.75, 0.5))  
 
@@ -561,4 +585,6 @@ par(mar = c(0, 0, 0, 0))
 plot(c(0, dim(resP2.big.dor)[2]), c(0, dim(resP2.big.dor)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
 rasterImage(resP2.big.dor, 0, 0, dim(resP2.big.dor)[2], dim(resP2.big.dor)[1])
 text(0, dim(resP2.big.dor)[1]-10, "L", cex = 2)
+
+dev.off()
 ```
