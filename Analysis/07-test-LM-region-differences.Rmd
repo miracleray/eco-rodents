@@ -65,7 +65,7 @@ for (i in 1:length(PartLevels)){
 ### Visualize the 3 partitions
 ```{r}
 # Deconstruct function from Thomas's code in Landmark-test
-ref <- mshape(shape)  
+ 
 PartLevels <- unique(lm.modules[, 3])
 Colors <- rainbow(length(PartLevels))
 Colors <- c("brown", "gray",  "#79ABE2")  
@@ -83,20 +83,10 @@ for (i in 1:length(PartLevels)){
 }
 ```
 
-## Test modularity with 3 partitions
-```{r}
-# Rostrum versus top cranium and basicranium
-mod.test.1 <- modularity.test(shape, partition.gp = (lm.modules[, 3]))
-mod.test.1$CR.mat  # results
-
-# And now a test with the phylogentic tree (and mean shapes)
-mod.test.phy <- phylo.modularity(mean.shapes, partition.gp = lm.modules[, 3], aus.tree)
-mod.test.phy$CR.mat
-```
-
 ### Visualize the 6 partitions from Goswami 2006/7
 ```{r}
 # Deconstruct function from Thomas's code in Landmark-test
+ref <- mshape(shape)
 PartLevels <- unique(lm.modules[, 4])  # 5 modules from Goswami's 6 (missing zygomatic)
 Colors <- rainbow(length(PartLevels))
 
@@ -107,11 +97,13 @@ for(i in 1:length(PartLevels)){
 }
 
 # 3D plot of the partitions
-open3d()
-for (i in 1:length(PartLevels)){
-  spheres3d(ref[Part[[i]], 1], ref[Part[[i]], 2], ref[Part[[i]], 3], col = Colors[i], lit = TRUE, radius = 0.001, asp = FALSE)
-  rgl.texts(ref[Part[[i]], 1], ref[Part[[i]], 2], ref[Part[[i]], 3], lm.modules[, 1], offset = 100, color = c("black"))
+open3d(windowRect = c(0, 0, 600, 600))
+for (i in 1:length(PartLevels)) {
+    spheres3d(ref[Part[[i]], 1], ref[Part[[i]], 2], ref[Part[[i]], 3], col = Colors[i], lit = TRUE, radius = 0.001, asp = FALSE)
+  rgl.texts(ref[Part[[i]], 1], ref[Part[[i]], 2], ref[Part[[i]], 3], lm.modules[, 4], offset = 100, color = c("black"))
 }
+view3d(phi = 90) # Lateral view, right side up
+rgl.snapshot("../Data/Processed/modules.png")
 ```
 
 ## Test modularity with 5 partitions
@@ -136,7 +128,20 @@ mod.test.5.phy <- phylo.modularity(mean.shapes, partition.gp = lm.modules[, 4], 
 mod.result.phy <- as.matrix(mod.test.5.phy$CR.mat)  # results
 colnames(mod.result.phy) <- c("vault", "orbital", "basicran", "rostrum", "molar")
 rownames(mod.result.phy) <- c("vault", "orbital", "basicran", "rostrum", "molar")
+```
 
+## Make Figure 4
+```{r}
+# Set up multipanel figure
+mat <- matrix(c(1,2), 1, 2, byrow = TRUE) # 2 plots, 1 row, 2 columns
+layout(mat, widths = c(1, 1, 1), heights = c(0.65, 0.75, 0.5))  
+
+# 1) 
+par(mar = c(0, 0, 0, 0))  # sets the margins
+
+
+# 2) 
+par(mar = c(0, 0, 0, 0))  # sets the margins
 plot(mod.test.5.phy)
 ```
 
