@@ -11,9 +11,15 @@ knitr::opts_knit$set(root.dir = '../eco-rodents')
 ```
 
 # Test variation within morphospace
-What is causing high levels of allometry? Is it functional integration of the gnawing apparatus (mostly in the top cranium-rostrum area)? 
+What is causing high levels of allometry? Is it functional integration of the gnawing apparatus (mostly in the top cranium-rostrum area), for example? 
 
-If so, we would expect to see the top cranium-rostrum to be the least variable across species compared to the basicranium-top cranium and basicranium-rostrum comparisons. 
+1) Tests modularity adjusting for phylogenetic signal using CR metrics
+
+2) Tests modularity with Mantel tests of PC scores from each module
+
+3) Tests for global integration
+
+Makes Figure 4, Table 1, and Supplementary Figure TK
 
 ### Load packages, functions, and data from previous steps
 ```{r message = FALSE}
@@ -36,7 +42,7 @@ load(file = "../Data/Processed/05-residual-data.rda")
 ## Choose the partitions
 The three partitions will need to be designated from the LM numbers. The first time, this was done with `define.modules()` but each module was then saved in a .csv file so this step can be repeated much more quickly.
 
-### Load in the partitions for all subsequent times
+### Load in the partition definitions
 ```{r}
 lm.modules <- read.csv("../Data/Processed/Landmark_modules.csv", sep = ",", header = TRUE)
 ```
@@ -62,32 +68,12 @@ for (i in 1:length(PartLevels)){
 }
 ```
 
-### Visualize the 3 partitions
-```{r}
-# Deconstruct function from Thomas's code in Landmark-test
- 
-PartLevels <- unique(lm.modules[, 3])
-Colors <- rainbow(length(PartLevels))
-Colors <- c("brown", "gray",  "#79ABE2")  
-
-# Subset the landmarks according to the partitions
-Part <- list()
-for(i in 1:length(PartLevels)){
-        Part[[i]] <- which(lm.modules[, 3] == PartLevels[[i]])
-}
-
-# 3D plot of the partitions
-open3d()
-for (i in 1:length(PartLevels)){
-        spheres3d(ref[Part[[i]], 1], ref[Part[[i]], 2], ref[Part[[i]], 3], col = Colors[i], lit = TRUE, radius = 0.001, asp = FALSE)
-}
-```
-
-### Visualize the 6 partitions from Goswami 2006/7
+### Visualize the partitions from Goswami 2006/7
+6 partitions hypothesized for mammals, our dataset supports 5 (missing zygomatic)
 ```{r}
 # Deconstruct function from Thomas's code in Landmark-test
 ref <- mshape(shape)
-PartLevels <- unique(lm.modules[, 4])  # 5 modules from Goswami's 6 (missing zygomatic)
+PartLevels <- sort(unique(lm.modules[, 4]))  # 5 (of 6) modules from Goswami
 Colors <- rainbow(length(PartLevels))
 
 # Subset the landmarks according to the partitions
@@ -100,10 +86,16 @@ for(i in 1:length(PartLevels)){
 open3d(windowRect = c(0, 0, 600, 600))
 for (i in 1:length(PartLevels)) {
     spheres3d(ref[Part[[i]], 1], ref[Part[[i]], 2], ref[Part[[i]], 3], col = Colors[i], lit = TRUE, radius = 0.001, asp = FALSE)
-  rgl.texts(ref[Part[[i]], 1], ref[Part[[i]], 2], ref[Part[[i]], 3], lm.modules[, 4], offset = 100, color = c("black"))
+  #rgl.texts(ref[Part[[i]], 1], ref[Part[[i]], 2], ref[Part[[i]], 3], Part[[i]], offset = 100, color = c("black"))
 }
 view3d(phi = 90) # Lateral view, right side up
 rgl.snapshot("../Data/Processed/modules.png")
+
+# Remove whitespace from new image (requires ImageMagik installed on PC)
+system("mogrify ../Data/Processed/modules.png -trim ../Data/Processed/*.png")
+
+# Load it back in
+module.plot <- readPNG("../Data/Processed/modules.png")
 ```
 
 ## Test modularity with 5 partitions
@@ -111,17 +103,7 @@ This test uses covariance ratio (CR) coefficients (Adams 2016) to quantify the d
 
 A significant modular signal: when the observed CR coefficient is significantly lower than the distribution of the randomized CR coefficients
 ```{r}
-# Rostrum versus top cranium and basicranium
-mod.test.5 <- modularity.test(shape, partition.gp = (lm.modules[, 4]))
-
-# Make pairwise comparison table
-mod.result <- as.matrix(mod.test.5$CR.mat)  # results
-colnames(mod.result) <- c("vault", "orbital", "basicran", "rostrum", "molar")
-rownames(mod.result) <- c("vault", "orbital", "basicran", "rostrum", "molar")
-
-plot(mod.test.5)
-
-# And now with the phylogentic tree (and mean shapes)
+# Test with the phylogentic tree (and mean shapes)
 mod.test.5.phy <- phylo.modularity(mean.shapes, partition.gp = lm.modules[, 4], aus.tree)
 
 # Make pairwise comparison table
@@ -133,43 +115,20 @@ rownames(mod.result.phy) <- c("vault", "orbital", "basicran", "rostrum", "molar"
 ## Make Figure 4
 ```{r}
 # Set up multipanel figure
-mat <- matrix(c(1,2), 1, 2, byrow = TRUE) # 2 plots, 1 row, 2 columns
+mat <- matrix(c(1,2), 2, 1, byrow = TRUE) # 2 plots, 1 row, 2 columns
 layout(mat, widths = c(1, 1, 1), heights = c(0.65, 0.75, 0.5))  
 
-# 1) 
-par(mar = c(0, 0, 0, 0))  # sets the margins
+# 1) Plot of modules
+par(mar = c(1, 1, 1, 1))  # sets the margins
+plot(c(0, dim(module.plot)[2]), c(0, dim(module.plot)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
+rasterImage(module.plot, 0, 0, dim(module.plot)[2], dim(module.plot)[1])
+legend("topleft", "A", cex = 2, bty = "n", inset = -0.09)
 
 
-# 2) 
-par(mar = c(0, 0, 0, 0))  # sets the margins
-plot(mod.test.5.phy)
-```
-
-### Test if modularity signal is different across clades
-```{r}
-coords.clade <- coords.subset(mean.shapes, info.means$Clade)
-
-# Remove single-species clades
-clade.index <- 1:nlevels(info.means$Clade)[-c(4,5)]  # removes Mus and Pogonomys
-
-# Use lapply function to perform modularity test on 3D arrays in each clade
-mod.clade.tests <- lapply(clade.index, function(j) modularity.test(coords.clade[[j]], partition.gp = lm.modules[, 4], iter = 500, print.progress = FALSE))
-
-# Apply function from 2019 Adams & Collyer paper
-clade.CRs <- compare.CR(mod.clade.tests, CR.null = FALSE)
-clade.CRs
-```
-
-### Test if modularity signal is different across tribes
-```{r}
-coords.tribe <- coords.subset(mean.shapes, info.means$Endemic)
-
-# Use lapply function to perform modularity test on 3D arrays in each tribe
-mod.tribe.tests <- lapply(c(2,3), function(j) modularity.test(coords.tribe[[j]], partition.gp = lm.modules[, 4], iter = 500, print.progress = TRUE))
-
-# Apply function from 2019 Adams & Collyer paper
-tribe.CRs <- compare.CR(mod.tribe.tests, CR.null = FALSE)
-tribe.CRs
+# 2) Plot of CR ratios (phylogenetic)
+par(mar = c(3, 3, 3, 3))  # sets the margins
+plot(mod.test.5.phy, xlim = c(0.5, 1.5))
+legend("topleft", "B", cex = 2, bty = "n", inset = c(-0.14, -0.18))
 ```
 
 ## Mantel Test to see if PCs of modules are equivalent
@@ -228,7 +187,7 @@ mantel.results <- data.table(basicran = col1, molar = col2, orbital = col3, rost
 write.table(mantel.results, "../Data/Results/Table_MantelTests.csv", sep = ",", col.names = NA)
 ```
 
-### Whole integration test - export plot for supplementary
+### Whole integration test - supplementary Figure TK
 Test whether rodent skull is integrated as a whole
 ```{r}
 globalIntegration(mean.shapes)

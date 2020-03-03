@@ -65,12 +65,12 @@ Number,Landmark,Module,Goswami,Landmarks
 64,SUR P outline aud bulla L 3,basicran,basicran,curve
 65,SUR P outline aud bulla L 2,basicran,basicran,curve
 66,SUR P outline aud bulla L 1,basicran,basicran,curve
-67,SUR P most edge maxilla R 3,rostrum,orbital,curve
-68,SUR P most edge maxilla R 2,rostrum,orbital,curve
-69,SUR P most edge maxilla R 1,rostrum,orbital,curve
-70,SUR P most edge maxilla L 3,rostrum,orbital,curve
-71,SUR P most edge maxilla L 2,rostrum,orbital,curve
-72,SUR P most edge maxilla L 1,rostrum,orbital,curve
+67,SUR P most edge maxilla R 3,rostrum,rostrum,curve
+68,SUR P most edge maxilla R 2,rostrum,rostrum,curve
+69,SUR P most edge maxilla R 1,rostrum,molar,curve
+70,SUR P most edge maxilla L 3,rostrum,rostrum,curve
+71,SUR P most edge maxilla L 2,rostrum,rostrum,curve
+72,SUR P most edge maxilla L 1,rostrum,molar,curve
 73,SUR nasal premaxilla suture R 5,rostrum,rostrum,curve
 74,SUR nasal premaxilla suture R 4,rostrum,rostrum,curve
 75,SUR nasal premaxilla suture R 3,rostrum,rostrum,curve
