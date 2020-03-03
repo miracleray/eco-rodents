@@ -121,17 +121,23 @@ save(mod.test.5.phy, mod.result.phy, file = "../Data/Processed/07-modularity.rda
 ## Make Figure 4
 ```{r}
 # Set up multipanel figure
-mat <- matrix(c(1,2), 2, 1, byrow = TRUE) # 2 plots, 1 row, 2 columns
+mat <- matrix(c(1, 2), 2, 1, byrow = TRUE) # 2 plots, 1 row, 2 columns
 layout(mat, widths = rep.int(1, ncol(mat)), heights = rep.int(1, nrow(mat)))  
 
 # 1) Plot of modules
 par(mar = c(1, 1, 1, 1))  # sets the margins
-plot(c(0, dim(module.plot)[2]), c(0, dim(module.plot)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
+plot(c(0, dim(module.plot)[2]), c(0, dim(module.plot)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = TRUE) 
 rasterImage(module.plot, 0, 0, dim(module.plot)[2], dim(module.plot)[1])
 legend("topleft", "A", cex = 2, bty = "n", inset = -0.09)
+text(70, -13, "Basicranium", cex = 0.9, bty = "n", col = mod.colors[1])
+text(255, 15, "Molar", cex = 0.9, bty = "n", col = mod.colors[2])
+text(249, 182, "Orbital", cex = 0.9, bty = "n", col = mod.colors[3])
+text(415, 140, "Rostrum", cex = 0.9, bty = "n", col = mod.colors[4])
+text(40, 175, "Vault", cex = 0.9, bty = "n", col = wes_palette("GrandBudapest2")[4])  # similar but darker color
+```
 
-
-# 2) Plot of CR ratios (phylogenetic)
+```{r}
+# 2) Plot of CR ratios (with phylogenetic correction)
 par(mar = c(3.5, 3.5, 0, 0))  # margins; need space left & bottom for labels
 hist(mod.test.5.phy$random.CR,
      main = NULL,
