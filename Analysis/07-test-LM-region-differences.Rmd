@@ -25,6 +25,7 @@ Makes Figure 4, Table 1, and Supplementary Figure TK
 ```{r message = FALSE}
 library(png)  # needed to work with screenshots
 library(colorspace)  # plot colors
+library(wesanderson)
 # Load libraries (and install if necessary) for landvR package
 if(!require(devtools)) install.packages("devtools")
 if(!require(dispRity)) install.packages("dispRity")
@@ -51,20 +52,19 @@ lm.modules <- read.csv("../Data/Processed/Landmark_modules.csv", sep = ",", head
 ```{r}
 # Deconstruct function from Thomas's code in Landmark-test
 ref <- mshape(shape)  
-PartLevels <- unique(lm.modules[, 5])
-Colors <- rainbow(length(PartLevels))
-Colors <- c("blue", "gray", "black")  # semi, patch, fixed
+lm.levels <- unique(lm.modules[, 5])
+lm.colors <- c("blue", "gray", "black")  # semi, patch, fixed
 
 # Subset the landmarks according to the partitions
-Part <- list()
-for(i in 1:length(PartLevels)){
-        Part[[i]] <- which(lm.modules[, 5] == PartLevels[[i]])
+lm.parts <- list()
+for(i in 1:length(lm.levels)){
+        lm.parts[[i]] <- which(lm.modules[, 5] == lm.levels[[i]])
 }
 
 # 3D plot of the partitions
 open3d()
-for (i in 1:length(PartLevels)){
-        spheres3d(ref[Part[[i]], 1], ref[Part[[i]], 2], ref[Part[[i]], 3], col = Colors[i], lit = TRUE, radius = 0.001, asp = FALSE)
+for (i in 1:length(lm.levels)){
+        spheres3d(ref[lm.parts[[i]], 1], ref[lm.parts[[i]], 2], ref[lm.parts[[i]], 3], col = lm.colors[i], lit = TRUE, radius = 0.001, asp = FALSE)
 }
 ```
 
@@ -73,20 +73,22 @@ for (i in 1:length(PartLevels)){
 ```{r}
 # Deconstruct function from Thomas's code in Landmark-test
 ref <- mshape(shape)
-PartLevels <- sort(unique(lm.modules[, 4]))  # 5 (of 6) modules from Goswami
-Colors <- rainbow(length(PartLevels))
+mod.levels<- sort(unique(lm.modules[, 4]))  # 5 (of 6) modules from Goswami
+
+# Define nice colors for modules
+mod.colors <- rainbow(length(mod.levels))
 
 # Subset the landmarks according to the partitions
-Part <- list()
-for(i in 1:length(PartLevels)){
-  Part[[i]] <- which(lm.modules[, 4] == PartLevels[[i]])
+mod.parts <- list()
+for(i in 1:length(mod.levels)){
+  mod.parts[[i]] <- which(lm.modules[, 4] == mod.levels[[i]])
 }
 
 # 3D plot of the partitions
 open3d(windowRect = c(0, 0, 600, 600))
-for (i in 1:length(PartLevels)) {
-    spheres3d(ref[Part[[i]], 1], ref[Part[[i]], 2], ref[Part[[i]], 3], col = Colors[i], lit = TRUE, radius = 0.001, asp = FALSE)
-  #rgl.texts(ref[Part[[i]], 1], ref[Part[[i]], 2], ref[Part[[i]], 3], Part[[i]], offset = 100, color = c("black"))
+for(i in 1:length(mod.levels)) {
+        spheres3d(ref[mod.parts[[i]], 1], ref[mod.parts[[i]], 2], ref[mod.parts[[i]], 3], col = mod.colors[i], lit = TRUE, radius = 0.001, asp = FALSE)
+        #rgl.texts(ref[mod.parts[[i]], 1], ref[mod.parts[[i]], 2], ref[mod.parts[[i]], 3], mod.parts[[i]], offset = 100, color = c("black"))
 }
 view3d(phi = 90) # Lateral view, right side up
 rgl.snapshot("../Data/Processed/modules.png")
@@ -94,7 +96,7 @@ rgl.snapshot("../Data/Processed/modules.png")
 # Remove whitespace from new image (requires ImageMagik installed on PC)
 system("mogrify ../Data/Processed/modules.png -trim ../Data/Processed/*.png")
 
-# Load it back in
+# Load png back in
 module.plot <- readPNG("../Data/Processed/modules.png")
 ```
 
