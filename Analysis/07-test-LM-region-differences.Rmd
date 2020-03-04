@@ -113,8 +113,10 @@ mod.test.5.phy <- phylo.modularity(mean.shapes, partition.gp = lm.modules[, 4], 
 
 # Make pairwise comparison table
 mod.result.phy <- as.matrix(mod.test.5.phy$CR.mat)  # results
-colnames(mod.result.phy) <- c("vault", "orbital", "basicran", "rostrum", "molar")
-rownames(mod.result.phy) <- c("vault", "orbital", "basicran", "rostrum", "molar")
+colnames(mod.result.phy) <- unique(lm.modules[, 4])  # names from 1st instance
+rownames(mod.result.phy) <- unique(lm.modules[, 4])  # ...in lm.module[, 4]
+alpha.key <- match(unique(lm.modules[, 4]), mod.levels)  # alphabetize table
+mod.result.phy <- mod.result.phy[order(alpha.key), order(alpha.key)]
 
 save(mod.test.5.phy, mod.result.phy, file = "../Data/Processed/07-modularity.rda")
 ```
