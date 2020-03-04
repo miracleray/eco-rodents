@@ -54,7 +54,7 @@ lm.modules <- read.csv("../Data/Processed/Landmark_modules.csv", sep = ",", head
 ### Visualize the landmark types
 ```{r}
 # Deconstruct function from Thomas's code in Landmark-test
-ref <- mshape(shape)  
+ref <- mshape(mean.shapes)  
 lm.levels <- unique(lm.modules[, 5])
 lm.colors <- c("blue", "gray", "black")  # semi, patch, fixed
 
@@ -75,7 +75,7 @@ for (i in 1:length(lm.levels)){
 6 partitions hypothesized for mammals, our dataset supports 5 (missing zygomatic)
 ```{r}
 # Deconstruct function from Thomas's code in Landmark-test
-ref <- mshape(shape)
+ref <- mshape(mean.shapes)
 mod.levels<- sort(unique(lm.modules[, 4]))  # 5 (of 6) modules from Goswami
 
 # Define nice colors for modules
@@ -86,14 +86,16 @@ mod.parts <- list()
 for(i in 1:length(mod.levels)){
   mod.parts[[i]] <- which(lm.modules[, 4] == mod.levels[[i]])
 }
+```
 
-# Make high resolution file of lateral 3D plot of the module partitions
-open3d(windowRect = c(0, 0, 600, 600))
+### Make image of 3D plot of the module partitions for Fig. 4A
+```{r}
+open3d(windowRect = c(0, 0, 1200, 1200))
 for(i in 1:length(mod.levels)) {
         spheres3d(ref[mod.parts[[i]], 1], ref[mod.parts[[i]], 2], ref[mod.parts[[i]], 3], col = mod.colors[i], lit = TRUE, radius = 0.0015, asp = FALSE)
         #rgl.texts(ref[mod.parts[[i]], 1], ref[mod.parts[[i]], 2], ref[mod.parts[[i]], 3], mod.parts[[i]], offset = 100, color = c("black"))
 }
-view3d(phi = 90) # Lateral view, right side up
+view3d(phi = 90)  # Lateral view, dorsal side up
 rgl.snapshot("../Data/Processed/modules.png")
 
 # Remove whitespace from new image (requires ImageMagik installed on PC)
@@ -126,13 +128,15 @@ save(mod.test.5.phy, mod.result.phy, file = "../Data/Processed/07-modularity.rda
 # Set up for export and for multiple panels
 setEPS() 
 postscript("../Data/Results/Figure4_Modularity.eps")
-mat <- matrix(c(1, 2), 2, 1, byrow = TRUE) # 2 plots, 1 row, 2 columns
+mat <- matrix(c(1, 2), 2, 1, byrow = TRUE)  # 2 plots, 1 row, 2 columns
 layout(mat, widths = rep.int(1, ncol(mat)), heights = rep.int(1, nrow(mat)))  
 
 # 1) Plot of modules
 par(mar = c(1, 1, 1, 1))  # sets the margins
-plot(c(0, dim(module.plot)[2]), c(0, dim(module.plot)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = TRUE) 
+plot(c(0, dim(module.plot)[2]), c(0, dim(module.plot)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE)  # module.plot = png made above
 rasterImage(module.plot, 0, 0, dim(module.plot)[2], dim(module.plot)[1])
+
+# Labels for module plot
 text(33, 195, "A", cex = 1.5)
 text(143, 196, "module definitions (observed condition)", cex = 0.9)
 text(70, -10, "Basicranium", cex = 0.9, bty = "n", col = mod.colors[1])
@@ -141,8 +145,8 @@ text(275, 175, "Orbital", cex = 0.9, bty = "n", col = mod.colors[3])
 text(415, 138, "Rostrum", cex = 0.9, bty = "n", col = mod.colors[4])
 text(15, 160, "Vault", cex = 0.9, bty = "n", col = wes_palette("GrandBudapest2")[4])  # similar but darker color
 
-# 2) Plot of CR ratios (with phylogenetic correction)
-par(mar = c(3.5, 3.5, 1.5, 0.5))  # margins; need most space left & bottom for labels
+# 2) Plot of observed and resampled CR coefficients (w/ phylo correction)
+par(mar = c(3.5, 3.5, 1.5, 0.5))
 hist(mod.test.5.phy$random.CR,
      main = NULL,
      xlab = "",
@@ -150,6 +154,8 @@ hist(mod.test.5.phy$random.CR,
      ylab = "",
      cex.axis = 0.9,
      col = "black")
+
+# Labels for histogram
 title(xlab = "Covariance ratio (CR) coefficient", line = 2.4)
 title(ylab = "Frequency (out of 1000)", line = 2.45)
 arrows(x0 = mod.test.5.phy$CR, y0 = 200, y1 = 8, length = 0.15, lwd = 1.5, col = "darkred")
