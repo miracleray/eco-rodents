@@ -26,6 +26,7 @@ Makes Figure 4, Table 1, and Supplementary Figure TK
 library(png)  # needed to work with screenshots
 library(colorspace)  # plot colors
 library(wesanderson)
+library(crop)  # to crop high res 3D images for figures
 # Load libraries (and install if necessary) for landvR package
 if(!require(devtools)) install.packages("devtools")
 if(!require(dispRity)) install.packages("dispRity")
@@ -86,7 +87,7 @@ for(i in 1:length(mod.levels)){
   mod.parts[[i]] <- which(lm.modules[, 4] == mod.levels[[i]])
 }
 
-# 3D plot of the partitions
+# Make high resolution file of lateral 3D plot of the module partitions
 open3d(windowRect = c(0, 0, 600, 600))
 for(i in 1:length(mod.levels)) {
         spheres3d(ref[mod.parts[[i]], 1], ref[mod.parts[[i]], 2], ref[mod.parts[[i]], 3], col = mod.colors[i], lit = TRUE, radius = 0.0015, asp = FALSE)
@@ -120,7 +121,9 @@ save(mod.test.5.phy, mod.result.phy, file = "../Data/Processed/07-modularity.rda
 
 ## Make Figure 4
 ```{r}
-# Set up multipanel figure
+# Set up for export and for multiple panels
+setEPS() 
+postscript("../Data/Results/Figure4_Modularity.eps")
 mat <- matrix(c(1, 2), 2, 1, byrow = TRUE) # 2 plots, 1 row, 2 columns
 layout(mat, widths = rep.int(1, ncol(mat)), heights = rep.int(1, nrow(mat)))  
 
@@ -128,17 +131,16 @@ layout(mat, widths = rep.int(1, ncol(mat)), heights = rep.int(1, nrow(mat)))
 par(mar = c(1, 1, 1, 1))  # sets the margins
 plot(c(0, dim(module.plot)[2]), c(0, dim(module.plot)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = TRUE) 
 rasterImage(module.plot, 0, 0, dim(module.plot)[2], dim(module.plot)[1])
-legend("topleft", "A", cex = 2, bty = "n", inset = -0.09)
-text(70, -13, "Basicranium", cex = 0.9, bty = "n", col = mod.colors[1])
+text(33, 195, "A", cex = 1.5)
+text(143, 196, "module definitions (observed condition)", cex = 0.9)
+text(70, -10, "Basicranium", cex = 0.9, bty = "n", col = mod.colors[1])
 text(255, 15, "Molar", cex = 0.9, bty = "n", col = mod.colors[2])
-text(249, 182, "Orbital", cex = 0.9, bty = "n", col = mod.colors[3])
-text(415, 140, "Rostrum", cex = 0.9, bty = "n", col = mod.colors[4])
-text(40, 175, "Vault", cex = 0.9, bty = "n", col = wes_palette("GrandBudapest2")[4])  # similar but darker color
-```
+text(275, 175, "Orbital", cex = 0.9, bty = "n", col = mod.colors[3])
+text(415, 138, "Rostrum", cex = 0.9, bty = "n", col = mod.colors[4])
+text(15, 160, "Vault", cex = 0.9, bty = "n", col = wes_palette("GrandBudapest2")[4])  # similar but darker color
 
-```{r}
 # 2) Plot of CR ratios (with phylogenetic correction)
-par(mar = c(3.5, 3.5, 0, 0))  # margins; need space left & bottom for labels
+par(mar = c(3.5, 3.5, 1.5, 0.5))  # margins; need most space left & bottom for labels
 hist(mod.test.5.phy$random.CR,
      main = NULL,
      xlab = "",
@@ -147,11 +149,13 @@ hist(mod.test.5.phy$random.CR,
      cex.axis = 0.9,
      col = "black")
 title(xlab = "Covariance ratio (CR) coefficient", line = 2.4)
-title(ylab = "Frequency of resampled CR", line = 2.45)
+title(ylab = "Frequency (out of 1000)", line = 2.45)
 arrows(x0 = mod.test.5.phy$CR, y0 = 200, y1 = 8, length = 0.15, lwd = 1.5, col = "darkred")
-text(mod.test.5.phy$CR - 0.005, 225, "Observed CR", cex = 0.9, col = "darkred")
-legend("topleft", "B", cex = 2, bty = "n", inset = c(-0.1, -0.05))
-text(0.945, 400, "resampled CR coefficients", cex = 0.9, bty = "n")
+text(mod.test.5.phy$CR - 0.003, 225, "observed CR", cex = 0.9, col = "darkred")
+text(0.9, 395, "B", cex = 1.5)
+text(0.936, 397, "resampled CR coefficients", cex = 0.9)
+
+dev.off()
 ```
 
 ## Mantel Test to see if PCs of modules are equivalent
