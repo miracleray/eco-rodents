@@ -10,13 +10,18 @@ knitr::opts_knit$set(root.dir = '../eco-rodents')
 ```
 
 # Test for differences in the 3 methods to get fitted allometric shapes from procD.lm()
-1) Simply using the $fitted object found in a procD.lm object.
+1) Simply using the `$fitted` object found in a procD.lm object.
 
-2) Using the mysterious $GM$Fitted object not described in the help file.
+2) Using the mysterious `$GM$fitted` object not described in the help file.
 
-3) Using the lengthy workaround suggested by the function's documentation.
+3) Using the lengthy workflow suggested by the function's documentation involving plot objects and regression scores.
 
-Is relevant to Figure 2's second column, which is currently using #1
+This script produces Supplementary Figure TK and is relevant to Figure 2's second column, which is currently using the method from #1 (script 06).  
+
+# Two conclusions after running this:
+1) `$fitted` and `$GM$fitted` are exactly the same (`$fitted` just needs `arrayspecs()` to be in the right coordinates format for *geomorph*). Either is appropriate to use for allometric fitted shape heatmaps - see Figure 2 for this ms. 
+
+2) Surprisingly, the workflow recommended in the documentation (#3) seems to produce the residual shape variation along PC1! You can compare column 3 in the figure made by this script with column 1 in Figure 3, the residual heatmap figure in this ms. 
 
 ### Load packages, functions, and data
 ```{r message = FALSE}
@@ -199,8 +204,8 @@ regsc.big.dor <- readPNG("../Data/Processed/heatmap_RES_mean-big_dor.png")
 ## 4) Make multi-panel Supplementary Figure TK for comparison
 ```{r}
 # Set up muli-panel figure TK; lateral 
-#setEPS() 
-#postscript("../Data/Results/SFigure_Allometry_Compare.eps")
+setEPS() 
+postscript("../Data/Results/SFigure_Allometry_Compare.eps")
 mat <- matrix(c(1:12), 4, 3, byrow = FALSE)  # 12 plots, 4 rows, 3 columns
 layout(mat, widths = c(1, 1, 1), heights = c(0.65, 0.75, 0.5))  
 
