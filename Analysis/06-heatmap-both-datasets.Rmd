@@ -404,7 +404,7 @@ resid.big.dor.no <- readPNG("../Data/Processed/heatmap_RES_mean-big_dor_NOt.png"
 # Set up muli-panel figure; lateral 
 pdf("../Data/Results/Figure2_Heatmap_Allometry.pdf")
 mat <- matrix(c(1:12), 4, 3, byrow = FALSE)  # 12 plots, 4 rows, 3 columns
-layout(mat, widths = c(1, 1, 1), heights = c(rep(0.5, 4)))
+layout(mat, widths = rep(1, dim(mat)[2]), heights = rep(0.5, dim(mat)[1]))
 
 ## Individuals
 # 1) Mean to Small, with allometry, lateral view
@@ -502,10 +502,9 @@ dev.off()
 ## 3) Make multi-panel Figure 3: Heatmaps with Residuals
 ```{r}
 # Set up muli-panel figure; lateral 
-setEPS() 
-postscript("../Data/Results/Figure3_Heatmap_Residuals.eps")
+pdf("../Data/Results/Figure3_Heatmap_Residuals.pdf")
 mat <- matrix(c(1:12), 4, 3, byrow = FALSE)  # 12 plots, 4 rows, 3 columns
-layout(mat, widths = c(1, 1, 1), heights = c(0.65, 0.75, 0.5))  
+layout(mat, widths = rep(1, dim(mat)[2]), heights = rep(0.5, dim(mat)[1])) 
 
 ## PC1 Residuals
 # 1) Mean to Small, residuals PC1, lateral view
@@ -513,29 +512,29 @@ par(mar = c(0, 0, 0, 0))
 plot(c(0, dim(resid.sm.lat)[2]), c(0, dim(resid.sm.lat)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
 rasterImage(resid.sm.lat, 0, 0, dim(resid.sm.lat)[2], dim(resid.sm.lat)[1])
 text(0, dim(resid.sm.lat)[1]-10, "A", cex = 2)
-legend("topright", inset = c(0.25, 0), legend = "PC1 Residuals", bty = "n", cex = 1.2)
-legend("bottomleft", "Mean to hypothetical minimum", bty = "n", inset = c(0.1, 0.05))
+legend("topright", inset = c(0.3, 0), legend = "PC1 Residuals", bty = "n", cex = 1.2)
+legend("bottomleft", "Mean to hypothetical minimum", bty = "n", inset = c(0.1, 0.07))
 
 # 2) Mean to Big, residuals PC1, lateral view
 par(mar = c(0, 0, 0, 0))
 plot(c(0, dim(resid.big.lat)[2]), c(0, dim(resid.big.lat)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
 rasterImage(resid.big.lat, 0, 0, dim(resid.big.lat)[2], dim(resid.big.lat)[1])
 text(0, dim(resid.big.lat)[1]-10, "B", cex = 2)
-legend("bottomleft", "Mean to hypothetical maximum", bty = "n", inset = c(0.1, 0.12))
+legend("bottomleft", "Mean to hypothetical maximum", bty = "n", inset = c(0.1, 0.07))
 
 # 3) Mean to Small, residuals PC1, dorsal view
 par(mar = c(0, 0, 0, 0))
 plot(c(0, dim(resid.big.dor)[2]), c(0, dim(resid.big.dor)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
 rasterImage(resid.sm.dor, 0, 0, dim(resid.big.dor)[2], dim(resid.big.dor)[1])
 text(0, dim(resid.big.dor)[1]-10, "C", cex = 2)
-legend("bottomleft", "Dorsal view of A", bty = "n", inset = c(0.1, -0.11))
+legend("bottomleft", "Dorsal view of A", bty = "n", inset = c(0.2, 0.05))
 
 # 4) Mean to Big, residuals PC1, dorsal view
 par(mar = c(0, 0, 0, 0))
 plot(c(0, dim(resid.big.dor)[2]), c(0, dim(resid.big.dor)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
 rasterImage(resid.big.dor, 0, 0, dim(resid.big.dor)[2], dim(resid.big.dor)[1])
 text(0, dim(resid.big.dor)[1]-10, "D", cex = 2)
-legend("bottomleft", "Dorsal view of B", bty = "n", inset = c(0.1, 0.18))
+legend("bottomleft", "Dorsal view of B", bty = "n", inset = c(0.2, 0.05))
 
 ## PC 1 Residuals -- without Notomys
 # 5) Mean to Small, residuals PC1, lateral view - no Notomys
@@ -543,29 +542,29 @@ par(mar = c(0, 0, 0, 0))
 plot(c(0, dim(resid.sm.lat.no)[2]), c(0, dim(resid.sm.lat.no)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
 rasterImage(resid.sm.lat.no, 0, 0, dim(resid.sm.lat.no)[2], dim(resid.sm.lat.no)[1])
 text(0, dim(resid.sm.lat.no)[1]-10, "E", cex = 2)
-legend("topright", inset = c(-0.1, 0), legend = "PC1 Residuals (no Notomys)", bty = "n", cex = 1.2)
-legend("bottomleft", "Mean to new hypothetical minimum", bty = "n", inset = c(0.1, 0.05))
+legend("topright", inset = c(0.1, 0), legend = "PC1 Residuals (no Notomys)", bty = "n", cex = 1.2)
+legend("bottomleft", "Mean to new hypothetical minimum", bty = "n", inset = c(0.07, 0.07))
 
 # 6) Mean to Big, residuals PC1, lateral view - no Notomys
 par(mar = c(0, 0, 0, 0))
 plot(c(0, dim(resid.big.lat.no)[2]), c(0, dim(resid.big.lat.no)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
 rasterImage(resid.big.lat.no, 0, 0, dim(resid.big.lat.no)[2], dim(resid.big.lat.no)[1])
 text(0, dim(resid.big.lat.no)[1]-10, "F", cex = 2)
-legend("bottomleft", "Mean to new hypothetical maximum", bty = "n", inset = c(0.1, 0.12))
+legend("bottomleft", "Mean to new hypothetical maximum", bty = "n", inset = c(0.07, 0.07))
 
 # 7) Mean to Small, residuals PC1, dorsal view - no Notomys
 par(mar = c(0, 0, 0, 0))
 plot(c(0, dim(resid.big.dor.no)[2]), c(0, dim(resid.big.dor.no)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
 rasterImage(resid.sm.dor.no, 0, 0, dim(resid.big.dor.no)[2], dim(resid.big.dor.no)[1])
 text(0, dim(resid.big.dor.no)[1]-10, "G", cex = 2)
-legend("bottomleft", "Dorsal view of E", bty = "n", inset = c(0.1, -0.11))
+legend("bottomleft", "Dorsal view of E", bty = "n", inset = c(0.2, 0.05))
 
 # 8) Mean to Big, residuals PC1, dorsal view - no Notomys
 par(mar = c(0, 0, 0, 0))
 plot(c(0, dim(resid.big.dor.no)[2]), c(0, dim(resid.big.dor.no)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
 rasterImage(resid.big.dor.no, 0, 0, dim(resid.big.dor.no)[2], dim(resid.big.dor.no)[1])
 text(0, dim(resid.big.dor.no)[1]-10, "H", cex = 2)
-legend("bottomleft", "Dorsal view of F", bty = "n", inset = c(0.1, 0.18))
+legend("bottomleft", "Dorsal view of F", bty = "n", inset = c(0.2, 0.05))
 
 ## PC2 (whole residual dataset)
 # 9) Mean to Small, residuals PC2, lateral view
@@ -573,29 +572,29 @@ par(mar = c(0, 0, 0, 0))
 plot(c(0, dim(resP2.sm.lat)[2]), c(0, dim(resP2.sm.lat)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
 rasterImage(resP2.sm.lat, 0, 0, dim(resP2.sm.lat)[2], dim(resP2.sm.lat)[1])
 text(0, dim(resP2.sm.lat)[1]-10, "I", cex = 2)
-legend("topright", inset = c(0.01, 0), legend = "PC2 Residuals (all spp.)", bty = "n", cex = 1.2)
-legend("bottomleft", "Mean to PC2 hypothetical minimum", bty = "n", inset = c(0.1, 0.05))
+legend("topright", inset = c(0.17, 0), legend = "PC2 Residuals (all spp.)", bty = "n", cex = 1.2)
+legend("bottomleft", "Mean to PC2 hypothetical minimum", bty = "n", inset = c(0.1, 0.07))
 
 # 10) Mean to Big, residuals PC2, lateral view
 par(mar = c(0, 0, 0, 0))
 plot(c(0, dim(resP2.big.lat)[2]), c(0, dim(resP2.big.lat)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
 rasterImage(resP2.big.lat, 0, 0, dim(resP2.big.lat)[2], dim(resP2.big.lat)[1])
 text(0, dim(resP2.big.lat)[1]-10, "J", cex = 2)
-legend("bottomleft", "Mean to PC2 hypothetical maximum", bty = "n", inset = c(0.1, 0.12))
+legend("bottomleft", "Mean to PC2 hypothetical maximum", bty = "n", inset = c(0.1, 0.07))
 
 # 11) Mean to Small, residuals PC2, dorsal view
 par(mar = c(0, 0, 0, 0))
 plot(c(0, dim(resP2.big.dor)[2]), c(0, dim(resP2.big.dor)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
 rasterImage(resP2.sm.dor, 0, 0, dim(resP2.big.dor)[2], dim(resP2.big.dor)[1])
 text(0, dim(resP2.big.dor)[1]-10, "K", cex = 2)
-legend("bottomleft", "Dorsal view of I", bty = "n", inset = c(0.1, -0.11))
+legend("bottomleft", "Dorsal view of I", bty = "n", inset = c(0.2, 0.05))
 
 # 12) Mean to Big, residuals PC2, dorsal view
 par(mar = c(0, 0, 0, 0))
 plot(c(0, dim(resP2.big.dor)[2]), c(0, dim(resP2.big.dor)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
 rasterImage(resP2.big.dor, 0, 0, dim(resP2.big.dor)[2], dim(resP2.big.dor)[1])
 text(0, dim(resP2.big.dor)[1]-10, "L", cex = 2)
-legend("bottomleft", "Dorsal view of J", bty = "n", inset = c(0.1, 0.18))
+legend("bottomleft", "Dorsal view of J", bty = "n", inset = c(0.2, 0.05))
 
 dev.off()
 ```
