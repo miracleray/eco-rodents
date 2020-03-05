@@ -13,9 +13,9 @@ knitr::opts_knit$set(root.dir = '../eco-rodents')
 # Test variation within morphospace
 What is causing high levels of allometry? Is it functional integration of the gnawing apparatus (mostly in the top cranium-rostrum area), for example? 
 
-1) Tests modularity adjusting for phylogenetic signal using CR metrics
+1) Tests modularity adjusting for phylogenetic signal using CR coefficients
 
-2) Tests modularity with Mantel tests of PC scores from each module
+2) Tests modularity with Mantel tests of PC scores distance matrices from each module
 
 3) Tests for global integration
 
@@ -123,11 +123,10 @@ mod.result.phy <- mod.result.phy[order(alpha.key), order(alpha.key)]
 save(mod.test.5.phy, mod.result.phy, file = "../Data/Processed/07-modularity.rda")
 ```
 
-## Make Figure 4
+## Make and export Figure 4
 ```{r}
 # Set up for export and for multiple panels
-setEPS() 
-postscript("../Data/Results/Figure4_Modularity.eps")
+pdf("../Data/Results/Figure4_Modularity.pdf")
 mat <- matrix(c(1, 2), 2, 1, byrow = TRUE)  # 2 plots, 1 row, 2 columns
 layout(mat, widths = rep.int(1, ncol(mat)), heights = rep.int(1, nrow(mat)))  
 
@@ -135,15 +134,14 @@ layout(mat, widths = rep.int(1, ncol(mat)), heights = rep.int(1, nrow(mat)))
 par(mar = c(1, 1, 1, 1))  # sets the margins
 plot(c(0, dim(module.plot)[2]), c(0, dim(module.plot)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE)  # module.plot = png made above
 rasterImage(module.plot, 0, 0, dim(module.plot)[2], dim(module.plot)[1])
-
 # Labels for module plot
-text(33, 195, "A", cex = 1.5)
-text(143, 196, "module definitions (observed condition)", cex = 0.9)
-text(70, -10, "Basicranium", cex = 0.9, bty = "n", col = mod.colors[1])
-text(255, 15, "Molar", cex = 0.9, bty = "n", col = mod.colors[2])
-text(275, 175, "Orbital", cex = 0.9, bty = "n", col = mod.colors[3])
-text(415, 138, "Rostrum", cex = 0.9, bty = "n", col = mod.colors[4])
-text(15, 160, "Vault", cex = 0.9, bty = "n", col = wes_palette("GrandBudapest2")[4])  # similar but darker color
+text(81, 388, "A", cex = 1.5)
+text(302, 392, "module definitions (observed condition)", cex = 0.9)
+text(142, -25, "Basicranium", cex = 0.9, bty = "n", col = darken(mod.colors[1]))
+text(500, 28, "Molar", cex = 0.9, bty = "n", col = mod.colors[2])
+text(560, 349, "Orbital", cex = 0.9, bty = "n", col = darken(mod.colors[3]))
+text(835, 270, "Rostrum", cex = 0.9, bty = "n", col = darken(mod.colors[4], amount = 0.3))
+text(42, 325, "Vault", cex = 0.9, bty = "n", col = darken(mod.colors[5], amount = 0.35))
 
 # 2) Plot of observed and resampled CR coefficients (w/ phylo correction)
 par(mar = c(3.5, 3.5, 1.5, 0.5))
@@ -154,14 +152,13 @@ hist(mod.test.5.phy$random.CR,
      ylab = "",
      cex.axis = 0.9,
      col = "black")
-
 # Labels for histogram
 title(xlab = "Covariance ratio (CR) coefficient", line = 2.4)
-title(ylab = "Frequency (out of 1000)", line = 2.45)
+title(ylab = "Frequency (out of 1000)", line = 2.35)
 arrows(x0 = mod.test.5.phy$CR, y0 = 200, y1 = 8, length = 0.15, lwd = 1.5, col = "darkred")
-text(mod.test.5.phy$CR - 0.003, 225, "observed CR", cex = 0.9, col = "darkred")
-text(0.9, 395, "B", cex = 1.5)
-text(0.936, 397, "resampled CR coefficients", cex = 0.9)
+text(mod.test.5.phy$CR - 0.001, 230, "observed CR", cex = 0.9, col = "darkred")
+text(0.9, 427, "B", cex = 1.5)
+text(0.936, 431, "resampled CR coefficients", cex = 0.9)
 
 dev.off()
 ```
