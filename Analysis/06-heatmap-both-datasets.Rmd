@@ -101,7 +101,7 @@ rgl.snapshot("../Data/Processed/heatmap_IND_mean-big_dor.png")
 First find mean specimen, then smallest and largest. Uses Dr Thomas Guillerme's new package, `landvR` to see how landmarks vary between these specimens.
 ```{r}
 # Fit specimens
-allom.fit <- procD.lm(mean.shapes~info.means$MeanCsize)
+allom.fit <- procD.lm(mean.shapes ~ log(info.means$MeanCsize))
 fit.shapes <- arrayspecs(allom.fit$fitted, 325, 3)
 
 # Find mean configuration - i.e. mean shape in dataset

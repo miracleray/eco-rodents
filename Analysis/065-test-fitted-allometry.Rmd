@@ -1,0 +1,298 @@
+---
+title: "065-test-fitted-allometry"
+author: "Ariel Marcy"
+date: "3/5/2020"
+output: html_document
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = '../eco-rodents')
+```
+
+# Test for differences in the 3 methods to get fitted allometric shapes from procD.lm()
+1) Simply using the $fitted object found in a procD.lm object.
+
+2) Using the mysterious $GM$Fitted object not described in the help file.
+
+3) Using the lengthy workaround suggested by the function's documentation.
+
+Is relevant to Figure 2's second column, which is currently using #1
+
+### Load packages, functions, and data
+```{r message = FALSE}
+library(geomorph)
+library(data.table)
+library(geiger)  # for phylogenies
+library(png)  # needed to work with screenshots
+library(colorspace)  # plot colors
+# Load libraries (and install if necessary) for landvR package
+if(!require(devtools)) install.packages("devtools")
+if(!require(dispRity)) install.packages("dispRity")
+if(!require(landvR)) install_github("TGuillerme/landvR")
+# Load previous data
+load(file = "../Data/Processed/03-main-data.rda")
+load(file = "../Data/Processed/03-tree-data.rda")
+load(file = "../Data/Processed/03-graphing-vectors.rda")
+```
+
+## 1) Heatmaps using procD.lm's $fitted
+First find mean specimen, then smallest and largest fitted allometric shape. Uses Dr Thomas Guillerme's new package, `landvR` to see how landmarks vary between these specimens.
+
+Exact same code as script 06; can skip if script 06 has been run.
+```{r}
+# Fit specimens
+allom.fit <- procD.lm(mean.shapes ~ log(info.means$MeanCsize))
+fit.shapes <- arrayspecs(allom.fit$fitted, 325, 3)
+
+# Find mean configuration - i.e. mean shape in dataset
+allom.mean <- (select.procrustes(fit.shapes, selector = mean))[[1]]
+
+# Measure spherical coordinates differences from the mean for each specimen for each landmark
+allom.diff.mean <- coordinates.difference(coordinates = fit.shapes, reference = allom.mean, type = "spherical")
+
+# Find largest and smallest native species from mean centroid size
+sm.index <- which(info.means$Species == "del")
+big.index <- which(info.means$MeanCsize == max(info.means$MeanCsize))
+smallest.shape <- fit.shapes[, , sm.index]
+biggest.shape <- fit.shapes[, , big.index]
+```
+
+### Export the heatmaps for fitted allometry shape change
+Export images for plots
+```{r}
+# Lateral view of smallest to mean
+open3d(windowRect = c(0, 0, 600, 600))
+procrustes.var.plot(allom.mean, smallest.shape, col = heat.colors, col.val = allom.diff.mean$Pseudomys_delicatulus[, "radius"])
+view3d(phi = 90)
+rgl.snapshot("../Data/Processed/heatmap_ALL_sm-mean_lat.png")
+
+# Lateral view of mean to biggest
+open3d(windowRect = c(0, 0, 600, 600))
+procrustes.var.plot(allom.mean, biggest.shape, col = heat.colors, col.val = allom.diff.mean$Uromys_caudimaculatus[, "radius"])
+view3d(phi = 90)
+rgl.snapshot("../Data/Processed/heatmap_ALL_mean-big_lat.png")
+
+# Dorsal view of smallest to mean
+open3d(windowRect = c(0, 0, 600, 600))
+procrustes.var.plot(allom.mean, smallest.shape, col = heat.colors, col.val = allom.diff.mean$Pseudomys_delicatulus[, "radius"]) 
+view3d(phi = 0)  # flip cranium
+rgl.snapshot("../Data/Processed/heatmap_ALL_sm-mean_dor.png")
+
+# Dorsal view of mean to biggest
+open3d(windowRect = c(0, 0, 600, 600))
+procrustes.var.plot(allom.mean, biggest.shape, col = heat.colors, col.val = allom.diff.mean$Uromys_caudimaculatus[, "radius"])
+view3d(phi = 0)  # flip cranium
+rgl.snapshot("../Data/Processed/heatmap_ALL_mean-big_dor.png")
+```
+
+## 2) Heatmaps using procD.lm's $GM$fitted
+```{r}
+# Fitted specimens from object GM
+fit.shapes.GM <- allom.fit$GM$fitted
+
+# Find mean configuration - i.e. mean shape in dataset
+allom.mean.GM <- (select.procrustes(fit.shapes.GM, selector = mean))[[1]]
+
+# Measure spherical coordinates differences from the mean for each specimen for each landmark
+allom.diff.mean.GM <- coordinates.difference(coordinates = fit.shapes.GM, reference = allom.mean.GM, type = "spherical")
+
+# Store largest and smallest native species from mean centroid size
+smallest.shape.GM <- fit.shapes.GM[, , sm.index]
+biggest.shape.GM <- fit.shapes.GM[, , big.index]
+```
+
+### Export the heatmaps for $GM$fitted
+Export images for plots
+```{r}
+# Lateral view of smallest to mean
+open3d(windowRect = c(0, 0, 600, 600))
+procrustes.var.plot(allom.mean.GM, smallest.shape.GM, col = heat.colors, col.val = allom.diff.mean.GM$Pseudomys_delicatulus[, "radius"])
+view3d(phi = 90)
+rgl.snapshot("../Data/Processed/heatmap_AGM_sm-mean_lat.png")
+
+# Lateral view of mean to biggest
+open3d(windowRect = c(0, 0, 600, 600))
+procrustes.var.plot(allom.mean.GM, biggest.shape.GM, col = heat.colors, col.val = allom.diff.mean.GM$Uromys_caudimaculatus[, "radius"])
+view3d(phi = 90)
+rgl.snapshot("../Data/Processed/heatmap_AGM_mean-big_lat.png")
+
+# Dorsal view of smallest to mean
+open3d(windowRect = c(0, 0, 600, 600))
+procrustes.var.plot(allom.mean.GM, smallest.shape.GM, col = heat.colors, col.val = allom.diff.mean.GM$Pseudomys_delicatulus[, "radius"]) 
+view3d(phi = 0)  # flip cranium
+rgl.snapshot("../Data/Processed/heatmap_AGM_sm-mean_dor.png")
+
+# Dorsal view of mean to biggest
+open3d(windowRect = c(0, 0, 600, 600))
+procrustes.var.plot(allom.mean.GM, biggest.shape.GM, col = heat.colors, col.val = allom.diff.mean.GM$Uromys_caudimaculatus[, "radius"])
+view3d(phi = 0)  # flip cranium
+rgl.snapshot("../Data/Processed/heatmap_AGM_mean-big_dor.png")
+```
+
+## 3) Suggested workaround from procD.lm's documentation
+```{r}
+# Save procD.lm object as regression plot
+allom.plot <- plot(allom.fit, type = "regression", predictor = info.means$MeanCsize, reg.type = "RegScore") 
+
+# Extract predicted shapes for smallest and largest
+preds <- shape.predictor(allom.fit$GM$fitted, x = allom.plot$RegScore,
+                         predmin = min(allom.plot$RegScore),
+                         predmax = max(allom.plot$RegScore) 
+                         )
+
+# Measure spherical coordinates differences from the mean for each specimen for each landmark - assumes mean shape of the $GM$fitted dataset is the appropriate consensus shape given its usage in the shape.predictor function above.
+allom.diff.mean.Reg <- coordinates.difference(coordinates = preds, reference = allom.mean.GM, type = "spherical")
+```
+
+### Export the heatmaps for suggested workaround
+Export images for plots
+```{r}
+# Lateral view of smallest to mean
+open3d(windowRect = c(0, 0, 600, 600))
+procrustes.var.plot(allom.mean.GM, preds$predmin, col = heat.colors, col.val = allom.diff.mean.Reg$predmin[, "radius"])
+view3d(phi = 90)
+rgl.snapshot("../Data/Processed/heatmap_REG_sm-mean_lat.png")
+
+# Lateral view of mean to biggest
+open3d(windowRect = c(0, 0, 600, 600))
+procrustes.var.plot(allom.mean.GM, preds$predmax, col = heat.colors, col.val = allom.diff.mean.Reg$predmax[, "radius"])
+view3d(phi = 90)
+rgl.snapshot("../Data/Processed/heatmap_REG_mean-big_lat.png")
+
+# Dorsal view of smallest to mean
+open3d(windowRect = c(0, 0, 600, 600))
+procrustes.var.plot(allom.mean.GM, preds$predmax, col = heat.colors, col.val = allom.diff.mean.Reg$predmin[, "radius"]) 
+view3d(phi = 0)  # flip cranium
+rgl.snapshot("../Data/Processed/heatmap_REG_sm-mean_dor.png")
+
+# Dorsal view of mean to biggest
+open3d(windowRect = c(0, 0, 600, 600))
+procrustes.var.plot(allom.mean.GM, preds$predmax, col = heat.colors, col.val = allom.diff.mean.Reg$predmax[, "radius"])
+view3d(phi = 0)  # flip cranium
+rgl.snapshot("../Data/Processed/heatmap_REG_mean-big_dor.png")
+```
+
+### Clean and load in all heatmaps
+```{r}
+# Remove whitespace from all heatmaps (requires ImageMagik installed on PC)
+system("mogrify ../Data/Processed/heatmap_*.png -trim ../Data/Processed/*.png")
+
+# 1) Load in $fitted allometry
+allom.sm.lat <- readPNG("../Data/Processed/heatmap_ALL_sm-mean_lat.png")
+allom.big.lat <- readPNG("../Data/Processed/heatmap_ALL_mean-big_lat.png")
+allom.sm.dor <- readPNG("../Data/Processed/heatmap_ALL_sm-mean_dor.png")
+allom.big.dor <- readPNG("../Data/Processed/heatmap_ALL_mean-big_dor.png")
+
+# 2) Load in $GM$fitted
+GMfit.sm.lat <- readPNG("../Data/Processed/heatmap_AGM_sm-mean_lat.png")
+GMfit.big.lat <- readPNG("../Data/Processed/heatmap_AGM_mean-big_lat.png")
+GMfit.sm.dor <- readPNG("../Data/Processed/heatmap_AGM_sm-mean_dor.png")
+GMfit.big.dor <- readPNG("../Data/Processed/heatmap_AGM_mean-big_dor.png")
+
+# 3) Suggested workaround
+regsc.sm.lat <- readPNG("../Data/Processed/heatmap_RES_sm-mean_lat.png")
+regsc.big.lat <- readPNG("../Data/Processed/heatmap_RES_mean-big_lat.png")
+regsc.sm.dor <- readPNG("../Data/Processed/heatmap_RES_sm-mean_dor.png")
+regsc.big.dor <- readPNG("../Data/Processed/heatmap_RES_mean-big_dor.png")
+```
+
+## 4) Make multi-panel Supplementary Figure TK for comparison
+```{r}
+# Set up muli-panel figure TK; lateral 
+setEPS() 
+postscript("../Data/Results/SFigure_Allometry_Compare.eps")
+mat <- matrix(c(1:12), 4, 3, byrow = FALSE)  # 12 plots, 4 rows, 3 columns
+layout(mat, widths = c(1, 1, 1), heights = c(0.65, 0.75, 0.5))  
+
+## Fitted allometry
+# 1) Mean to Small
+par(mar = c(0, 0, 0, 0))  # sets the margins
+plot(c(0, dim(allom.sm.lat)[2]), c(0, dim(allom.sm.lat)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
+rasterImage(allom.sm.lat, 0, 0, dim(allom.sm.lat)[2], dim(allom.sm.lat)[1])
+text(0, dim(allom.sm.lat)[1]-10, "E", cex = 2)
+legend("topright", inset = c(0.22, 0), legend = "procD.lm $fitted", bty = "n", cex = 1.2)
+#legend("bottomleft", "Mean to P. delicatulus, fitted shape", bty = "n", inset = c(0.1, 0.05))
+
+# 2) Mean to Big
+par(mar = c(0, 0, 0, 0))
+plot(c(0, dim(allom.big.lat)[2]), c(0, dim(allom.big.lat)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
+rasterImage(allom.big.lat, 0, 0, dim(allom.big.lat)[2], dim(allom.big.lat)[1])
+text(0, dim(allom.big.lat)[1]-10, "F", cex = 2)
+#legend("bottomleft", "Mean to U. caudimaculatus, fitted shape", bty = "n", inset = c(0.1, 0.12))
+
+# 3) Mean to Small
+par(mar = c(0, 0, 0, 0))  # sets the margins
+plot(c(0, dim(allom.big.dor)[2]), c(0, dim(allom.big.dor)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
+rasterImage(allom.sm.dor, 0, 0, dim(allom.big.dor)[2], dim(allom.big.dor)[1])
+text(0, dim(allom.big.dor)[1]-10, "G", cex = 2)
+#legend("bottomleft", "Dorsal view of E", bty = "n", inset = c(0.1, -0.11))
+
+# 4) Mean to Big
+par(mar = c(0, 0, 0, 0))
+plot(c(0, dim(allom.big.dor)[2]), c(0, dim(allom.big.dor)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
+rasterImage(allom.big.dor, 0, 0, dim(allom.big.dor)[2], dim(allom.big.dor)[1])
+text(0, dim(allom.big.dor)[1]-10, "H", cex = 2)
+#legend("bottomleft", "Dorsal view of F", bty = "n", inset = c(0.1, 0.18))
+
+## $GM$fitted 
+# 5) Mean to Small
+par(mar = c(0, 0, 0, 0))  # sets the margins
+plot(c(0, dim(GMfit.sm.lat)[2]), c(0, dim(GMfit.sm.lat)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
+rasterImage(GMfit.sm.lat, 0, 0, dim(GMfit.sm.lat)[2], dim(GMfit.sm.lat)[1])
+text(0, dim(GMfit.sm.lat)[1]-10, "I", cex = 2)
+legend("topright", inset = c(0.06, 0), legend = "$GM$fitted", bty = "n", cex = 1.2)
+#legend("bottomleft", "Mean to hypothetical minimum", bty = "n", inset = c(0.1, 0.05))
+
+# 6) Mean to Big
+par(mar = c(0, 0, 0, 0))
+plot(c(0, dim(GMfit.big.lat)[2]), c(0, dim(GMfit.big.lat)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
+rasterImage(GMfit.big.lat, 0, 0, dim(GMfit.big.lat)[2], dim(GMfit.big.lat)[1])
+text(0, dim(GMfit.big.lat)[1]-10, "J", cex = 2)
+#legend("bottomleft", "Mean to hypothetical maximum", bty = "n", inset = c(0.1, 0.12))
+
+# 7) Mean to Small
+par(mar = c(0, 0, 0, 0))  # sets the margins
+plot(c(0, dim(GMfit.big.dor)[2]), c(0, dim(GMfit.big.dor)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
+rasterImage(GMfit.sm.dor, 0, 0, dim(GMfit.big.dor)[2], dim(GMfit.big.dor)[1])
+text(0, dim(GMfit.big.dor)[1]-10, "K", cex = 2)
+#legend("bottomleft", "Dorsal view of I", bty = "n", inset = c(0.1, -0.11))
+
+# 8) Mean to Big
+par(mar = c(0, 0, 0, 0))
+plot(c(0, dim(GMfit.big.dor)[2]), c(0, dim(GMfit.big.dor)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
+rasterImage(GMfit.big.dor, 0, 0, dim(GMfit.big.dor)[2], dim(GMfit.big.dor)[1])
+text(0, dim(GMfit.big.dor)[1]-10, "L", cex = 2)
+#legend("bottomleft", "Dorsal view of J", bty = "n", inset = c(0.1, 0.18))
+
+## Suggested workaround
+# 9) Mean to Small
+par(mar = c(0, 0, 0, 0))
+plot(c(0, dim(regsc.sm.lat)[2]), c(0, dim(regsc.sm.lat)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
+rasterImage(regsc.sm.lat, 0, 0, dim(regsc.sm.lat)[2], dim(regsc.sm.lat)[1])
+text(0, dim(regsc.sm.lat)[1]-10, "A", cex = 2)
+legend("topright", inset = c(0.25, 0), legend = "Regression Workflow", bty = "n", cex = 1.2)
+#legend("bottomleft", "Mean to hypothetical minimum", bty = "n", inset = c(0.1, 0.05))
+
+# 10) Mean to Big
+par(mar = c(0, 0, 0, 0))
+plot(c(0, dim(regsc.big.lat)[2]), c(0, dim(regsc.big.lat)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
+rasterImage(regsc.big.lat, 0, 0, dim(regsc.big.lat)[2], dim(regsc.big.lat)[1])
+text(0, dim(regsc.big.lat)[1]-10, "B", cex = 2)
+#legend("bottomleft", "Mean to hypothetical maximum", bty = "n", inset = c(0.1, 0.12))
+
+# 11) Mean to Small
+par(mar = c(0, 0, 0, 0))
+plot(c(0, dim(regsc.big.dor)[2]), c(0, dim(regsc.big.dor)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
+rasterImage(regsc.sm.dor, 0, 0, dim(regsc.big.dor)[2], dim(regsc.big.dor)[1])
+text(0, dim(regsc.big.dor)[1]-10, "C", cex = 2)
+#legend("bottomleft", "Dorsal view of A", bty = "n", inset = c(0.1, -0.11))
+
+# 12) Mean to Big
+par(mar = c(0, 0, 0, 0))
+plot(c(0, dim(regsc.big.dor)[2]), c(0, dim(regsc.big.dor)[1]), type = "n", axes = F, xlab = "", ylab = "", asp = T) 
+rasterImage(regsc.big.dor, 0, 0, dim(regsc.big.dor)[2], dim(regsc.big.dor)[1])
+text(0, dim(regsc.big.dor)[1]-10, "D", cex = 2)
+#legend("bottomleft", "Dorsal view of B", bty = "n", inset = c(0.1, 0.18))
+
+dev.off()
+```
