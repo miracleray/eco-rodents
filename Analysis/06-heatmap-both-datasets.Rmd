@@ -413,14 +413,14 @@ plot(c(0, dim(indiv.sm.lat)[2]), c(0, dim(indiv.sm.lat)[1]), type = "n", axes = 
 rasterImage(indiv.sm.lat, 0, 0, dim(indiv.sm.lat)[2], dim(indiv.sm.lat)[1])
 text(0, dim(indiv.sm.lat)[1]-10, "A", cex = 2)
 legend("topleft", inset = c(.01, 0), legend = "Smallest/Largest Individuals", bty = "n", cex = 1.2)
-legend("bottomleft", "Mean to P. delicatulus", bty = "n", inset = c(0.1, 0.07))
+legend("bottomleft", legend = expression(paste("Mean to ", italic("P. delicatulus"))), bty = "n", inset = c(0.1, 0.07))
 
 # 2) Mean to Big, with allometry, lateral view
 par(mar = c(0, 0, 0, 0))
 plot(c(0, dim(indiv.big.lat)[2]), c(0, dim(indiv.big.lat)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
 rasterImage(indiv.big.lat, 0, 0, dim(indiv.big.lat)[2], dim(indiv.big.lat)[1])
 text(0, dim(indiv.big.lat)[1]-10, "B", cex = 2)
-legend("bottomleft", "Mean to U. caudimaculatus", bty = "n", inset = c(0.1, 0.07))
+legend("bottomleft", legend = expression(paste("Mean to ", italic("U. caudimaculatus"))), bty = "n", inset = c(0.1, 0.07))
 
 # 3) Mean to Small, with Allometry, dorsal view
 par(mar = c(0, 0, 0, 0))  # sets the margins
@@ -443,14 +443,14 @@ plot(c(0, dim(allom.sm.lat)[2]), c(0, dim(allom.sm.lat)[1]), type = "n", axes = 
 rasterImage(allom.sm.lat, 0, 0, dim(allom.sm.lat)[2], dim(allom.sm.lat)[1])
 text(0, dim(allom.sm.lat)[1]-10, "E", cex = 2)
 legend("topright", inset = c(0.28, 0), legend = "Fitted Allometry", bty = "n", cex = 1.2)
-legend("bottomleft", "Mean to P. delicatulus, fitted shape", bty = "n", inset = c(0.03, 0.07))
+legend("bottomleft", legend = expression(paste("Mean to ", italic("P. delicatulus"), " fitted shape")), bty = "n", inset = c(0.03, 0.07))
 
 # 6) Mean to Big, with allometry, lateral view
 par(mar = c(0, 0, 0, 0))
 plot(c(0, dim(allom.big.lat)[2]), c(0, dim(allom.big.lat)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
 rasterImage(allom.big.lat, 0, 0, dim(allom.big.lat)[2], dim(allom.big.lat)[1])
 text(0, dim(allom.big.lat)[1]-10, "F", cex = 2)
-legend("bottomleft", "Mean to U. caudimaculatus, fitted shape", bty = "n", inset = c(0.03, 0.07))
+legend("bottomleft", legend = expression(paste("Mean to ", italic("U. caudimaculatus"), " fitted shape")), bty = "n", inset = c(0.03, 0.07))
 
 # 7) Mean to Small, with Allometry, dorsal view
 par(mar = c(0, 0, 0, 0))  # sets the margins
@@ -542,7 +542,7 @@ par(mar = c(0, 0, 0, 0))
 plot(c(0, dim(resid.sm.lat.no)[2]), c(0, dim(resid.sm.lat.no)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
 rasterImage(resid.sm.lat.no, 0, 0, dim(resid.sm.lat.no)[2], dim(resid.sm.lat.no)[1])
 text(0, dim(resid.sm.lat.no)[1]-10, "E", cex = 2)
-legend("topright", inset = c(0.1, 0), legend = "PC1 Residuals (no Notomys)", bty = "n", cex = 1.2)
+legend("topright", inset = c(0.1, 0), legend = expression(paste("PC1 Residuals (no ", italic("Notomys"), ")")), bty = "n", cex = 1.2)
 legend("bottomleft", "Mean to new hypothetical minimum", bty = "n", inset = c(0.07, 0.07))
 
 # 6) Mean to Big, residuals PC1, lateral view - no Notomys
@@ -573,14 +573,14 @@ plot(c(0, dim(resP2.sm.lat)[2]), c(0, dim(resP2.sm.lat)[1]), type = "n", axes = 
 rasterImage(resP2.sm.lat, 0, 0, dim(resP2.sm.lat)[2], dim(resP2.sm.lat)[1])
 text(0, dim(resP2.sm.lat)[1]-10, "I", cex = 2)
 legend("topright", inset = c(0.17, 0), legend = "PC2 Residuals (all spp.)", bty = "n", cex = 1.2)
-legend("bottomleft", "Mean to PC2 hypothetical minimum", bty = "n", inset = c(0.1, 0.07))
+legend("bottomleft", "Mean to PC2 hypothetical minimum", bty = "n", inset = c(0.07, 0.07))
 
 # 10) Mean to Big, residuals PC2, lateral view
 par(mar = c(0, 0, 0, 0))
 plot(c(0, dim(resP2.big.lat)[2]), c(0, dim(resP2.big.lat)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
 rasterImage(resP2.big.lat, 0, 0, dim(resP2.big.lat)[2], dim(resP2.big.lat)[1])
 text(0, dim(resP2.big.lat)[1]-10, "J", cex = 2)
-legend("bottomleft", "Mean to PC2 hypothetical maximum", bty = "n", inset = c(0.1, 0.07))
+legend("bottomleft", "Mean to PC2 hypothetical maximum", bty = "n", inset = c(0.07, 0.07))
 
 # 11) Mean to Small, residuals PC2, dorsal view
 par(mar = c(0, 0, 0, 0))
