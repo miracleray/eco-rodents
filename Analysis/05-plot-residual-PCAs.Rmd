@@ -100,10 +100,8 @@ alpha.pch.no <- alpha.pch[-index.not]
 ## Export Figure 1
 Compare the PCAs relevant to Figure 2 heatmaps
 ```{r}
-# Formatting parameters
-part.coords <- c(-0.105, 0.145)
-
 # Set up for export and for multiple panels
+part.coords <- c(-0.105, 0.145)  # formatting parameters for B, C, D locations
 pdf("../Data/Results/Figure1_PCAs.pdf")
 mat <- matrix(c(1:4), 2, 2, byrow = TRUE)  # 4 plots, 2 rows, 2 columns
 layout(mat, widths = rep(1, dim(mat)[2]), heights = rep(0.5, dim(mat)[1]))   

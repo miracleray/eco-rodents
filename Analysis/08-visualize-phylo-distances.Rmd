@@ -123,10 +123,9 @@ master.table$col.spp2 <- PlotByGroup(master.table, "spp2", alpha.col.spp2)
 ### Export Figure 5
 ```{r}
 # Set up multipanel figure for export
-setEPS()
-postscript("../Data/Results/Figure5_PhyloMorph_Dist.eps")
+pdf("../Data/Results/Figure5_PhyloMorph_Dist.pdf")
 mat <- matrix(c(1, 2), 2, 1, byrow = TRUE)  # 2 rows, 1 column
-layout(mat, widths = c(1, 1, 1), heights = c(0.65, 0.75, 0.5))  
+layout(mat, widths = rep.int(1, ncol(mat)), heights = rep.int(1, nrow(mat))) 
 
 # A) Plot with allometry
 par(mar = c(1, 4, 2, 1))
@@ -138,7 +137,7 @@ legend("topleft", legend = "with allometry", inset = c(0.01, 0), bty = "n")
 par(mar = c(4.5, 4, 2, 1))
 plot(master.table.r$phylo.d, master.table.r$morph.d.r, col = master.table$col.spp1, bg = master.table$col.spp2, pch = 21, xlab = "Phylogenetic distance (~million years since common ancestor)", ylab = "Morph. distance")
 text(0.25, 0.265, "B", cex = 1.5)
-legend("topleft", legend = "residuals", inset = c(0.01, 0.01), bty = "n")
+legend("topleft", legend = "residuals", inset = c(0.01, 0), bty = "n")
 legend("bottomright", legend = genera.phylo, col = col.phylo, pch = 16, cex = 0.6, pt.cex = 0.7, ncol = 5, bty = "n", inset = c(0.12, 0))
 
 dev.off()
