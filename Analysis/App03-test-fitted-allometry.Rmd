@@ -1,5 +1,5 @@
 ---
-title: "065-test-fitted-allometry"
+title: "App03-test-fitted-allometry"
 author: "Ariel Marcy"
 date: "3/5/2020"
 output: html_document
