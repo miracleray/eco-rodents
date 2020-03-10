@@ -496,6 +496,12 @@ rasterImage(allPC.big.dor, 0, 0, dim(allPC.big.dor)[2], dim(allPC.big.dor)[1])
 text(0, dim(allPC.big.dor)[1]-10, "L", cex = 2)
 legend("bottomleft", "Dorsal view of J", bty = "n", inset = c(0.2, 0.05))
 
+# Make gradient legend
+legend_image <- as.raster(matrix(heat.colors(20), ncol = 1))
+rasterImage(legend_image, 463, 165, 485, 230)
+text(381, 223, "High variation", col = "dark grey", cex = 1)
+text(431, 175, "Low", col = "dark grey", cex = 1)
+
 dev.off()
 ```
 
