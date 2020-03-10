@@ -228,7 +228,7 @@ resNC2.big.dor <- readPNG("../Data/Processed/heatmap_NC2_mean-big_dor_NC2.png")
 ## 2) Make multi-panel Supplementary Figure TK: Heatmaps with Residuals
 ```{r}
 # Set up muli-panel figure
-pdf("../Data/Results/SFigureTK_Heatmap_Residuals_without.pdf")
+pdf("../Data/Results/FigureS_Heatmap_Residuals_without.pdf")
 mat <- matrix(c(1:12), 4, 3, byrow = FALSE)  # 12 plots, 4 rows, 3 columns
 layout(mat, widths = rep(1, dim(mat)[2]), heights = rep(0.5, dim(mat)[1])) 
 
@@ -238,7 +238,7 @@ par(mar = c(0, 0, 0, 0))
 plot(c(0, dim(resid.sm.lat.n2)[2]), c(0, dim(resid.sm.lat.n2)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
 rasterImage(resid.sm.lat.n2, 0, 0, dim(resid.sm.lat.n2)[2], dim(resid.sm.lat.n2)[1])
 text(0, dim(resid.sm.lat.n2)[1]-10, "A", cex = 2)
-legend("topright", inset = c(0.1, 0), legend = expression(paste("PC2 Residuals (no ", italic("Notomys"), ")")), bty = "n", cex = 1.2)
+legend("topright", inset = c(0.17, 0), legend = expression(paste("PC2 Residuals (no ", italic("Notomys"), ")")), bty = "n", cex = 1.1)
 legend("bottomleft", "Mean to hypothetical minimum", bty = "n", inset = c(0.1, 0.07))
 
 # 2) Mean to Big, residuals PC2, lateral view - without Notomys
@@ -268,7 +268,7 @@ par(mar = c(0, 0, 0, 0))
 plot(c(0, dim(resNC1.sm.lat)[2]), c(0, dim(resNC1.sm.lat)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
 rasterImage(resNC1.sm.lat, 0, 0, dim(resNC1.sm.lat)[2], dim(resNC1.sm.lat)[1])
 text(0, dim(resNC1.sm.lat)[1]-10, "E", cex = 2)
-legend("topright", inset = c(0.1, 0), legend = expression(paste("PC1 Residuals (no ", italic("Notomys"), "or carnivores)")), bty = "n", cex = 1.1)
+legend("topright", inset = c(0, 0), legend = expression(paste("PC1 Residuals (no ", italic("Notomys"), " or carnivores)")), bty = "n", cex = 1.05)
 legend("bottomleft", "Mean to new hypothetical minimum", bty = "n", inset = c(0.07, 0.07))
 
 # 6) Mean to Big, residuals PC1, lateral view - no Notomys or carnivores
@@ -298,7 +298,7 @@ par(mar = c(0, 0, 0, 0))
 plot(c(0, dim(resNC2.sm.lat)[2]), c(0, dim(resNC2.sm.lat)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
 rasterImage(resNC2.sm.lat, 0, 0, dim(resNC2.sm.lat)[2], dim(resNC2.sm.lat)[1])
 text(0, dim(resNC2.sm.lat)[1]-10, "I", cex = 2)
-legend("topright", inset = c(0.17, 0), legend = expression(paste("PC2 Residuals (no ", italic("Notomys"), "or carnivores)")), bty = "n", cex = 1.1)
+legend("topright", inset = c(0, 0), legend = expression(paste("PC2 Residuals (no ", italic("Notomys"), " or carnivores)")), bty = "n", cex = 1.05)
 legend("bottomleft", "Mean to PC2 hypothetical minimum", bty = "n", inset = c(0.07, 0.07))
 
 # 10) Mean to Big, residuals PC2, lateral view - no Notomys or carnivores
