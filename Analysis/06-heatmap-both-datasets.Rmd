@@ -501,7 +501,7 @@ dev.off()
 
 ## 3) Make multi-panel Figure 3: Heatmaps with Residuals
 ```{r}
-# Set up muli-panel figure; lateral 
+# Set up muli-panel figure 
 pdf("../Data/Results/Figure3_Heatmap_Residuals.pdf")
 mat <- matrix(c(1:12), 4, 3, byrow = FALSE)  # 12 plots, 4 rows, 3 columns
 layout(mat, widths = rep(1, dim(mat)[2]), heights = rep(0.5, dim(mat)[1])) 
