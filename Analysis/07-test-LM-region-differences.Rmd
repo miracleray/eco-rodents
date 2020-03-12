@@ -212,16 +212,16 @@ col5 <- c(m.1v5$statistic, m.2v5$statistic, m.3v5$statistic, m.4v5$statistic, "-
 
 # Combine columns into table
 modules <- sort(unique(as.factor(lm.modules[, 4])))
-mantel.results <- data.table(basicran = col1, molar = col2, orbital = col3, rostrum = col4, vault = col5, row.names = modules)
+mantel.results <- data.table(Modules = modules, basicranium = col1, molar = col2, orbital = col3, rostrum = col4, vault = col5)
 
-# Export Supplementary Table TK
-write.table(mantel.results, "../Data/Results/Table_MantelTests.csv", sep = ",", col.names = NA)
+# Export Table 1
+write.table(mantel.results, "../Data/Results/Table1_MantelTests.csv", sep = ",", col.names = NA)
 ```
 
 ### Whole integration test - Supplementary Figure TK
 Test whether rodent skull is integrated as a whole
 ```{r}
-# Set up for export and for multiple panels
+# Set up for export
 pdf("../Data/Results/SFigure_GlobalIntegration.pdf")
 globalIntegration(mean.shapes, ShowPlot = TRUE)
 text(12, -16, "slope of -1", col = "red")
