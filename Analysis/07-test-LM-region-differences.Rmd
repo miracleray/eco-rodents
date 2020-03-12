@@ -24,8 +24,8 @@ Makes Figure 4, Table 1, and Supplementary Figure TK
 ### Load packages, functions, and data from previous steps
 ```{r message = FALSE}
 library(png)  # needed to work with screenshots
-library(colorspace)  # plot colors
-library(wesanderson)
+library(colorspace)  # darken colors
+library(wesanderson)  # plot colors
 library(crop)  # to crop high res 3D images for figures
 # Load libraries (and install if necessary) for landvR package
 if(!require(devtools)) install.packages("devtools")
@@ -43,8 +43,8 @@ load(file = "../Data/Processed/05-residual-data.rda")
 load(file = "../Data/Processed/07-modularity.rda")
 ```
 
-## Choose the partitions
-The three partitions will need to be designated from the LM numbers. The first time, this was done with `define.modules()` but each module was then saved in a .csv file so this step can be repeated much more quickly.
+## Choose the modules
+The five modules will need to be designated from the LM numbers. The first time, this was done with `define.modules()` but each module was then saved in a .csv file so this step can be repeated much more quickly.
 
 ### Load in the partition definitions
 ```{r}
@@ -71,8 +71,8 @@ for (i in 1:length(lm.levels)){
 }
 ```
 
-### Visualize the partitions from Goswami 2006/7
-6 partitions hypothesized for mammals, our dataset supports 5 (missing zygomatic)
+### Visualize the modules from Goswami 2006/7
+6 modules hypothesized for mammals, our dataset supports 5 (missing zygomatic)
 ```{r}
 # Deconstruct function from Thomas's code in Landmark-test
 ref <- mshape(mean.shapes)
@@ -81,14 +81,14 @@ mod.levels<- sort(unique(lm.modules[, 4]))  # 5 (of 6) modules from Goswami
 # Define nice colors for modules
 mod.colors <- c(wes_palette("GrandBudapest1")[2:4], wes_palette("GrandBudapest2")[1:2])
 
-# Subset the landmarks according to the partitions
+# Subset the landmarks according to the modules
 mod.parts <- list()
 for(i in 1:length(mod.levels)){
   mod.parts[[i]] <- which(lm.modules[, 4] == mod.levels[[i]])
 }
 ```
 
-### Make image of 3D plot of the module partitions for Fig. 4A
+### Make image of 3D plot of the modules for Fig. 4A
 ```{r}
 open3d(windowRect = c(0, 0, 1200, 1200))
 for(i in 1:length(mod.levels)) {
@@ -105,10 +105,8 @@ system("mogrify ../Data/Processed/modules.png -trim ../Data/Processed/*.png")
 module.plot <- readPNG("../Data/Processed/modules.png")
 ```
 
-## Test modularity with 5 partitions
+## Test modularity with 5 modules
 This test uses covariance ratio (CR) coefficients (Adams 2016) to quantify the degree of modularity between hypothesized modules/partitions. The observed CR is compared to the distribution found by randomizing the landmarks into partitions of identical sample sizes.
-
-A significant modular signal: when the observed CR coefficient is significantly lower than the distribution of the randomized CR coefficients
 ```{r}
 # Test with the phylogentic tree (and mean shapes)
 mod.test.5.phy <- phylo.modularity(mean.shapes, partition.gp = lm.modules[, 4], aus.tree)
@@ -164,7 +162,7 @@ dev.off()
 ```
 
 ## Mantel Test to see if PCs of modules are equivalent
-Uses method by Dr Emma Sherratt
+Uses method similar to workflow from Sherratt et al. TK
 ```{r}
 # Separate modules - using 5-module framework 
 mod.1 <- mean.shapes[which(lm.modules[, 4] == "basicran"), ,]
@@ -205,22 +203,27 @@ m.4v5 <- mantel(d.PCA.4, d.PCA.5, method = "pearson", permutations = 1000)
 # Bonferroni correction
 p.vals.bon <- round(p.adjust(c(m.1v2$signif, m.1v3$signif, m.1v4$signif, m.1v5$signif, m.2v3$signif, m.2v4$signif, m.2v5$signif, m.3v4$signif, m.3v5$signif, m.4v5$signif), method = "bonferroni"), 3)
 
-# Make results table
+# Make results table columns
 col1 <- c("-", p.vals.bon[1], p.vals.bon[2], p.vals.bon[3], p.vals.bon[4])
 col2 <- c(m.1v2$statistic, "-", p.vals.bon[5], p.vals.bon[6], p.vals.bon[7])
 col3 <- c(m.1v3$statistic, m.2v3$statistic, "-", p.vals.bon[8], p.vals.bon[9])
 col4 <- c(m.1v4$statistic, m.2v4$statistic, m.3v4$statistic, "-", p.vals.bon[10])
 col5 <- c(m.1v5$statistic, m.2v5$statistic, m.3v5$statistic, m.4v5$statistic, "-")
 
+# Combine columns into table
 modules <- sort(unique(as.factor(lm.modules[, 4])))
 mantel.results <- data.table(basicran = col1, molar = col2, orbital = col3, rostrum = col4, vault = col5, row.names = modules)
 
-# Export Table S6
+# Export Supplementary Table TK
 write.table(mantel.results, "../Data/Results/Table_MantelTests.csv", sep = ",", col.names = NA)
 ```
 
-### Whole integration test - supplementary Figure TK
+### Whole integration test - Supplementary Figure TK
 Test whether rodent skull is integrated as a whole
 ```{r}
-globalIntegration(mean.shapes)
+# Set up for export and for multiple panels
+pdf("../Data/Results/SFigure_GlobalIntegration.pdf")
+globalIntegration(mean.shapes, ShowPlot = TRUE)
+text(12, -16, "slope of -1", col = "red")
+dev.off()
 ```
