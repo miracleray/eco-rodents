@@ -25,7 +25,6 @@ library(vegan)
 library(geiger)  # for phylogenies
 library(png)  # needed to work with screenshots
 library(colorspace)  # plot colors
-
 # Load libraries (and install if necessary) for landvR package
 if(!require(devtools)) install.packages("devtools")
 if(!require(dispRity)) install.packages("dispRity")
@@ -40,7 +39,7 @@ load(file = "../Data/Processed/05-residual-data.rda")
 ```
 
 ## 1) Prepare heatmaps
-This script is dominated by the code needed to generate, export, and clean the heatmap images which are tiled in supplementary figure TK.
+This script is dominated by the code needed to generate, export, and clean the heatmap images which are tiled in Supplementary Figure TK.
 
 ### Remove Notomys and find hypothetical shapes for PC2
 ```{r}
@@ -228,7 +227,7 @@ resNC2.big.dor <- readPNG("../Data/Processed/heatmap_NC2_mean-big_dor_NC2.png")
 ## 2) Make multi-panel Supplementary Figure TK: Heatmaps with Residuals
 ```{r}
 # Set up muli-panel figure
-pdf("../Data/Results/FigureS_Heatmap_Residuals_without.pdf")
+pdf("../Data/Results/SFigure_more_Heatmap_Residuals.pdf")
 mat <- matrix(c(1:12), 4, 3, byrow = FALSE)  # 12 plots, 4 rows, 3 columns
 layout(mat, widths = rep(1, dim(mat)[2]), heights = rep(0.5, dim(mat)[1])) 
 
@@ -321,6 +320,12 @@ plot(c(0, dim(resNC2.big.dor)[2]), c(0, dim(resNC2.big.dor)[1]), type = "n", axe
 rasterImage(resNC2.big.dor, 0, 0, dim(resNC2.big.dor)[2], dim(resNC2.big.dor)[1])
 text(0, dim(resNC2.big.dor)[1]-10, "L", cex = 2)
 legend("bottomleft", "Dorsal view of J", bty = "n", inset = c(0.2, 0.05))
+
+# Make gradient legend
+legend_image <- as.raster(matrix(heat.colors(20), ncol = 1))
+rasterImage(legend_image, 443, 150, 465, 215)
+text(365, 208, "High variation", col = "dark grey", cex = 1)
+text(413, 162, "Low", col = "dark grey", cex = 1)
 
 dev.off()
 ```
