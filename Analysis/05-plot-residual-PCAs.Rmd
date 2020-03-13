@@ -95,6 +95,13 @@ info.means.no <- info.means[-index.not, ]
 wrap.PCA.r.n <- plotTangentSpace(residuals.no, verbose = FALSE)
 alpha.col.no <- alpha.col[-index.not]
 alpha.pch.no <- alpha.pch[-index.not]
+
+# Calulate % of PC
+PCs.n <- wrap.PCA.r.n$pc.summary$importance
+PCx.per.n <- round(PCs.n[2, 1] * 100, digits = 1)  # % with 1 decimal
+PCx.lab.n <- paste("PC1", " (", PCx.per.n, "%)", sep = "")
+PCy.per.n <- round(PCs.n[2, 2] * 100, digits = 1)
+PCy.lab.n <- paste("PC2", " (", PCy.per.n, "%)", sep = "")
 ```
 
 ## Export Figure 1
@@ -147,8 +154,8 @@ text(0.0375, part.coords[2], "shape residuals (genus colors)")
 par(mar = c(4.5, 4.5, 2, 1))
 plot(x = wrap.PCA.r.n$pc.scores[, 1],  
                  y = -wrap.PCA.r.n$pc.scores[, 2],  # Flip for consistency
-                 xlab = PCx.lab, 
-                 ylab = PCy.lab,
+                 xlab = PCx.lab.n, 
+                 ylab = PCy.lab.n,
                  asp = TRUE,
                  xlim = c(-0.1, 0.2),
                  ylim = c(-0.15, 0.15),
