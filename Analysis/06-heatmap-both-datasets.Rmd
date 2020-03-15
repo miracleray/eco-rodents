@@ -26,25 +26,18 @@ Produces multipanel Figure 2.
 Produces multipanel Figure 3.
 
 ### Load packages, functions, and data
-Tree, mean shape, and metadata for phylogenetic analyses come from the allometry rodents script 04. 
+Tree, mean shape, and metadata for phylogenetic analyses come from the allometry rodents script 03. Residual data for Fig. 3 comes from script 05.
 ```{r message = FALSE}
 library(geomorph)
-library(data.table)
-library(vegan)
-library(geiger)  # for phylogenies
 library(png)  # needed to work with screenshots
-library(colorspace)  # plot colors
-
 # Load libraries (and install if necessary) for landvR package
 if(!require(devtools)) install.packages("devtools")
 if(!require(dispRity)) install.packages("dispRity")
 if(!require(landvR)) install_github("TGuillerme/landvR")
 source("../Functions/utilities.R")  # custom functions
-source("../Functions/plotGMPhyloMorphoSpace_plotmod.R")  # modified geomorph function
 load(file = "../Data/Processed/03-main-data.rda")
 load(file = "../Data/Processed/03-tree-data.rda")
 load(file = "../Data/Processed/03-graphing-vectors.rda")
-load(file = "../Data/Processed/04-PCA.rda")
 load(file = "../Data/Processed/05-residual-data.rda")
 ```
 
