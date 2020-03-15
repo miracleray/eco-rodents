@@ -28,14 +28,14 @@ load(file = "../Data/Processed/05-residual-data.rda")
 ```
 
 ## Analyze phylogenetic and morphological distance matrices
-To analyze phylogenetic and morphological distance in the context of biomes, we first need to generate distances matrices that can be comparable.
+First, generate distances matrices that can be comparable.
 ```{r}
 # Phylo distance matrix
 phylo.matrix <- cophenetic(aus.tree) / 2  # divide by two to convert distance to millions of years since Last Common Ancestor
 
 # Morphological distance matrix
 mean.gpa <- gpagen(mean.shapes, ProcD = TRUE)  # use mean shapes of species
-morph.matrix <- as.matrix(mean.gpa$procD)
+morph.matrix <- as.matrix(mean.gpa$procD)  # ProcD = Procrustes distance
 
 # Make names shorter
 long.names <- colnames(phylo.matrix)
@@ -99,7 +99,7 @@ master.table.r <- merge(phylo.table, morph.table.r[, 3:4], by = "pair")
 ```
 
 ## Plots for phylo-morph distance pairs
-Set up colors
+First, set up colors
 ```{r}
 # Create color key
 just.genera <- NULL
