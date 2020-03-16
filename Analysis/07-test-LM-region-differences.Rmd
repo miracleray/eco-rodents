@@ -169,13 +169,14 @@ par(mar = c(1, 1, 1, 1))  # sets the margins
 plot(c(0, dim(module.plot)[2]), c(0, dim(module.plot)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE)  # module.plot = png made above
 rasterImage(module.plot, 0, 0, dim(module.plot)[2], dim(module.plot)[1])
 # Labels for module plot
-text(81, 388, "A", cex = 1.5)
-text(302, 392, "module definitions (observed condition)", cex = 0.9)
-text(142, -25, "Basicranium", cex = 0.9, bty = "n", col = darken(mod.colors[1]))
+legend("topleft", "A", cex = 1.5, bty = "n")
+legend("topleft", "module definitions", cex = 0.9, bty = "n", inset = c(0.03, 0.00))
+legend("topleft", "(observed condition)", cex = 0.9, bty = "n", inset = c(0.03, 0.05))
+text(80, 0, "Basicranium", cex = 0.9, bty = "n", col = darken(mod.colors[1]))
 text(500, 28, "Molar", cex = 0.9, bty = "n", col = mod.colors[2])
 text(560, 349, "Orbital", cex = 0.9, bty = "n", col = darken(mod.colors[3]))
 text(835, 270, "Rostrum", cex = 0.9, bty = "n", col = darken(mod.colors[4], amount = 0.3))
-text(42, 325, "Vault", cex = 0.9, bty = "n", col = darken(mod.colors[5], amount = 0.35))
+text(12, 200, "Vault", cex = 0.9, bty = "n", col = darken(mod.colors[5], amount = 0.35))
 
 # 2) Plot of observed and resampled CR coefficients for full shape dataset
 par(mar = c(3.5, 3.5, 1.5, 0.5))
@@ -189,10 +190,10 @@ hist(mod.test.5$random.CR,
 # Labels for histogram
 title(xlab = "Covariance ratio (CR) coefficient", line = 2.4)
 title(ylab = "Frequency (out of 1000)", line = 2.35)
-arrows(x0 = mod.test.5$CR, y0 = 200, y1 = 8, length = 0.15, lwd = 1.5, col = "darkred")
-text(mod.test.5$CR - 0.001, 230, "observed CR", cex = 0.9, col = "darkred")
-text(0.65, 427, "B", cex = 1.5)
-text(0.936, 431, "resampled CR coefficients; full shape dataset", cex = 0.9)
+arrows(x0 = mod.test.5$CR, y0 = 465, y1 = 8, length = 0.15, lwd = 1.5, col = "darkred")
+text(mod.test.5$CR - 0.001, 500, "observed CR", cex = 0.9, col = "darkred")
+legend("topleft", "B", cex = 1.5, bty = "n", inset = -0.05)
+legend("topleft", "resampled CR coefficients; full shape", cex = 0.9, bty = "n", inset = c(0.1, 0.02))
 
 # 3) Plot of CR coefficients for residual shape dataset
 par(mar = c(3.5, 3.5, 1.5, 0.5))
@@ -206,10 +207,10 @@ hist(mod.test.res$random.CR,
 # Labels for histogram
 title(xlab = "Covariance ratio (CR) coefficient", line = 2.4)
 title(ylab = "Frequency (out of 1000)", line = 2.35)
-arrows(x0 = mod.test.res$CR, y0 = 200, y1 = 8, length = 0.15, lwd = 1.5, col = "darkred")
-text(mod.test.res$CR - 0.001, 230, "observed CR", cex = 0.9, col = "darkred")
-text(0.65, 427, "C", cex = 1.5)
-text(0.936, 431, "resampled CR coefficients; residual shape", cex = 0.9)
+arrows(x0 = mod.test.res$CR, y0 = 375, y1 = 8, length = 0.15, lwd = 1.5, col = "darkred")
+text(mod.test.res$CR + 0.02, 400, "observed CR", cex = 0.9, col = "darkred")
+legend("topleft", "C", cex = 1.5, bty = "n", inset = -0.05)
+legend("topleft", "resampled CR coefficients; residual shape", cex = 0.9, bty = "n", inset = 0.02)
 
 # 4) Plot of observed and resampled CR coefficients (w/ phylo correction)
 par(mar = c(3.5, 3.5, 1.5, 0.5))
@@ -223,10 +224,10 @@ hist(mod.test.5.phy$random.CR,
 # Labels for histogram
 title(xlab = "Covariance ratio (CR) coefficient", line = 2.4)
 title(ylab = "Frequency (out of 1000)", line = 2.35)
-arrows(x0 = mod.test.5.phy$CR, y0 = 200, y1 = 8, length = 0.15, lwd = 1.5, col = "darkred")
-text(mod.test.5.phy$CR - 0.001, 230, "observed CR", cex = 0.9, col = "darkred")
-text(0.65, 427, "D", cex = 1.5)
-text(0.936, 431, "with phylogenetic correction", cex = 0.9)
+arrows(x0 = mod.test.5.phy$CR, y0 = 175, y1 = 8, length = 0.15, lwd = 1.5, col = "darkred")
+text(mod.test.5.phy$CR - 0.03, 200, "observed CR", cex = 0.9, col = "darkred")
+legend("topleft", "D", cex = 1.5, bty = "n", inset = -0.05)
+legend("topleft", "as above, with phylogenetic correction", cex = 0.9, bty = "n", inset = 0.02)
 
 # 5) Plot of CR coefficients (w/ phylo correction) for residual shape dataset
 par(mar = c(3.5, 3.5, 1.5, 0.5))
@@ -240,10 +241,10 @@ hist(mod.test.5.res$random.CR,
 # Labels for histogram
 title(xlab = "Covariance ratio (CR) coefficient", line = 2.4)
 title(ylab = "Frequency (out of 1000)", line = 2.35)
-arrows(x0 = mod.test.5.res$CR, y0 = 200, y1 = 8, length = 0.15, lwd = 1.5, col = "darkred")
-text(mod.test.5.res$CR - 0.001, 230, "observed CR", cex = 0.9, col = "darkred")
-text(0.65, 427, "E", cex = 1.5)
-text(0.936, 431, "with phylogenetic correction", cex = 0.9)
+arrows(x0 = mod.test.5.res$CR - 0.01, y0 = 105, y1 = 8, length = 0.15, lwd = 1.5, col = "darkred")
+text(mod.test.5.res$CR - 0.001, 125, "observed CR", cex = 0.9, col = "darkred")
+legend("topleft", "E", cex = 1.5, bty = "n", inset = -0.05)
+legend("topleft", "as above, with phylogenetic correction", cex = 0.9, bty = "n", inset = 0.02)
 
 dev.off()
 ```
