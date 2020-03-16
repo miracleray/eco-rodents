@@ -310,9 +310,9 @@ MantelModularity <- function(shapes, lm.modules) {
 mantel.full <- MantelModularity(mean.shapes, lm.modules)
 mantel.res <- MantelModularity(residuals, lm.modules)
 
-# Export Table 1A and B
+# Export Table 1A and 1B
 write.table(mantel.full, "../Data/Results/Table1A_MantelTest_Full.csv", sep = ",", col.names = NA)
-write.table(mantel.res, "../Data/Results/Table1A_MantelTest_Res.csv", sep = ",", col.names = NA)
+write.table(mantel.res, "../Data/Results/Table1B_MantelTest_Res.csv", sep = ",", col.names = NA)
 ```
 
 ### Whole integration test - Supplementary Figure TK
