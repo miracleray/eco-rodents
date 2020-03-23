@@ -104,6 +104,41 @@ PCy.per.n <- round(PCs.n[2, 2] * 100, digits = 1)
 PCy.lab.n <- paste("PC2", " (", PCy.per.n, "%)", sep = "")
 ```
 
+### Set up 3 datasets for screeplots
+```{r}
+# Full shape
+full.PC.impt <- data.frame(PC = 1:length(PCA.mean.allo$pc.summary$importance[2, ]), impt = PCA.mean.allo$pc.summary$importance[2, ])
+
+# Residual shape
+res.PC.impt <- data.frame(PC = 1:length(res.PCA$pc.summary$importance[2, ]), impt = res.PCA$pc.summary$importance[2, ])
+
+# Residual shape without Notomys
+rnot.PC.impt <- data.frame(PC = 1:length(wrap.PCA.r.n$pc.summary$importance[2, ]), impt = wrap.PCA.r.n$pc.summary$importance[2, ])
+```
+
+### Export skree plots for PC importance scores for 3 separate datasets
+```{r}
+# Make simple multipanel figure
+pdf("../Data/Results/SFigure_Screeplots.pdf")
+mat <- matrix(c(1:3), 3, 1, byrow = TRUE)  # 3 plots, 3 rows, 1 column
+layout(mat, widths = rep(1, dim(mat)[2]), heights = rep(0.5, dim(mat)[1])) 
+
+# 1) 
+barplot(full.PC.impt[, 2], main = "A) full shape dataset")
+abline(h = 0.1, col = 'deeppink4')
+
+# 2)
+barplot(res.PC.impt[, 2], main = "B) residual shape dataset")
+abline(h = 0.1, col = 'deeppink4')
+
+# 3)
+barplot(rnot.PC.impt[, 2], main = expression(paste("C) residual shape dataset without ", italic(Notomys))))
+abline(h = 0.1, col = 'deeppink4')
+
+dev.off()
+```
+
+
 ## Export Figure 1
 Compare the PCAs relevant to Figure 2 heatmaps
 ```{r}
