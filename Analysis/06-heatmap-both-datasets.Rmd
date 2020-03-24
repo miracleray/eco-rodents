@@ -435,7 +435,7 @@ par(mar = c(0, 0, 0, 0))  # sets the margins
 plot(c(0, dim(indiv.sm.lat)[2]), c(0, dim(indiv.sm.lat)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
 rasterImage(indiv.sm.lat, 0, 0, dim(indiv.sm.lat)[2], dim(indiv.sm.lat)[1])
 text(0, dim(indiv.sm.lat)[1]-10, "E", cex = 2)
-legend("topleft", inset = c(.01, 0), legend = "Smallest/Largest Individuals", bty = "n", cex = 1.2)
+legend("topleft", inset = c(.015, 0), legend = "Smallest/Largest Individuals", bty = "n", cex = 1.2)
 legend("bottomleft", legend = expression(paste("Mean to ", italic("P. delicatulus"))), bty = "n", inset = c(0.1, 0.07))
 
 # 6) Mean to Big, with allometry, lateral view
