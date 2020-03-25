@@ -169,13 +169,13 @@ plot(c(0, dim(module.plot)[2]), c(0, dim(module.plot)[1]), type = "n", axes = FA
 rasterImage(module.plot, 0, 0, dim(module.plot)[2], dim(module.plot)[1])
 # Labels for module plot
 legend("topleft", "A", cex = 1.5, bty = "n")
-legend("topleft", "module definitions", cex = 0.9, bty = "n", inset = c(0.03, 0.03))
-legend("topleft", "(observed condition)", cex = 0.9, bty = "n", inset = c(0.03, 0.1))
-text(80, 0, "Basicranium", cex = 0.9, bty = "n", col = darken(mod.colors[1]))
+legend("topleft", "module definitions", cex = 0.9, bty = "n", inset = c(0.04, 0.015))
+legend("topleft", "(observed condition)", cex = 0.9, bty = "n", inset = c(0.038, 0.065))
+text(80, -3, "Basicranium", cex = 0.9, bty = "n", col = darken(mod.colors[1]))
 text(500, 28, "Molar", cex = 0.9, bty = "n", col = mod.colors[2])
 text(560, 349, "Orbital", cex = 0.9, bty = "n", col = darken(mod.colors[3]))
 text(835, 270, "Rostrum", cex = 0.9, bty = "n", col = darken(mod.colors[4], amount = 0.3))
-text(0, 190, "Vault", cex = 0.9, bty = "n", col = darken(mod.colors[5], amount = 0.35))
+text(-30, 220, "Vault", cex = 0.9, bty = "n", col = darken(mod.colors[5], amount = 0.35))
 
 # 2) Plot of observed and resampled CR coefficients for full shape dataset
 par(mar = c(3.5, 3.5, 1.5, 0.5))
@@ -187,12 +187,12 @@ hist(mod.test.5$random.CR,
      cex.axis = 0.9,
      col = "black")
 # Labels for histogram
-title(xlab = "Covariance ratio (CR) coefficient", line = 2.4)
+#title(xlab = "Covariance ratio (CR) coefficient", line = 2.4)
 title(ylab = "Frequency (out of 1000)", line = 2.35)
 arrows(x0 = mod.test.5$CR, y0 = 465, y1 = 8, length = 0.15, lwd = 1.5, col = "darkred")
-text(mod.test.5$CR - 0.001, 500, "observed CR", cex = 0.9, col = "darkred")
+text(mod.test.5$CR, 525, "observed CR", cex = 0.9, col = "darkred")
 legend("topleft", "B", cex = 1.5, bty = "n", inset = -0.05)
-legend("topleft", "resampled CR coefficients; full shape", cex = 0.9, bty = "n", inset = c(0.1, 0.02))
+legend("topleft", "resampled CR coefficients; full shape", cex = 0.9, bty = "n", inset = c(0.034, 0.02))
 
 # 3) Plot of CR coefficients for shape residual dataset
 par(mar = c(3.5, 3.5, 1.5, 0.5))
@@ -204,12 +204,12 @@ hist(mod.test.res$random.CR,
      cex.axis = 0.9,
      col = "black")
 # Labels for histogram
-title(xlab = "Covariance ratio (CR) coefficient", line = 2.4)
+#title(xlab = "Covariance ratio (CR) coefficient", line = 2.4)
 title(ylab = "Frequency (out of 1000)", line = 2.35)
 arrows(x0 = mod.test.res$CR, y0 = 375, y1 = 8, length = 0.15, lwd = 1.5, col = "darkred")
-text(mod.test.res$CR + 0.02, 400, "observed CR", cex = 0.9, col = "darkred")
+text(mod.test.res$CR + 0.02, 425, "observed CR", cex = 0.9, col = "darkred")
 legend("topleft", "C", cex = 1.5, bty = "n", inset = -0.05)
-legend("topleft", "resampled CR coefficients; shape residual", cex = 0.9, bty = "n", inset = 0.02)
+legend("topleft", "resampled CR coefficients; shape residual", cex = 0.9, bty = "n", inset = c(0.035, 0.02))
 
 # 4) Plot of observed and resampled CR coefficients (w/ phylo correction)
 par(mar = c(3.5, 3.5, 1.5, 0.5))
@@ -226,7 +226,7 @@ title(ylab = "Frequency (out of 1000)", line = 2.35)
 arrows(x0 = mod.test.5.phy$CR, y0 = 175, y1 = 8, length = 0.15, lwd = 1.5, col = "darkred")
 text(mod.test.5.phy$CR - 0.03, 200, "observed CR", cex = 0.9, col = "darkred")
 legend("topleft", "D", cex = 1.5, bty = "n", inset = -0.05)
-legend("topleft", "as above, with phylogenetic correction", cex = 0.9, bty = "n", inset = 0.02)
+legend("topleft", "as above, with phylogenetic correction", cex = 0.9, bty = "n", inset = c(0.033, 0.02))
 
 # 5) Plot of CR coefficients (w/ phylo correction) for shape residual dataset
 par(mar = c(3.5, 3.5, 1.5, 0.5))
@@ -241,9 +241,9 @@ hist(mod.test.5.res$random.CR,
 title(xlab = "Covariance ratio (CR) coefficient", line = 2.4)
 title(ylab = "Frequency (out of 1000)", line = 2.35)
 arrows(x0 = mod.test.5.res$CR - 0.01, y0 = 105, y1 = 8, length = 0.15, lwd = 1.5, col = "darkred")
-text(mod.test.5.res$CR - 0.001, 125, "observed CR", cex = 0.9, col = "darkred")
+text(mod.test.5.res$CR - 0.01, 120, "observed CR", cex = 0.9, col = "darkred")
 legend("topleft", "E", cex = 1.5, bty = "n", inset = -0.05)
-legend("topleft", "as above, with phylogenetic correction", cex = 0.9, bty = "n", inset = 0.02)
+legend("topleft", "as above, with phylogenetic correction", cex = 0.9, bty = "n", inset = c(0.033, 0.02))
 
 dev.off()
 ```

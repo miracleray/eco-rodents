@@ -10,12 +10,12 @@ knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_knit$set(root.dir = '../eco-rodents')
 ```
 
-# Plot PCAs for allometric and residual shape datasets
-Plot PCAs for allometric shape and residual shape, provide coloration and pch symbols by locomotion and diet, and review changes in residual shape PCA when *Notomys* species are removed. These plots are relevant to the heatplots created in script 06 / shown in Figure 2. 
+# Plot PCAs for allometric and shape residual datasets
+Plot PCAs for allometric shape and shape residual, provide coloration and pch symbols by locomotion and diet, and review changes in shape residual PCA when *Notomys* species are removed. These plots are relevant to the heatplots created in script 06 / shown in Figure 2. 
 
 Creates multipanel Figure 1.
 
-Produces residual shape data used in later analyses, stored in RDA file 05.
+Produces shape residual data used in later analyses, stored in RDA file 05.
 
 ### Load packages, functions, and data
 Tree, mean shape, and metadata for phylogenetic analyses come from the allometry rodents script 04. 
@@ -109,10 +109,10 @@ PCy.lab.n <- paste("PC2", " (", PCy.per.n, "%)", sep = "")
 # Full shape
 full.PC.impt <- data.frame(PC = 1:length(PCA.mean.allo$pc.summary$importance[2, ]), impt = PCA.mean.allo$pc.summary$importance[2, ])
 
-# Residual shape
+# shape residual
 res.PC.impt <- data.frame(PC = 1:length(res.PCA$pc.summary$importance[2, ]), impt = res.PCA$pc.summary$importance[2, ])
 
-# Residual shape without Notomys
+# shape residual without Notomys
 rnot.PC.impt <- data.frame(PC = 1:length(wrap.PCA.r.n$pc.summary$importance[2, ]), impt = wrap.PCA.r.n$pc.summary$importance[2, ])
 ```
 
