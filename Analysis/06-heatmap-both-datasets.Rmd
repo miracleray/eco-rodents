@@ -224,7 +224,7 @@ res.PC1.min.h <- wrap.PCA.r$pc.shapes[[2]]  # Flipped b/c axes are flipped
 res.PC1.max.h <- wrap.PCA.r$pc.shapes[[1]]
 ```
 
-### Export the variation for residual shape change
+### Export the variation for shape residual change
 ```{r}
 # Lateral view of mean to smallest
 open3d(windowRect = c(0, 0, 600, 600))
@@ -262,7 +262,7 @@ res.PC2.min.h <- wrap.PCA.r$pc.shapes[[4]]
 res.PC2.max.h <- wrap.PCA.r$pc.shapes[[3]]
 ```
 
-### Export the variation for residual shape change
+### Export the variation for shape residual change
 ```{r}
 # Lateral view of mean to smallest
 open3d(windowRect = c(0, 0, 600, 600))
@@ -511,7 +511,7 @@ par(mar = c(0, 0, 0, 0))
 plot(c(0, dim(resid.sm.lat)[2]), c(0, dim(resid.sm.lat)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
 rasterImage(resid.sm.lat, 0, 0, dim(resid.sm.lat)[2], dim(resid.sm.lat)[1])
 text(0, dim(resid.sm.lat)[1]-10, "A", cex = 2)
-legend("topright", inset = c(0.5, 0), legend = "PC1 residual shape", bty = "n", cex = 1.2)
+legend("topright", inset = c(0.3, 0), legend = "PC1 shape residual", bty = "n", cex = 1.2)
 legend("bottomleft", "Mean to hypothetical minimum", bty = "n", inset = c(0.1, 0.07))
 
 # 2) Mean to Big, residuals PC1, lateral view
@@ -541,7 +541,7 @@ par(mar = c(0, 0, 0, 0))
 plot(c(0, dim(resid.sm.lat.no)[2]), c(0, dim(resid.sm.lat.no)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
 rasterImage(resid.sm.lat.no, 0, 0, dim(resid.sm.lat.no)[2], dim(resid.sm.lat.no)[1])
 text(0, dim(resid.sm.lat.no)[1]-10, "E", cex = 2)
-legend("topright", inset = c(0.1, 0), legend = expression(paste("PC1 residual shape (no ", italic("Notomys"), ")")), bty = "n", cex = 1.2)
+legend("topright", inset = c(0.05, 0), legend = expression(paste("PC1 shape residual (no ", italic("Notomys"), ")")), bty = "n", cex = 1.2)
 legend("bottomleft", "Mean to new hypothetical minimum", bty = "n", inset = c(0.07, 0.07))
 
 # 6) Mean to Big, residuals PC1, lateral view - no Notomys
@@ -571,7 +571,7 @@ par(mar = c(0, 0, 0, 0))
 plot(c(0, dim(resP2.sm.lat)[2]), c(0, dim(resP2.sm.lat)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
 rasterImage(resP2.sm.lat, 0, 0, dim(resP2.sm.lat)[2], dim(resP2.sm.lat)[1])
 text(0, dim(resP2.sm.lat)[1]-10, "I", cex = 2)
-legend("topright", inset = c(0.3, 0), legend = "PC2 shape residual data (all spp.)", bty = "n", cex = 1.2)
+legend("topright", inset = c(0.1, 0), legend = "PC2 shape residual (all spp.)", bty = "n", cex = 1.2)
 legend("bottomleft", "Mean to PC2 hypothetical minimum", bty = "n", inset = c(0.07, 0.07))
 
 # 10) Mean to Big, residuals PC2, lateral view
