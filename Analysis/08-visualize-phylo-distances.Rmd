@@ -131,13 +131,13 @@ layout(mat, widths = rep.int(1, ncol(mat)), heights = rep.int(1, nrow(mat)))
 par(mar = c(1, 4, 2, 1))
 plot(master.table$phylo.d, master.table$morph.d, col = master.table$col.spp1, bg = master.table$col.spp2, pch = 21, ylab = "Morph. distance")
 text(0.25, 0.197, "A", cex = 1.5)
-legend("topleft", legend = "with allometry", inset = c(0.01, 0), bty = "n")
+legend("topleft", legend = "full shape", inset = c(0.005, 0.01), bty = "n")
 
 # B) Plot with residuals
 par(mar = c(4.5, 4, 2, 1))
 plot(master.table.r$phylo.d, master.table.r$morph.d.r, col = master.table$col.spp1, bg = master.table$col.spp2, pch = 21, xlab = "Phylogenetic distance (~million years since common ancestor)", ylab = "Morph. distance")
 text(0.25, 0.265, "B", cex = 1.5)
-legend("topleft", legend = "residuals", inset = c(0.01, 0), bty = "n")
+legend("topleft", legend = "residual shape", inset = c(0.005, 0.01), bty = "n")
 legend("bottomright", legend = genera.phylo, col = col.phylo, pch = 16, cex = 0.6, pt.cex = 0.7, ncol = 5, bty = "n", inset = c(0.12, 0))
 
 dev.off()
