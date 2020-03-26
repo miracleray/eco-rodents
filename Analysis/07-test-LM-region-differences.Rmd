@@ -28,6 +28,7 @@ library(wesanderson)  # plot colors
 library(colorspace)  # darken colors
 library(vegan)  # for Mantel tests
 library(geomorph)
+library(data.table)
 source("../Functions/utilities.R")  # custom functions
 load(file = "../Data/Processed/03-main-data.rda")
 load(file = "../Data/Processed/03-tree-data.rda")
@@ -309,6 +310,11 @@ MantelModularity <- function(shapes, lm.modules) {
 # Run on the full and shape residual datasets respectively
 mantel.full <- MantelModularity(mean.shapes, lm.modules)
 mantel.res <- MantelModularity(residuals, lm.modules)
+
+# Add landmark numbers; col #4 gives the Goswami module definitions
+n.num <- c(sum(lm.modules[, 4] == "basicran"), sum(lm.modules[, 4] == "molar"), sum(lm.modules[, 4] == "orbital"), sum(lm.modules[, 4] == "rostrum"), sum(lm.modules[, 4] == "vault"))
+mantel.full <- cbind(mantel.full, n.num)  # add to tables for export
+mantel.res <- cbind(mantel.res, n.num)
 
 # Export Table 1A and 1B
 write.table(mantel.full, "../Data/Results/Table1A_MantelTest_Full.csv", sep = ",", col.names = NA)
