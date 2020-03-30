@@ -102,34 +102,7 @@ module.plot <- readPNG("../Data/Processed/modules.png")
 ```
 
 ## Test modularity with 5 modules for full shape dataset
-This test uses covariance ratio (CR) coefficients (Adams 2016) to quantify the degree of modularity between hypothesized modules/partitions. The observed CR is compared to the distribution of randomized CR's, found by randomizing the landmarks into partitions of identical sample sizes.
-```{r}
-# Test with the phylogentic tree (and mean shapes)
-mod.test.5 <- modularity.test(mean.shapes, partition.gp = lm.modules[, 4])
-
-# Make pairwise comparison table
-mod.result <- as.matrix(mod.test.5$CR.mat)  # results
-colnames(mod.result) <- unique(lm.modules[, 4])  # names from 1st instance
-rownames(mod.result) <- unique(lm.modules[, 4])  # ...in lm.module[, 4]
-alpha.key <- match(unique(lm.modules[, 4]), mod.levels)  # alphabetize table
-mod.result <- mod.result[order(alpha.key), order(alpha.key)]
-```
-
-## Test modularity with 5 modules for shape residual dataset
-As above but with residuals
-```{r}
-# Test with the phylogentic tree (and mean shapes)
-mod.test.res <- modularity.test(residuals, partition.gp = lm.modules[, 4])
-
-# Make pairwise comparison table
-mod.result.res1 <- as.matrix(mod.test.res$CR.mat)  # results
-colnames(mod.result.res1) <- unique(lm.modules[, 4])  # names from 1st instance
-rownames(mod.result.res1) <- unique(lm.modules[, 4])  # ...in lm.module[, 4]
-mod.result.res1 <- mod.result.res1[order(alpha.key), order(alpha.key)]
-```
-
-## Test modularity with 5 modules for full shape dataset -- with phylogeny
-As above but accounts for random changes due to evolution via Brownian motion (Felice and Adams 2014).
+This test uses covariance ratio (CR) coefficients (Adams 2016) to quantify the degree of modularity between hypothesized modules/partitions. The observed CR is compared to the distribution of randomized CR's, found by randomizing the landmarks into partitions of identical sample sizes. Accounts for random changes due to evolution via Brownian motion (Felice and Adams 2014).
 ```{r}
 # Test with the phylogentic tree (and mean shapes)
 mod.test.5.phy <- phylo.modularity(mean.shapes, partition.gp = lm.modules[, 4], aus.tree)
@@ -138,6 +111,7 @@ mod.test.5.phy <- phylo.modularity(mean.shapes, partition.gp = lm.modules[, 4], 
 mod.result.phy <- as.matrix(mod.test.5.phy$CR.mat)  # results
 colnames(mod.result.phy) <- unique(lm.modules[, 4])  # names from 1st instance
 rownames(mod.result.phy) <- unique(lm.modules[, 4])  # ...in lm.module[, 4]
+alpha.key <- match(unique(lm.modules[, 4]), mod.levels)  # alphabetize table
 mod.result.phy <- mod.result.phy[order(alpha.key), order(alpha.key)]  # alphabetize table
 ```
 
@@ -154,14 +128,14 @@ rownames(mod.result.res) <- unique(lm.modules[, 4])  # ...in lm.module[, 4]
 mod.result.res <- mod.result.res[order(alpha.key), order(alpha.key)]
 
 # Save time consuming tests
-save(mod.test.5, mod.test.res, mod.test.5.phy, mod.test.5.res, mod.result, mod.result.res1, mod.result.phy, mod.result.res, file = "../Data/Processed/07-modularity.rda")
+save(mod.test.5.phy, mod.test.5.res, mod.result.phy, mod.result.res, file = "../Data/Processed/07-modularity.rda")
 ```
 
 ## Make and export Figure 4
 ```{r}
 # Set up for export and for multiple panels
 pdf("../Data/Results/Figure4_Modularity.pdf")
-mat <- matrix(c(1, 1, 2, 3, 4, 5), 3, 2, byrow = TRUE)  # 5 plots, 3 row, 2 columns
+mat <- matrix(c(1, 1, 2, 3), 2, 2, byrow = TRUE)  # 3 plots, 2 row, 2 columns
 layout(mat, widths = rep.int(1, ncol(mat)), heights = rep.int(1, nrow(mat)))  
 
 # 1) Plot of modules
@@ -178,41 +152,7 @@ text(560, 349, "Orbital", cex = 0.9, bty = "n", col = darken(mod.colors[3]))
 text(835, 270, "Rostrum", cex = 0.9, bty = "n", col = darken(mod.colors[4], amount = 0.3))
 text(-30, 220, "Vault", cex = 0.9, bty = "n", col = darken(mod.colors[5], amount = 0.35))
 
-# 2) Plot of observed and resampled CR coefficients for full shape dataset
-par(mar = c(3.5, 3.5, 1.5, 0.5))
-hist(mod.test.5$random.CR,
-     main = NULL,
-     xlab = "",
-     xlim = c(0.65, 1.1),
-     ylab = "",
-     cex.axis = 0.9,
-     col = "black")
-# Labels for histogram
-#title(xlab = "Covariance ratio (CR) coefficient", line = 2.4)
-title(ylab = "Frequency (out of 1000)", line = 2.35)
-arrows(x0 = mod.test.5$CR, y0 = 465, y1 = 8, length = 0.15, lwd = 1.5, col = "darkred")
-text(mod.test.5$CR, 525, "observed CR", cex = 0.9, col = "darkred")
-legend("topleft", "B", cex = 1.5, bty = "n", inset = -0.05)
-legend("topleft", "resampled CR coefficients; full shape", cex = 0.9, bty = "n", inset = c(0.034, 0.02))
-
-# 3) Plot of CR coefficients for shape residual dataset
-par(mar = c(3.5, 3.5, 1.5, 0.5))
-hist(mod.test.res$random.CR,
-     main = NULL,
-     xlab = "",
-     xlim = c(0.65, 1.1),
-     ylab = "",
-     cex.axis = 0.9,
-     col = "black")
-# Labels for histogram
-#title(xlab = "Covariance ratio (CR) coefficient", line = 2.4)
-title(ylab = "Frequency (out of 1000)", line = 2.35)
-arrows(x0 = mod.test.res$CR, y0 = 375, y1 = 8, length = 0.15, lwd = 1.5, col = "darkred")
-text(mod.test.res$CR + 0.02, 425, "observed CR", cex = 0.9, col = "darkred")
-legend("topleft", "C", cex = 1.5, bty = "n", inset = -0.05)
-legend("topleft", "resampled CR coefficients; shape residual", cex = 0.9, bty = "n", inset = c(0.035, 0.02))
-
-# 4) Plot of observed and resampled CR coefficients (w/ phylo correction)
+# 2) Plot of observed and resampled CR coefficients (w/ phylo correction)
 par(mar = c(3.5, 3.5, 1.5, 0.5))
 hist(mod.test.5.phy$random.CR,
      main = NULL,
@@ -226,10 +166,10 @@ title(xlab = "Covariance ratio (CR) coefficient", line = 2.4)
 title(ylab = "Frequency (out of 1000)", line = 2.35)
 arrows(x0 = mod.test.5.phy$CR, y0 = 175, y1 = 8, length = 0.15, lwd = 1.5, col = "darkred")
 text(mod.test.5.phy$CR - 0.03, 200, "observed CR", cex = 0.9, col = "darkred")
-legend("topleft", "D", cex = 1.5, bty = "n", inset = -0.05)
-legend("topleft", "as above, with phylogenetic correction", cex = 0.9, bty = "n", inset = c(0.033, 0.02))
+legend("topleft", "B", cex = 1.5, bty = "n", inset = -0.05)
+legend("topleft", "full shape", cex = 0.9, bty = "n", inset = c(0.033, 0.02))
 
-# 5) Plot of CR coefficients (w/ phylo correction) for shape residual dataset
+# 3) Plot of CR coefficients (w/ phylo correction) for shape residual dataset
 par(mar = c(3.5, 3.5, 1.5, 0.5))
 hist(mod.test.5.res$random.CR,
      main = NULL,
@@ -243,8 +183,8 @@ title(xlab = "Covariance ratio (CR) coefficient", line = 2.4)
 title(ylab = "Frequency (out of 1000)", line = 2.35)
 arrows(x0 = mod.test.5.res$CR - 0.01, y0 = 105, y1 = 8, length = 0.15, lwd = 1.5, col = "darkred")
 text(mod.test.5.res$CR - 0.01, 120, "observed CR", cex = 0.9, col = "darkred")
-legend("topleft", "E", cex = 1.5, bty = "n", inset = -0.05)
-legend("topleft", "as above, with phylogenetic correction", cex = 0.9, bty = "n", inset = c(0.033, 0.02))
+legend("topleft", "C", cex = 1.5, bty = "n", inset = -0.05)
+legend("topleft", "residual shape", cex = 0.9, bty = "n", inset = c(0.033, 0.02))
 
 dev.off()
 ```
