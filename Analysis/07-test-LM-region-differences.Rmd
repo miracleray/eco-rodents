@@ -91,6 +91,9 @@ for(i in 1:length(mod.levels)) {
         spheres3d(ref[mod.parts[[i]], 1], ref[mod.parts[[i]], 2], ref[mod.parts[[i]], 3], col = mod.colors[i], lit = TRUE, radius = 0.0015, asp = FALSE)
         #rgl.texts(ref[mod.parts[[i]], 1], ref[mod.parts[[i]], 2], ref[mod.parts[[i]], 3], mod.parts[[i]], offset = 100, color = c("black"))
 }
+#view3d(phi = 0)
+#rgl.snapshot("../Data/Processed/module_ventral.png")
+
 view3d(phi = 90)  # Lateral view, dorsal side up
 rgl.snapshot("../Data/Processed/modules.png")
 
