@@ -33,7 +33,7 @@ info <- sm.info[, !(names(sm.info) %in% drops)]
 # Add trait info from Native Mice and Rats (Breed & Ford 2007)
 traits <- read.csv("../Data/Processed/in_ex_traits.csv", header = TRUE)
 traits$Taxa <- paste(str_sub(traits$Genus, 1, 1), str_sub(traits$Species, 1, 3), sep = "_")  # make matching Taxa column
-info <- merge(info, traits, by = "Taxa", sort = TRUE)  # merge
+info <- merge(info, traits, by = "Taxa", sort = TRUE)  # merge trait datasets
 
 info <- info[order(info$Order), ]  # original order / same as shape
 
@@ -59,7 +59,7 @@ dimnames(shape)[[3]] <- as.list(paste(info$FullName))
 ```
 
 ### Handle *Mastacomys*
-Since *Mastacomys* is technically within the genus *Pseudomys* (Smissen & Rowe 2018), we'll make an "Effective Genus" column in the metadata where this genus is classified under *Pseudomys* for analyses that use genera.
+Since *Mastacomys* is technically within the genus *Pseudomys* (Smissen & Rowe 2018), we'll make an "Effective Genus" or "EGenus" column in the metadata where this genus is classified under *Pseudomys* for analyses that use genera.
 ```{r}
 info$EGenus <- info$Genus  # make Effective Genus column
 info$EGenus[which(info$Genus == "Mas")] <- "Pse"  # Mas becomes Pseudomys
@@ -78,15 +78,15 @@ Hyd <- sequential_hcl(5, "Reds 3")  # Hydromys clade
 Pog <- sequential_hcl(5, "Heat 2")  # Pogonomys clade
 Inv <- sequential_hcl(5, "Light Grays")  # Mus and Rattus clades
 
-# 1) genus color by phylogeny
+# 1) Genus color by phylogeny
 genera.phylo <- c("Mus", "Rat", "Pog", "Xer", "Hyd", "Not", "Pse", "Zyz", "Leg", "Uro", "Mel", "Lep", "Mes", "Con")
 col.phylo <- c(Inv[3], Inv[1], Pog[3], Hyd[1], Hyd[2], Pse[1], Pse[2], Pse[4], Pse[3], Uro[1], Uro[2], Mes[3], Mes[2], Mes[1])
 names(col.phylo) <- genera.phylo 
 
-# 2) color by alphabetical genus name
+# 2) Color by alphabetical genus name
 col.gen <- col.phylo[match(sort(unique(info$EGenus)), names(col.phylo))] 
 
-# 3) color vector for all data (specimen level)
+# 3) Color vector for all data (specimen level)
 sp.col.gen <- col.phylo[match(as.factor(info$EGenus), names(col.phylo))]
 sp.col.gen[which(info$Species %in% c("nor", "rat"))] <- "black"  # account for invasive Rattus
 ```
@@ -154,7 +154,7 @@ We need to update the centoid size column for info.means to contain the *mean* c
 ```{r}
 # Calculate mean centroid size from original Csize data and store in info.means
 cs.means <- aggregate(info[, which(colnames(info) == "Csize")], list(Taxa = info$FullName), mean)  # aggregate also alphabetizes it
-info.means$MeanCsize <- cs.means[, 2]  # store in dataframe
+info.means$MeanCsize <- cs.means[, 2]  # store CS in dataframe
 ```
 
 ### Names, colors, and points in alphabetical order
@@ -220,12 +220,12 @@ aus.tree <- drop.tip(relabel.tree, concord$tree_not_data)  # prune tree to Aus s
 
 Next, subset and re-order the metadata and shape datasets to match the order of species found in the tree. 
 ```{r}
-# Subsetting
+# Subset datasets
 to.remove <- name.check(aus.tree, aus.tree$tip.label, dimnames(mean.shapes)[[3]])
 info.means.tree <- info.means[!is.element(info.means$FullName, to.remove$data_not_tree), ]  # metadata
 mean.shapes.tree <- mean.shapes[, , !is.element(info.means$FullName, to.remove$data_not_tree)]  # shape data
 
-# Re-order to match tree tip order
+# Re-order datasets to match tree tip order
 tree.order <- match(aus.tree$tip.label, info.means.tree$FullName)
 info.means <- info.means.tree[tree.order, ]  # metadata
 mean.shapes <- mean.shapes.tree[, , tree.order]  # shape data
