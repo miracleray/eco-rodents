@@ -42,8 +42,8 @@ These contain related analyses, mostly ensuring the dataset and the methods are 
 
 * **App01-compare-sliding methods.Rmd** Double checks whether sliding in Viewbox before sliding in `geomorph` impacts the landmark variation patterns underlying our shape dataset. 
 * **App02-compare-patch-protocols.Rmd** Plots PCAs colored by genus and runs shape ~ genus * centroid size ANOVAs for both big and small patch protocols. Visualizes landmark variation differences with Dr Thomas Guillerme's new package, `landvR`, in color-coded heatmaps for both patch protocols and for both PC1 and PC2. 
-* **App03-test-fitted-allometry.Rmd** Plots `landvR` heatplots after performing 3 variations on methods to get the fitted allometric shapes from `procD.lm()`. **Generates Supplementary Figure TK.**
-* **App04-residuals-without.Rmd** Plots `landvR` heatplots of shape changes for the residual dataset without Notomys PC2 and for the residual dataset without Notomys or the aquatic carnivores both PC1 and PC2. **Generates Supplementary Figure TK.**
+* **App03-test-fitted-allometry.Rmd** Plots `landvR` heatplots after performing 3 variations on methods to get the fitted allometric shapes from `procD.lm()`. **Generates Supplementary Figure 1.**
+* **App04-residuals-without.Rmd** Plots `landvR` heatplots of shape changes for the residual dataset without Notomys PC2 and for the residual dataset without Notomys or the aquatic carnivores both PC1 and PC2. **Generates Supplementary Figure 2.**
 
 ### Custom functions
 The analyses call custom functions, most of which are defined in the [..Data/Functions/utilities.R](/Data/Functions/utilities.R) file. A modified version of `geomorph`'s function `plotGMPhyloMorphoSpace` is defined in the [..Data/Functions/plotGMPhyloMorphoSpace_plotmod.R](/Data/Functions/plotGMPhyloMorphoSpace_plotmod.R) file.
