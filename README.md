@@ -32,7 +32,7 @@ The analysis workflow is broken down into smaller scripts explained below. Each 
 * **02-calculate-user-error.Rmd** Allows users to view outliers and find major landmarking errors. Takes out replicated specimens from the shape data, finds their duplicates, and calculates user error based on repeatability for both patch datasets. 
 * **03-prepare-data.Rmd** Preps datasets used throughout the later analyses for metadata, phylogenetic data, and graphics for plotting.
 * **04-plot-allometry-PCAs.Rmd** Plots exploratory PCAs with point colors and shapes according to taxa or trait information provided in the metadata table.
-* **05-plot-residual-PCAs.Rmd** Plots the residual PCAs by phylogenetic and by guild (diet/locomotion). **Generates Figure 1.**
+* **05-plot-residual-PCAs.Rmd** Plots the residual PCAs by phylogenetic and by guild (diet/locomotion). Tests for correlation between PC1 of the two datasets and runs Mantel test comparing the entire morphospaces of both datasets. **Generates Figure 1.**
 * **06-heatmap-both-datasets.Rmd** Plots the `landvR` heatplots of shape changes over the PC axes for both allometric and residual datasets. **Generates Figures 2 and 3.**
 * **07-test-LM-region-differences.Rmd** Sets modules by landmarks and creates 3D plot. Tests covariation via modularity using the modules defined for mammalian skulls in Goswami 2006 & 2007. Runs Mantel tests on the distance matrices of the PC scores for each module. Tests for global integration. **Generates Figure 4 and Table 1.**
 * **08-visualize-phylo-distances** Plots phylo-morphological distance plots for both full shape and residual shape datasets. **Generates Figure 5.**
