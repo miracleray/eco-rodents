@@ -15,12 +15,15 @@ Plot PCAs for allometric shape and shape residual, provide coloration and pch sy
 
 Creates multipanel Figure 1.
 
+Compares morphospace similarity of the two datasets with a Mantel test and a correlation test.
+
 Produces shape residual data used in later analyses, stored in RDA file 05.
 
 ### Load packages, functions, and data
 Tree, mean shape, and metadata for phylogenetic analyses come from the allometry rodents script 04. 
 ```{r message = FALSE}
 library(geomorph)
+library(vegan)  # for Mantel tests
 library(dplyr)
 source("../Functions/utilities.R")  # custom functions
 load(file = "../Data/Processed/03-main-data.rda")
