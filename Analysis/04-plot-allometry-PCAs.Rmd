@@ -13,7 +13,7 @@ knitr::opts_knit$set(root.dir = '../eco-rodents')
 # Plotting exploratory PCAs
 PCAs provide a human-friendly way to visualize shape data. They are a good way to understand what's going on in the data quickly. However, because they artificially collapse the shape variation into orthogonal PC axes, they must be considered exploratory analyses only.
 
-Here, we explore the variation in rodent skulls by coloring the PCA plots by genus and by traits.
+Here, we explore the variation in rodent skulls by coloring the PCA plots by genus and by ecologically-relevant traits.
 
 ### Load packages, functions, and data
 ```{r message = FALSE}
@@ -28,31 +28,41 @@ load(file = "../Data/Processed/03-graphing-vectors.rda")
 ```
 
 ## 1) Plot PCA by genus for small patch dataset
-The function `PlotPCA()` quickly plots a PCA with specimens colored by groups and optionally given different point shapes for other attributes. The function also reports PC axis variation in %. 
+The custom function `PlotPCA()` quickly plots a PCA with specimens colored by groups and optionally given different point shapes for other attributes. The function also reports PC axis variation in %. 
 ```{r}
 PCA <- plotTangentSpace(shape)
 
-# Plot PCA by genus and export as .eps into ../Data/Results folder
-setEPS()
-postscript("../Data/Results/PCA_Allspp_allom.eps")
-
+# Plot PCA with all data by genus
 PlotPCA(PCA, 1, 2, sp.col.gen, pch.spp)
 legend("bottomright", legend = phylo.names, col = col.unique.spp, pch = pch.unique.spp, pt.bg = col.unique.spp, cex = .35, pt.cex = .7, ncol = 2)
-
-dev.off()
 ```
 
-## Do for mean shapes
+## 2) PCA plot by ancestor group
+There are two main tribes on Australia: Hydromini and Rattini, which represent two different lineages within Murinae to make it from Asia to Sahul. 
+
+Within Hydromini, there are 5 groups with unique ancestors and arrivals from New Guinea to Australia. Most had unique radiations that centered on different biomes. 
 ```{r}
-mean.PCA <- plotTangentSpace(mean.shapes)
-PlotPCA(mean.PCA, 1, 2, alpha.col, alpha.pch, flip.axis1 = TRUE)
-legend("bottomright", legend = phylo.names, col = col.unique.spp, pch = pch.unique.spp, pt.bg = col.unique.spp, cex = .45, pt.cex = .8, ncol = 2)
+# Set up colors, using distinct colors from above. 
+col.Hyd <- col.unique.spp[which(phylo.names == "H chr")]  # Hydromys 
+col.invR <- "black"  # to distinguish between native and invasive Rattus rats 
+col.Mes <- col.unique.spp[which(phylo.names == "M gou")]  # Mesembriomys
+col.mus <- col.unique.spp[which(phylo.names == "M mus")]  # Mus musculus
+col.Pog <- col.unique.spp[which(phylo.names == "P mol")]  # Pogonomys
+col.Pse <- col.unique.spp[which(phylo.names == "L for")]  # Pseudomys
+col.Rat <- col.unique.spp[which(phylo.names == "R vil")]  # native Rattus
+col.Uro <- col.unique.spp[which(phylo.names == "M bur")]  # Uromys
+
+col.clade <- c(col.Hyd, col.invR, col.Mes, col.mus, col.Pog, col.Pse, col.Rat, col.Uro)
+
+# Colors matching each specimen in order of shape dataset
+col.by.clade <- PlotByGroup(info, "Clade", col.clade)
+
+# PCA 
+PlotPCA(PCA, 1, 2, col.by.clade)
 ```
 
-## 2) Check for disparity differences between old and new endemics
-Check to see if differences seen in PCA (which squashes multi-variate variation) occur when all axes of variation are taken into account.
-
-Here we are testing the difference between the space occupied by the old endemics versus the new endemics
+## 3) Check for disparity differences between old and new endemics
+Check to see if differences seen in PCA (which squashes multi-variate variation) occur when all axes of variation are taken into account. Here we are testing the difference between the space occupied by the old endemics versus the new endemics
 ```{r}
 # Remove invasives
 end.shape <- shape[, , -(which(info$Endemic == "Inv"))]
@@ -78,30 +88,6 @@ plot(dist.from.old, ylim = c(0.01, 0.26))
 
 # This t-test shows that the new species are significantly further away from the old centroid than the old species
 disp.t.test <- test.dispRity(dist.from.old, test = t.test, alternative = "less")
-```
-
-## 3) PCA plot by ancestor group
-There are two main tribes on Australia: Hydromini and Rattini, which represent two different lineages within Murinae to make it from Asia to Sahul. 
-
-Within Hydromini, there are 5 groups with unique ancestors and arrivals from New Guinea to Australia. Most had unique radiations that centered on different biomes. 
-```{r}
-# Set up colors, using distinct colors from above. 
-col.Hyd <- col.unique.spp[which(phylo.names == "H chr")]  # Hydromys 
-col.invR <- "black"  # to distinguish between native and invasive Rattus rats 
-col.Mes <- col.unique.spp[which(phylo.names == "M gou")]  # Mesembriomys
-col.mus <- col.unique.spp[which(phylo.names == "M mus")]  # Mus musculus
-col.Pog <- col.unique.spp[which(phylo.names == "P mol")]  # Pogonomys
-col.Pse <- col.unique.spp[which(phylo.names == "L for")]  # Pseudomys
-col.Rat <- col.unique.spp[which(phylo.names == "R vil")]  # native Rattus
-col.Uro <- col.unique.spp[which(phylo.names == "M bur")]  # Uromys
-
-col.clade <- c(col.Hyd, col.invR, col.Mes, col.mus, col.Pog, col.Pse, col.Rat, col.Uro)
-
-# Colors matching each specimen in order of shape dataset
-col.by.clade <- PlotByGroup(info, "Clade", col.clade)
-
-# PCA 
-PlotPCA(PCA, 1, 2, col.by.clade)
 ```
 
 ## 4) PCA plot by diet and guild
@@ -135,7 +121,49 @@ text(-0.06, -0.05, "Omnivore", col = col.omni)
 text(-0.11, 0.01, "Granivore", col = col.gran)
 ```
 
-### Save intermediate data
+## 5) Extra plots for powerpoint
+Created for presentation with different formatting
+
+### Residual by genera
 ```{r}
-save(PCA, col.diet.5, pch.gld.4, mean.PCA, file = "../Data/Processed/04-PCA.rda")
+plot(x = -res.PCA$pc.scores[, 1],  # flip for consistency
+                 y = -res.PCA$pc.scores[, 2],  
+                 xlab = PCx.lab, 
+                 ylab = PCy.lab,
+                 asp = F,
+                 xlim = c(-0.12, 0.15),
+                 ylim = c(-0.15, 0.12),
+                 col = alpha.col,
+                 pch = alpha.pch,
+                 bg = alpha.col,
+                 cex = 1.5,
+                 cex.axis = 1.1, 
+                 cex.lab = 1.3)
+legend("bottomright", legend = genera.phylo, col = col.phylo, pch = 16, pt.bg = col.unique.spp, cex = 0.75, bty = "n", text(font = 3))
+```
+
+### Residual by locomotion and diet
+```{r}
+plot(x = -res.PCA$pc.scores[, 1],  # flip for consistency
+                 y = -res.PCA$pc.scores[, 2],  
+                 xlab = PCx.lab, 
+                 ylab = PCy.lab,
+                 asp = F,
+                 xlim = c(-0.12, 0.15),
+                 ylim = c(-0.15, 0.12),
+                 col = col.diet.means, 
+                 pch = pch.gld.means, 
+                 bg = col.diet.means,
+                 cex = 1.5,
+                 cex.axis = 1.1, 
+                 cex.lab = 1.3)
+legend("topright", legend = c("Aquatic", "Arboreal", "Terrestrial", "Hopping", "", "Carnivore", "Frugivore", "Granivore", "Herbivore", "Omnivore"), col = c(rep("black", 4), "white", col.diet.5), border = NULL, pch = c(21, 24, 22, 23, rep(15, 6)), cex = 0.76, bty = "n", inset = c(0, 0))
+```
+
+### Residual phylomorphospace
+```{r}
+source(file = "../Functions/plotGMPhyloMorphoSpace_plotmod.R")
+library(phytools)
+
+plotGMPhyloMorphoSpace_plotmod(aus.tree, residuals, tip.labels = FALSE, node.labels = FALSE, xaxis = -1, yaxis = 2, plot.param = list(xlim = c(-0.15, 0.12), ylim = c(-0.12, 0.15), t.bg = col.diet.means, t.pch = pch.gld.means, l.col = "dark gray", n.cex = 1, t.cex = 1.5, xlab = "PC1 (30%)", ylab = "PC2 (21.1%)"))
 ```

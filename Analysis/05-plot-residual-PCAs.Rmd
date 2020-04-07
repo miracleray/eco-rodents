@@ -29,7 +29,6 @@ source("../Functions/utilities.R")  # custom functions
 load(file = "../Data/Processed/03-main-data.rda")
 load(file = "../Data/Processed/03-tree-data.rda")
 load(file = "../Data/Processed/03-graphing-vectors.rda")
-load(file = "../Data/Processed/04-PCA.rda")
 ```
 
 ## 1) Make PCA of mean shapes with allometry
@@ -77,11 +76,21 @@ PCy.lab <- paste("PC2", " (", PCy.per, "%)", sep = "")
 ## 3) Plot by guild and compare with mean allometry shapes 
 Recolor plot above with points by diet and guild
 ```{r}
-# Define color pallete for diets of all specimens
+# Set up pallete for 5 diet types
+warm <- sequential_hcl(5, "LaJolla")  
+col.carn <- warm[4]  # meat colored red
+col.frug <- warm[3]  # fruit colored orange
+col.gran <- warm[2]  # grain colored gold
+col.herb <- sequential_hcl(5, "Greens 3")[2]  # green colored grass
+col.omni <- sequential_hcl(5, "Grays")[3]  # gray for anything goes omnivore
+
+# Define color pallete for diets of mean specimens
+col.diet.5 <- c(col.carn, col.frug, col.gran, col.herb, col.omni)
 col.diet.means <- PlotByGroup(info.means, "Feeding", col.diet.5)
 
-# Aquatic (circle), Arboreal (tri), Terrestrial (square), Hopping (diamond)
-pch.gld.means <- PlotByGroup(info.means, "Guild", pch.gld.4)
+# Points for 4 locomotion types: Aquatic (circle), Arboreal (triangle), Terrestrial (square), hopping (diamond)
+pch.gld.4 <- c(16, 24, 23, 22)
+pch.gld <- PlotByGroup(info.means, "Guild", pch.gld.4)
 ```
 
 ## 4) Prepare PCA without Notomys
@@ -104,7 +113,8 @@ PCy.per.n <- round(PCs.n[2, 2] * 100, digits = 1)
 PCy.lab.n <- paste("PC2", " (", PCy.per.n, "%)", sep = "")
 ```
 
-### Set up 3 datasets for screeplots
+## 5) Export skreeplots for PC importance scores for 3 separate datasets
+Set up 3 datasets for screeplots
 ```{r}
 # Full shape
 full.PC.impt <- data.frame(PC = 1:length(PCA.mean.allo$pc.summary$importance[2, ]), impt = PCA.mean.allo$pc.summary$importance[2, ])
@@ -116,7 +126,7 @@ res.PC.impt <- data.frame(PC = 1:length(res.PCA$pc.summary$importance[2, ]), imp
 rnot.PC.impt <- data.frame(PC = 1:length(wrap.PCA.r.n$pc.summary$importance[2, ]), impt = wrap.PCA.r.n$pc.summary$importance[2, ])
 ```
 
-## Export skreeplots for PC importance scores for 3 separate datasets
+### Create supplementary figure
 ```{r}
 # Make simple multipanel figure
 pdf("../Data/Results/SFigure_Screeplots.pdf")
@@ -141,7 +151,7 @@ legend("topleft", inset = c(0.07, -0.07), legend = expression(paste("C) shape re
 dev.off()
 ```
 
-## Export Figure 1
+## 6) Export Figure 1
 Compare the PCAs relevant to Figure 2 heatmaps
 ```{r}
 # Set up for export and for multiple panels
@@ -228,7 +238,7 @@ text(0.043, part.coords[2], expression(paste("shape residual without ", italic("
 dev.off()
 ```
 
-## Compare the full shape and shape residual dataset PCAs
+## 7) Compare the full shape and shape residual dataset PCAs
 Mantel tests to compare full morphospace
 ```{r}
 # Make distance matrices
@@ -261,45 +271,4 @@ cor.pc1
 ### Save intermediate data
 ```{r}
 save(res.PCA, allom.resid, residuals, file = "../Data/Processed/05-residual-data.rda")
-```
-
-```{r}
-plot(x = -res.PCA$pc.scores[, 1],  # flip for consistency
-                 y = -res.PCA$pc.scores[, 2],  
-                 xlab = PCx.lab, 
-                 ylab = PCy.lab,
-                 asp = F,
-                 xlim = c(-0.12, 0.15),
-                 ylim = c(-0.15, 0.12),
-                 col = alpha.col,
-                 pch = alpha.pch,
-                 bg = alpha.col,
-                 cex = 1.5,
-                 cex.axis = 1.1, 
-                 cex.lab = 1.3)
-legend("bottomright", legend = genera.phylo, col = col.phylo, pch = 16, pt.bg = col.unique.spp, cex = 0.75, bty = "n", text(font = 3))
-```
-
-```{r}
-plot(x = -res.PCA$pc.scores[, 1],  # flip for consistency
-                 y = -res.PCA$pc.scores[, 2],  
-                 xlab = PCx.lab, 
-                 ylab = PCy.lab,
-                 asp = F,
-                 xlim = c(-0.12, 0.15),
-                 ylim = c(-0.15, 0.12),
-                 col = col.diet.means, 
-                 pch = pch.gld.means, 
-                 bg = col.diet.means,
-                 cex = 1.5,
-                 cex.axis = 1.1, 
-                 cex.lab = 1.3)
-legend("topright", legend = c("Aquatic", "Arboreal", "Terrestrial", "Hopping", "", "Carnivore", "Frugivore", "Granivore", "Herbivore", "Omnivore"), col = c(rep("black", 4), "white", col.diet.5), border = NULL, pch = c(21, 24, 22, 23, rep(15, 6)), cex = 0.76, bty = "n", inset = c(0, 0))
-```
-
-```{r}
-source(file = "../Functions/plotGMPhyloMorphoSpace_plotmod.R")
-library(phytools)
-
-plotGMPhyloMorphoSpace_plotmod(aus.tree, residuals, tip.labels = FALSE, node.labels = FALSE, xaxis = -1, yaxis = 2, plot.param = list(xlim = c(-0.15, 0.12), ylim = c(-0.12, 0.15), t.bg = col.diet.means, t.pch = pch.gld.means, l.col = "dark gray", n.cex = 1, t.cex = 1.5, xlab = "PC1 (30%)", ylab = "PC2 (21.1%)"))
 ```
