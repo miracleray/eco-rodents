@@ -1,5 +1,5 @@
 ---
-title: "04-plot-allometry-PCAs"
+title: "App03-explore-PCAs"
 author: "Ariel Marcy"
 date: "2018-10-17"
 output: html_document
@@ -21,8 +21,10 @@ library(stringr)
 library(data.table)
 library(geomorph)
 library(geiger)
+library(phytools)
 library(colorspace)  # colors
 source("../Functions/utilities.R")  # custom functions
+source("../Functions/plotGMPhyloMorphoSpace_plotmod.R")  # phylomorphospace
 load(file = "../Data/Processed/03-main-data.rda")
 load(file = "../Data/Processed/03-graphing-vectors.rda")
 ```
@@ -162,8 +164,5 @@ legend("topright", legend = c("Aquatic", "Arboreal", "Terrestrial", "Hopping", "
 
 ### Residual phylomorphospace
 ```{r}
-source(file = "../Functions/plotGMPhyloMorphoSpace_plotmod.R")
-library(phytools)
-
 plotGMPhyloMorphoSpace_plotmod(aus.tree, residuals, tip.labels = FALSE, node.labels = FALSE, xaxis = -1, yaxis = 2, plot.param = list(xlim = c(-0.15, 0.12), ylim = c(-0.12, 0.15), t.bg = col.diet.means, t.pch = pch.gld.means, l.col = "dark gray", n.cex = 1, t.cex = 1.5, xlab = "PC1 (30%)", ylab = "PC2 (21.1%)"))
 ```

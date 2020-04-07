@@ -1,5 +1,5 @@
 ---
-title: "07-test-LM-region-differences"
+title: "06-test-modularity"
 author: "Ariel Marcy"
 date: "10/21/2019"
 output: html_document
@@ -33,10 +33,10 @@ source("../Functions/utilities.R")  # custom functions
 load(file = "../Data/Processed/03-main-data.rda")
 load(file = "../Data/Processed/03-tree-data.rda")
 load(file = "../Data/Processed/03-graphing-vectors.rda")
-load(file = "../Data/Processed/05-residual-data.rda")
+load(file = "../Data/Processed/04-residual-data.rda")
 
 # Can load in time consuming modularity test after first run:
-load(file = "../Data/Processed/07-modularity.rda")
+load(file = "../Data/Processed/06-modularity.rda")
 ```
 
 ## Choose the modules
@@ -131,7 +131,7 @@ rownames(mod.result.res) <- unique(lm.modules[, 4])  # ...in lm.module[, 4]
 mod.result.res <- mod.result.res[order(alpha.key), order(alpha.key)]
 
 # Save time consuming tests
-save(mod.test.5.phy, mod.test.5.res, mod.result.phy, mod.result.res, file = "../Data/Processed/07-modularity.rda")
+save(mod.test.5.phy, mod.test.5.res, mod.result.phy, mod.result.res, file = "../Data/Processed/06-modularity.rda")
 ```
 
 ## Make and export Figure 4
@@ -273,9 +273,9 @@ text(12, -16, "slope of -1", col = "red")
 dev.off()
 ```
 
+Test for phylogenetic signal
 ```{r}
 globalIntegration(residuals, ShowPlot = TRUE)
-
 
   mod.1 <- mean.shapes[which(lm.modules[, 4] == "basicran"), ,]
   mod.2 <- mean.shapes[which(lm.modules[, 4] == "molar"), ,]

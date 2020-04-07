@@ -1,5 +1,5 @@
 ---
-title: "08-visualize-phylo-distances"
+title: "07-plot-phylomorph-dist"
 author: "Ariel Marcy"
 date: "1/15/2020"
 output: html_document
@@ -10,8 +10,8 @@ knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_knit$set(root.dir = '../eco-rodents')
 ```
 
-# Test phylo-morpho distances
-Assess limits of morphological distance (aka divergence) as it relates to phylogenetic distance. Calculated for shape with allometry and for shape residuals.
+# Make phylo-morphological distance plots
+Assess limits of morphological distance (aka divergence) as it relates to phylogenetic distance. Calculated for full shape dataset (with allometry) and for shape residual dataset (allometry-free).
 
 Creates bipanel Figure 5.
 
@@ -24,7 +24,7 @@ source("../Functions/utilities.R")  # custom functions
 load(file = "../Data/Processed/03-main-data.rda")
 load(file = "../Data/Processed/03-tree-data.rda")
 load(file = "../Data/Processed/03-graphing-vectors.rda")
-load(file = "../Data/Processed/05-residual-data.rda")
+load(file = "../Data/Processed/04-residual-data.rda")
 ```
 
 ## Analyze phylogenetic and morphological distance matrices

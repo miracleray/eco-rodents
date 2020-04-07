@@ -1,5 +1,5 @@
 ---
-title: "App03-test-fitted-allometry"
+title: "App04-test-fitted-allometry"
 author: "Ariel Marcy"
 date: "3/5/2020"
 output: html_document
@@ -16,7 +16,7 @@ knitr::opts_knit$set(root.dir = '../eco-rodents')
 
 3) Using the lengthy workflow suggested by the function's documentation involving plot objects and regression scores.
 
-This script produces Supplementary Figure TK and is relevant to Figure 2's second column, which is currently using the method from #1 (script 06).  
+This script produces Supplementary Figure TK and is relevant to Figure 2's second column, which is currently using the method from #1 (script 05).  
 
 # Two conclusions after running this:
 1) `$fitted` and `$GM$fitted` are exactly the same (`$fitted` just needs `arrayspecs()` to be in the right coordinates format for *geomorph*). Either is appropriate to use for allometric fitted shape heatmaps - see Figure 2 for this ms. 
@@ -43,7 +43,7 @@ load(file = "../Data/Processed/03-graphing-vectors.rda")
 ## 1) Heatmaps using procD.lm's $fitted
 First find mean specimen, then smallest and largest fitted allometric shape. Uses Dr Thomas Guillerme's new package, `landvR` to see how landmarks vary between these specimens.
 
-Exact same code as script 06; can skip if script 06 has been run.
+Exact same code as script 05; can skip if script 05 has been run.
 ```{r}
 # Fit specimens
 allom.fit <- procD.lm(mean.shapes ~ log(info.means$MeanCsize))

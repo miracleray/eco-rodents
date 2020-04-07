@@ -1,5 +1,5 @@
 ---
-title: "01-extract-data-for-analyses"
+title: "01-extract-data"
 author: "Ariel Marcy"
 date: "2018-09-17"
 output: html_document

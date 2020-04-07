@@ -1,5 +1,5 @@
 ---
-title: "06-heatmap-both-datasets"
+title: "05-heatmap-both-datasets"
 author: "Ariel Marcy"
 date: "9/18/2019"
 output: html_document
@@ -38,7 +38,7 @@ source("../Functions/utilities.R")  # custom functions
 load(file = "../Data/Processed/03-main-data.rda")
 load(file = "../Data/Processed/03-tree-data.rda")
 load(file = "../Data/Processed/03-graphing-vectors.rda")
-load(file = "../Data/Processed/05-residual-data.rda")
+load(file = "../Data/Processed/04-residual-data.rda")
 ```
 
 ## 1) Prepare heatmaps

@@ -1,5 +1,5 @@
 ---
-title: "05-plot_residual_PCAs"
+title: "04-compare_PCAs"
 author: "Ariel Marcy & Vera Weisbecker"
 date: "8/15/2019"
 output: html_document
@@ -11,13 +11,15 @@ knitr::opts_knit$set(root.dir = '../eco-rodents')
 ```
 
 # Plot PCAs for allometric and shape residual datasets
-Plot PCAs for allometric shape and shape residual, provide coloration and pch symbols by locomotion and diet, and visualize changes in shape residual PCA when *Notomys* species are removed. These plots are relevant to the heatplots created in script 06 / shown in Figure 2. 
+Plot PCAs for allometric shape and shape residual, provide coloration and pch symbols by locomotion and diet, and visualize changes in shape residual PCA when *Notomys* species are removed. These plots are relevant to the heatplots created in script 05 / shown in Figure 2. 
 
 Creates multipanel Figure 1.
 
-Compares morphospace similarity of the two datasets with a Mantel test and a correlation test.
+Compares morphospace similarity of the two datasets with Mantel tests and a correlation test.
 
-Produces shape residual data used in later analyses, stored in RDA file 05.
+Creates supplementary Figure TK, a screeplot of the the PCs for each dataset.
+
+Produces shape residual data used in later analyses, stored in RDA file 04.
 
 ### Load packages, functions, and data
 Tree, mean shape, and metadata for phylogenetic analyses come from the allometry rodents script 04. 
@@ -276,5 +278,5 @@ dev.off()
 
 ### Save intermediate data
 ```{r}
-save(mean.PCA, res.PCA, allom.resid, residuals, file = "../Data/Processed/05-residual-data.rda")
+save(mean.PCA, res.PCA, allom.resid, residuals, file = "../Data/Processed/04-residual-data.rda")
 ```
