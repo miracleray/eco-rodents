@@ -180,7 +180,7 @@ sm.land.pairs <- FindPairs(sm.pt.names)
 ### Run bilateral GPA
 Now we are ready to re-run the generalized Procrustes alignment using bilateral landmark designations and extract the symmetric component of shape.
 
-The two bilateral GPAs can take some time (~10min total to run).
+The two bilateral GPAs can take some time (~20min total to run).
 
 WARNING: the `bilat.symmetry()` function will change the order of specimens in the shape file IF you have any non-unique names in the vector given to argument `ind =` of `bilat.symmetry()`. For example, if we had used `$CatNum`, then we would have 2 of the same CatNums for specimens with replicates. To avoid this, have a column for Replicate Status ("Rep" in this script), merge this with the CatNum column and any other columns of interest, and use this `$All` column for the `ind =` argument of `bilat.symmetry()`.
 ```{r}
