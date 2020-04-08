@@ -19,7 +19,7 @@ Compares morphospace similarity of the two datasets with Mantel tests and a corr
 
 Creates supplementary Figure TK, a screeplot of the the PCs for each dataset.
 
-Produces shape residual data used in later analyses, stored in RDA file 04.
+Produces shape residual data used in later analyses, stored in rda file 04.
 
 ### Load packages, functions, and data
 Tree, mean shape, and metadata for phylogenetic analyses come from the allometry rodents script 04. 
