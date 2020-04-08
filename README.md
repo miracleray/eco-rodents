@@ -6,7 +6,7 @@ To cite the paper, data, and/or code:
 
 As of April 2020, this is still a work in progress. Relies on `R` (v. 3.6.1), `geomorph` (v. 3.1.3), and `landvR` (v. 0.4).
 
-*All scripts are in RMarkdown format (.Rmd), which can be opened in RStudio. There, you can edit and run code chunks as normal, or you can click the Knit button to create HTML versions with both code and output. After cloning this repo, remember to either set your working directory to the eco-rodents folder on your computer, or open an RStudio project from that folder.*
+*All scripts are in RMarkdown format (.Rmd), which can be opened in RStudio. There, you can edit and run code chunks as normal or use the Knit button to create HTML versions with both code and output. After cloning this repo, remember to either set your working directory to the eco-rodents folder on your computer or open an RStudio project from that folder.*
 
 ## Data
 **Landmarking data:**
@@ -36,7 +36,7 @@ If you use these data, please cite the original authors:
 
 * [**04-compare-PCAs.Rmd**](/Analysis/04-compare-PCAs.Rmd) Plots the full shape PCA versus shape residual PCAs colored by genus or by diet/locomotion. Tests for correlation between PC1 of the two datasets and runs Mantel tests comparing the entire morphospaces of both datasets. **Generates Figure 1 and Supplementary Figure TK.**
 * [**05-heatmap-both-datasets.Rmd**](/Analysis/05-heatmap-both-datasets.Rmd) Plots the `landvR` heatplots of shape changes over the PC axes for both allometric and residual datasets. **Generates Figures 2 and 3.**
-* [**06-test-modularity.Rmd**](/Analysis/06-test-modularity.Rmd) Tests modularity and integration using the modules defined for mammalian skulls in Goswami 2006 & 2007. Tests for global integration. **Generates Figure 4, Table 1, and Supplementary Figure TK.**
+* [**06-test-modularity.Rmd**](/Analysis/06-test-modularity.Rmd) Tests modularity and integration using the modules defined for mammalian skulls in Goswami 2006 & 2007. Modularity tests include `geomorph` function `phylo.modularity`and pairwise Mantel tests of each moduel. Tests for global integration with `geomorph` function `globalIntegration`. **Generates Figure 4, Table 1, and Supplementary Figure TK.**
 * [**07-plot-phylomorph-dist.Rmd**](/Analysis/07-plot-phylomorph-dist.Rmd) Plots phylo-morphological distance plots for both the full shape and shape residual datasets. **Generates Figure 5.**
 
 ### Appendices
