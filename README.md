@@ -32,7 +32,7 @@ If you use these data, please cite the original authors:
 * [**02-calculate-user-error.Rmd**](/Analysis/02-calculate-user-error.Rmd) Allows users to view outliers, find major landmarking errors, and take out replicated specimens from the shape data. Also calculates user error to report in terms of repeatability. 
 * [**03-prepare-data.Rmd**](/Analysis/03-prepare-data.Rmd) Prepares the shape datasets, the metadata, the phylogenetic data, and the vectors with graphics information for plotting. All of which are used throughout the later analyses and are saved in three different .rda files to improve efficiency.
 
-**The next four scripts perform the analyses and produce the results**, the tables and figures they generate are saved to the [..Data/Results](/Data/Results) folder.
+**The next four scripts perform the analyses**, the tables and figures they generate are saved to the [..Data/Results](/Data/Results) folder.
 
 * [**04-compare-PCAs.Rmd**](/Analysis/04-compare-PCAs.Rmd) Plots the full shape PCA versus shape residual PCAs colored by genus or by diet/locomotion. Tests for correlation between PC1 of the two datasets and runs Mantel tests comparing the entire morphospaces of both datasets. **Generates Figure 1 and Supplementary Figure TK.**
 * [**05-heatmap-both-datasets.Rmd**](/Analysis/05-heatmap-both-datasets.Rmd) Plots the `landvR` heatplots of shape changes over the PC axes for both allometric and residual datasets. **Generates Figures 2 and 3.**
@@ -42,7 +42,7 @@ If you use these data, please cite the original authors:
 ### Appendices
 These contain related analyses, mostly ensuring the dataset and the methods are sound for the analyses above. The last two scripts generate supplementary heatplots that would not fit in the main manuscript.
 
-* [**App01-compare-sliding methods.Rmd**](/Analysis/App01-compare-sliding methods.Rmd) Double checks whether sliding in Viewbox before sliding in `geomorph` impacts the landmark variation patterns underlying our shape dataset. 
+* [**App01-compare-sliding methods.Rmd**](/Analysis/App01-compare-sliding-methods.Rmd) Double checks whether sliding in Viewbox before sliding in `geomorph` impacts the landmark variation patterns underlying our shape dataset. 
 * [**App02-compare-patch-protocols.Rmd**](/Analysis/App02-compare-patch-protocols.Rmd) Plots PCAs colored by genus and runs shape ~ genus * centroid size ANOVAs for both big and small patch protocols included in the data (the main analyses only use the "small patch" protocol. Visualizes landmark variation differences with `landvR`, in color-coded heatmaps for both patch protocols and for both PC1 and PC2. 
 * [**App03-explore-PCAs.Rmd**](/Analysis/App03-explore-PCAs.Rmd) Plots exploratory PCAs with point colors and shapes according to taxa or trait information provided in the metadata table. Creates plots, including a phylomorphospace, better suited to powerpoint. 
 * [**App04-test-fitted-allometry.Rmd**](/Analysis/App04-test-fitted-allometry.Rmd) Plots `landvR` heatplots after performing 3 variations on methods to get the fitted allometric shapes from `procD.lm()`. **Generates Supplementary Figure TK.**
