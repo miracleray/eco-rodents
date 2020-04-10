@@ -25,23 +25,19 @@ Produces multipanel Figure 2.
 
 Produces multipanel Figure 3.
 
-### Load packages, functions, and data
-Tree, mean shape, and metadata for phylogenetic analyses come from the allometry rodents script 03. Residual data for Fig. 3 comes from script 05.
+### Load packages and data
+Including installing libraries for landvR package, which creates the heatmaps.
 ```{r message = FALSE}
 library(geomorph)
-library(png)  # needed to work with screenshots
-# Load libraries (and install if necessary) for landvR package
-if(!require(devtools)) install.packages("devtools")
+library(devtools)
 if(!require(dispRity)) install.packages("dispRity")
 if(!require(landvR)) install_github("TGuillerme/landvR")
-source("../Functions/utilities.R")  # custom functions
+library(png)  # needed to work with screenshots
 load(file = "../Data/Processed/03-main-data.rda")
-load(file = "../Data/Processed/03-tree-data.rda")
-load(file = "../Data/Processed/03-graphing-vectors.rda")
 load(file = "../Data/Processed/04-residual-data.rda")
 ```
 
-## 1) Prepare heatmaps
+## 1) Create heatmap figures
 This script is dominated by the code needed to generate, export, and clean the heatmap images which are tiled in Figures 2 and 3. 
 
 ### Make heatmaps involving the smallest and largest native species 
