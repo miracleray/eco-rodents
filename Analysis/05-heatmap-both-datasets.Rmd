@@ -256,15 +256,19 @@ PC1.var.r2 <- variation.range(gpagen.shape, return.ID = FALSE, axis = 2, ordinat
 # Select extreme specimens (the ones that make the warp-meshes)
 res.PC2.min.h <- wrap.PCA.r$pc.shapes[[4]]
 res.PC2.max.h <- wrap.PCA.r$pc.shapes[[3]]
+
+# Set up graphics for PC2 colors
+diff.min <- variation.range(res.mean, res.PC2.min.h)
 ```
 
 ### Export the variation for shape residual change
 ```{r}
 # Lateral view of mean to smallest
 open3d(windowRect = c(0, 0, 600, 600))
-procrustes.var.plot(res.mean, res.PC2.min.h, col = heat.colors, col.val = PC1.var.r2[, "radius"])
+rocrustes.var.plot(res.mean, res.PC2.min.h, col = heat.colors, col.val = list(diff.min, diff.min))
+#procrustes.var.plot(res.mean, res.PC2.min.h, col = heat.colors, col.val = PC1.var.r2[, "radius"])
 view3d(phi = 90)
-rgl.snapshot("../Data/Processed/heatmap_RP2_sm-mean_lat.png")
+rgl.snapshot("../Data/Processed/heatmap_RP2_sm-mean_lat_test.png")
 
 # Lateral view of mean to biggest
 open3d(windowRect = c(0, 0, 600, 600))
