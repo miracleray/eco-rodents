@@ -30,8 +30,8 @@ Including installing libraries for landvR package, which creates the heatmaps.
 ```{r message = FALSE}
 library(geomorph)
 library(devtools)
-if(!require(dispRity)) install.packages("dispRity")
-if(!require(landvR)) install_github("TGuillerme/landvR")
+if(!require(dispRity)) install.packages("dispRity")  
+if(!require(landvR)) install_github("TGuillerme/landvR")  # needed for heatmaps
 library(png)  # needed to work with screenshots
 load(file = "../Data/Processed/03-main-data.rda")
 load(file = "../Data/Processed/04-residual-data.rda")
