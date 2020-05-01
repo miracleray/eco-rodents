@@ -4,13 +4,13 @@ Code authors: Ariel E. Marcy, Dr Thomas Guillerme, Dr Vera Weisbecker
 To cite the paper, data, and/or code:
 > Coming soonish
 
-As of April 2020, this is still a work in progress. Relies on `R` (v. 3.6.1), `geomorph` (v. 3.1.3), and `landvR` (v. 0.4).
+As of May 2020, this is still a work in progress. Relies on `R` (v. 3.6.1), `geomorph` (v. 3.1.3), and `landvR` (v. 0.4).
 
 *All scripts are in RMarkdown format (.Rmd), which can be opened in RStudio. There, you can edit and run code chunks as normal or use the Knit button to create HTML versions with both code and output. After cloning this repo, remember to either set your working directory to the eco-rodents folder on your computer or open an RStudio project from that folder.*
 
 ## Data
 **Landmarking data:**
-* [MorphoSource Project 561](https://www.morphosource.org/MyProjects/Dashboard/dashboard/select_project_id/561) publically provides 3D meshes for all surface scanned crania landmarked in the study.
+* [MorphoSource Project 561](https://www.morphosource.org/Detail/ProjectDetail/Show/project_id/561) publically provides 3D meshes for all surface scanned crania landmarked in the study.
 * [Raw_Coordinates.csv](Data/Raw/Raw_Coord_Data.csv) provides the shape coordinates from landmarked 3D skulls exported from Viewbox.
 
 **Ecological metadata:**
