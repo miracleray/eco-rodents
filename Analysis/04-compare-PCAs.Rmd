@@ -126,7 +126,7 @@ Finally, we compare the full shape PCA to the shape residuals PCAs. All PCAs are
 ```{r}
 # Set up for export and for multiple panels
 part.coords <- c(-0.105, 0.145)  # formatting parameters for B, C, D locations
-pdf("../Data/Results/Figure1_PCAs_Chapter.pdf")
+pdf("../Data/Results/Figure1_PCAs_2020.pdf")
 mat <- matrix(c(1:4), 2, 2, byrow = TRUE)  # 4 plots, 2 rows, 2 columns
 layout(mat, widths = rep(1, dim(mat)[2]), heights = rep(0.5, dim(mat)[1]))   
 
@@ -148,7 +148,8 @@ plot(x = -mean.PCA$pc.scores[, 1],  # Flip for consistency
 text(-0.083, 0.097, "A", cex = 1.5)
 text(0.02, 0.0965, "full shape dataset, with allometry")
 #text(-0.045, 0.082, "(Chapter 3)", cex = 0.8)  # for PhD thesis version
-text(-0.022, 0.082, expression(paste("(Marcy ", italic("et al. in review"), ")")), cex = 0.8)
+#text(-0.022, 0.082, expression(paste("(Marcy ", italic("et al. in review"), ")")), cex = 0.8)
+text(-0.029, 0.082, expression(paste("(Marcy ", italic("et al. "), "2020)")), cex = 0.8)  # once chapter 3 is published
 
 # B) Plot of shape residuals PCA - genus colors
 par(mar = c(4.5, 4.5, 2, 1))
