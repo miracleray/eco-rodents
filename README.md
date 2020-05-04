@@ -24,6 +24,7 @@ If you use these data, please cite the original authors:
 
 If you use these data, please cite the original authors:
 > Smissen PJ & Rowe KC. 2018. Repeated biome transitions in the evolution of Australian Rodents. Molecular Phylogenetics and Evolution. 128:182–191. doi: 10.1016/j.ympev.2018.07.015.
+> Marcy AE, Guillerme T, Sherratt E, Rowe KC, Phillips MJ, and Weisbecker V. 2020. Australian rodents reveal conserved Cranial Evolutionary Allometry across 10 million years of murid evolution. bioRxiv. [https://www.biorxiv.org/content/early/2020/05/01/2020.04.30.071308](https://www.biorxiv.org/content/early/2020/05/01/2020.04.30.071308)
     
 ## Analyses
 **The first three scripts prepare the data for analysis and plotting**, the intermediate data they generate are stored as .rda files in the [..Data/Processed](/Data/Processed) folder. These are too large to upload to GitHub so scripts must be run sequentially. 
