@@ -65,25 +65,25 @@ Export images for plots
 open3d(windowRect = c(0, 0, 600, 600))
 procrustes.var.plot(mean.config, smallest.mean, col = heat.colors, col.val = diff.mean$Pseudomys_delicatulus[, "radius"])
 view3d(phi = 90)
-rgl.snapshot("../Data/Processed/heatmap_IND_sm-mean_lat.png")
+rgl.snapshot("../Data/Processed/Heatmaps/IND_mean-sm_lat.png")
 
 # Lateral view of mean to biggest
 open3d(windowRect = c(0, 0, 600, 600))
 procrustes.var.plot(mean.config, biggest.mean, col = heat.colors, col.val = diff.mean$Uromys_caudimaculatus[, "radius"])
 view3d(phi = 90)
-rgl.snapshot("../Data/Processed/heatmap_IND_mean-big_lat.png")
+rgl.snapshot("../Data/Processed/Heatmaps/IND_mean-bg_lat.png")
 
 # Dorsal view of mean to smallest
 open3d(windowRect = c(0, 0, 600, 600))
 procrustes.var.plot(mean.config, smallest.mean, col = heat.colors, col.val = diff.mean$Pseudomys_delicatulus[, "radius"]) 
 view3d(phi = 0)  # flip cranium
-rgl.snapshot("../Data/Processed/heatmap_IND_sm-mean_dor.png")
+rgl.snapshot("../Data/Processed/Heatmaps/IND_mean-sm_dor.png")
 
 # Dorsal view of mean to biggest
 open3d(windowRect = c(0, 0, 600, 600))
 procrustes.var.plot(mean.config, biggest.mean, col = heat.colors, col.val = diff.mean$Uromys_caudimaculatus[, "radius"])
 view3d(phi = 0)  # flip cranium
-rgl.snapshot("../Data/Processed/heatmap_IND_mean-big_dor.png")
+rgl.snapshot("../Data/Processed/Heatmaps/IND_mean-bg_dor.png")
 ```
 
 ## Make heatmaps involving smallest and largest fitted allometric shapes
@@ -111,25 +111,25 @@ Export images for plots
 open3d(windowRect = c(0, 0, 600, 600))
 procrustes.var.plot(allom.mean, smallest.shape, col = heat.colors, col.val = allom.diff.mean$Pseudomys_delicatulus[, "radius"])
 view3d(phi = 90)
-rgl.snapshot("../Data/Processed/heatmap_ALL_sm-mean_lat.png")
+rgl.snapshot("../Data/Processed/Heatmaps/ALL_mean-sm_lat.png")
 
 # Lateral view of mean to biggest
 open3d(windowRect = c(0, 0, 600, 600))
 procrustes.var.plot(allom.mean, biggest.shape, col = heat.colors, col.val = allom.diff.mean$Uromys_caudimaculatus[, "radius"])
 view3d(phi = 90)
-rgl.snapshot("../Data/Processed/heatmap_ALL_mean-big_lat.png")
+rgl.snapshot("../Data/Processed/Heatmaps/ALL_mean-bg_lat.png")
 
 # Dorsal view of smallest to mean
 open3d(windowRect = c(0, 0, 600, 600))
 procrustes.var.plot(allom.mean, smallest.shape, col = heat.colors, col.val = allom.diff.mean$Pseudomys_delicatulus[, "radius"]) 
 view3d(phi = 0)  # flip cranium
-rgl.snapshot("../Data/Processed/heatmap_ALL_sm-mean_dor.png")
+rgl.snapshot("../Data/Processed/Heatmaps/ALL_mean-sm_dor.png")
 
 # Dorsal view of mean to biggest
 open3d(windowRect = c(0, 0, 600, 600))
 procrustes.var.plot(allom.mean, biggest.shape, col = heat.colors, col.val = allom.diff.mean$Uromys_caudimaculatus[, "radius"])
 view3d(phi = 0)  # flip cranium
-rgl.snapshot("../Data/Processed/heatmap_ALL_mean-big_dor.png")
+rgl.snapshot("../Data/Processed/Heatmaps/ALL_mean-bg_dor.png")
 ```
 
 ### Make heatmaps for PC1 with allometry
@@ -169,25 +169,25 @@ Export images for plots
 open3d(windowRect = c(0, 0, 600, 600))
 procrustes.var.plot(PC.allom.mean, allom.PC1.min.h, col = heat.colors, col.val = PC1.var[, "radius"])
 view3d(phi = 90)
-rgl.snapshot("../Data/Processed/heatmap_PCA_sm-mean_lat.png")
+rgl.snapshot("../Data/Processed/Heatmaps/PCA_mean-sm_lat.png")
 
 # Lateral view of mean to biggest
 open3d(windowRect = c(0, 0, 600, 600))
 procrustes.var.plot(PC.allom.mean, allom.PC1.max.h, col = heat.colors, col.val = PC1.var[, "radius"])
 view3d(phi = 90)
-rgl.snapshot("../Data/Processed/heatmap_PCA_mean-big_lat.png")
+rgl.snapshot("../Data/Processed/Heatmaps/PCA_mean-bg_lat.png")
 
 # Dorsal view of mean to smallest
 open3d(windowRect = c(0, 0, 600, 600))
 procrustes.var.plot(PC.allom.mean, allom.PC1.min.h, col = heat.colors, col.val = PC1.var[, "radius"]) 
 view3d(phi = 0)  # flip cranium
-rgl.snapshot("../Data/Processed/heatmap_PCA_sm-mean_dor.png")
+rgl.snapshot("../Data/Processed/Heatmaps/PCA_mean-sm_dor.png")
 
 # Dorsal view of mean to biggest
 open3d(windowRect = c(0, 0, 600, 600))
 procrustes.var.plot(PC.allom.mean, allom.PC1.max.h, col = heat.colors, col.val = PC1.var[, "radius"])
 view3d(phi = 0)  # flip cranium
-rgl.snapshot("../Data/Processed/heatmap_PCA_mean-big_dor.png")
+rgl.snapshot("../Data/Processed/Heatmaps/PCA_mean-bg_dor.png")
 ```
 
 ### Make heatmaps for PC1 with residual coordinates
@@ -226,25 +226,25 @@ res.PC1.max.h <- wrap.PCA.r$pc.shapes[[1]]
 open3d(windowRect = c(0, 0, 600, 600))
 procrustes.var.plot(res.mean, res.PC1.min.h, col = heat.colors, col.val = PC1.var.r[, "radius"])
 view3d(phi = 90)
-rgl.snapshot("../Data/Processed/heatmap_RES_sm-mean_lat.png")
+rgl.snapshot("../Data/Processed/Heatmaps/RES_mean-sm_lat.png")
 
 # Lateral view of mean to biggest
 open3d(windowRect = c(0, 0, 600, 600))
 procrustes.var.plot(res.mean, res.PC1.max.h, col = heat.colors, col.val = PC1.var.r[, "radius"])
 view3d(phi = 90)
-rgl.snapshot("../Data/Processed/heatmap_RES_mean-big_lat.png")
+rgl.snapshot("../Data/Processed/Heatmaps/RES_mean-bg_lat.png")
 
 # Dorsal view of mean to smallest
 open3d(windowRect = c(0, 0, 600, 600))
 procrustes.var.plot(res.mean, res.PC1.min.h, col = heat.colors, col.val = PC1.var.r[, "radius"]) 
 view3d(phi = 0)  # flip cranium
-rgl.snapshot("../Data/Processed/heatmap_RES_sm-mean_dor.png")
+rgl.snapshot("../Data/Processed/Heatmaps/RES_mean-sm_dor.png")
 
 # Dorsal view of mean to biggest
 open3d(windowRect = c(0, 0, 600, 600))
 procrustes.var.plot(res.mean, res.PC1.max.h, col = heat.colors, col.val = PC1.var.r[, "radius"])
 view3d(phi = 0)  # flip cranium
-rgl.snapshot("../Data/Processed/heatmap_RES_mean-big_dor.png")
+rgl.snapshot("../Data/Processed/Heatmaps/RES_mean-bg_dor.png")
 ```
 
 ### Make heatmaps for PC2 residual coordinates
@@ -258,35 +258,35 @@ res.PC2.min.h <- wrap.PCA.r$pc.shapes[[4]]
 res.PC2.max.h <- wrap.PCA.r$pc.shapes[[3]]
 
 # Set up graphics for PC2 colors
-diff.min <- variation.range(res.mean, res.PC2.min.h)
+#diff.min <- variation.range(res.mean, res.PC2.min.h)
 ```
 
 ### Export the variation for shape residual change
 ```{r}
 # Lateral view of mean to smallest
 open3d(windowRect = c(0, 0, 600, 600))
-rocrustes.var.plot(res.mean, res.PC2.min.h, col = heat.colors, col.val = list(diff.min, diff.min))
+procrustes.var.plot(res.mean, res.PC2.min.h, col = heat.colors, col.val = list(diff.min, diff.min))
 #procrustes.var.plot(res.mean, res.PC2.min.h, col = heat.colors, col.val = PC1.var.r2[, "radius"])
 view3d(phi = 90)
-rgl.snapshot("../Data/Processed/heatmap_RP2_sm-mean_lat_test.png")
+rgl.snapshot("../Data/Processed/Heatmaps/RP2_mean-sm_lat_test.png")
 
 # Lateral view of mean to biggest
 open3d(windowRect = c(0, 0, 600, 600))
 procrustes.var.plot(res.mean, res.PC2.max.h, col = heat.colors, col.val = PC1.var.r2[, "radius"])
 view3d(phi = 90)
-rgl.snapshot("../Data/Processed/heatmap_RP2_mean-big_lat.png")
+rgl.snapshot("../Data/Processed/Heatmaps/RP2_mean-bg_lat.png")
 
 # Dorsal view of mean to smallest
 open3d(windowRect = c(0, 0, 600, 600))
 procrustes.var.plot(res.mean, res.PC2.min.h, col = heat.colors, col.val = PC1.var.r2[, "radius"]) 
 view3d(phi = 0)  # flip cranium
-rgl.snapshot("../Data/Processed/heatmap_RP2_sm-mean_dor.png")
+rgl.snapshot("../Data/Processed/Heatmaps/RP2_mean-sm_dor.png")
 
 # Dorsal view of mean to biggest
 open3d(windowRect = c(0, 0, 600, 600))
 procrustes.var.plot(res.mean, res.PC2.max.h, col = heat.colors, col.val = PC1.var.r2[, "radius"])
 view3d(phi = 0)  # flip cranium
-rgl.snapshot("../Data/Processed/heatmap_RP2_mean-big_dor.png")
+rgl.snapshot("../Data/Processed/Heatmaps/RP2_mean-bg_dor.png")
 ```
 
 ### Remove Notomys and find hypothetical shapes
@@ -329,67 +329,67 @@ res.PC1.max.h.n <- wrap.PCA.r.n$pc.shapes[[2]]
 open3d(windowRect = c(0, 0, 600, 600))
 procrustes.var.plot(res.mean, res.PC1.min.h.n, col = heat.colors, col.val = PC1.var.r.n[, "radius"])
 view3d(phi = 90)
-rgl.snapshot("../Data/Processed/heatmap_RES_sm-mean_lat_NOt.png")
+rgl.snapshot("../Data/Processed/Heatmaps/NOt_mean-sm_lat.png")
 
 # Lateral view of mean to biggest
 open3d(windowRect = c(0, 0, 600, 600))
 procrustes.var.plot(res.mean, res.PC1.max.h.n, col = heat.colors, col.val = PC1.var.r.n[, "radius"])
 view3d(phi = 90)
-rgl.snapshot("../Data/Processed/heatmap_RES_mean-big_lat_NOt.png")
+rgl.snapshot("../Data/Processed/Heatmaps/NOt_mean-bg_lat.png")
 
 # Dorsal view of mean to smallest
 open3d(windowRect = c(0, 0, 600, 600))
 procrustes.var.plot(res.mean, res.PC1.min.h.n, col = heat.colors, col.val = PC1.var.r.n[, "radius"]) 
 view3d(phi = 0)  # flip cranium
-rgl.snapshot("../Data/Processed/heatmap_RES_sm-mean_dor_NOt.png")
+rgl.snapshot("../Data/Processed/Heatmaps/NOt_mean-sm_dor.png")
 
 # Dorsal view of mean to biggest
 open3d(windowRect = c(0, 0, 600, 600))
 procrustes.var.plot(res.mean, res.PC1.max.h.n, col = heat.colors, col.val = PC1.var.r.n[, "radius"])
 view3d(phi = 0)  # flip cranium
-rgl.snapshot("../Data/Processed/heatmap_RES_mean-big_dor_NOt.png")
+rgl.snapshot("../Data/Processed/Heatmaps/NOt_mean-bg_dor.png")
 
 # Remove whitespace from all heatmaps (requires ImageMagik installed on PC)
-system("mogrify ../Data/Processed/heatmap_*.png -trim ../Data/Processed/*.png")
+system("mogrify ../Data/Processed/Heatmaps/*.png -trim ../Data/Processed/*.png")
 ```
 
 ### Load in all heatmaps
 ```{r}
 # Load in with allometry smallest to largest
-indiv.sm.lat <- readPNG("../Data/Processed/heatmap_IND_sm-mean_lat.png")
-indiv.big.lat <- readPNG("../Data/Processed/heatmap_IND_mean-big_lat.png")
-indiv.sm.dor <- readPNG("../Data/Processed/heatmap_IND_sm-mean_dor.png")
-indiv.big.dor <- readPNG("../Data/Processed/heatmap_IND_mean-big_dor.png")
+indiv.sm.lat <- readPNG("../Data/Processed/Heatmaps/IND_mean-sm_lat.png")
+indiv.big.lat <- readPNG("../Data/Processed/Heatmaps/IND_mean-bg_lat.png")
+indiv.sm.dor <- readPNG("../Data/Processed/Heatmaps/IND_mean-sm_dor.png")
+indiv.big.dor <- readPNG("../Data/Processed/Heatmaps/IND_mean-bg_dor.png")
 
 # Load in with allometry smallest to largest
-allom.sm.lat <- readPNG("../Data/Processed/heatmap_ALL_sm-mean_lat.png")
-allom.big.lat <- readPNG("../Data/Processed/heatmap_ALL_mean-big_lat.png")
-allom.sm.dor <- readPNG("../Data/Processed/heatmap_ALL_sm-mean_dor.png")
-allom.big.dor <- readPNG("../Data/Processed/heatmap_ALL_mean-big_dor.png")
+allom.sm.lat <- readPNG("../Data/Processed/Heatmaps/ALL_mean-sm_lat.png")
+allom.big.lat <- readPNG("../Data/Processed/Heatmaps/ALL_mean-bg_lat.png")
+allom.sm.dor <- readPNG("../Data/Processed/Heatmaps/ALL_mean-sm_dor.png")
+allom.big.dor <- readPNG("../Data/Processed/Heatmaps/ALL_mean-bg_dor.png")
 
 # Load in with allometry PC 1
-allPC.sm.lat <- readPNG("../Data/Processed/heatmap_PCA_sm-mean_lat.png")
-allPC.big.lat <- readPNG("../Data/Processed/heatmap_PCA_mean-big_lat.png")
-allPC.sm.dor <- readPNG("../Data/Processed/heatmap_PCA_sm-mean_dor.png")
-allPC.big.dor <- readPNG("../Data/Processed/heatmap_PCA_mean-big_dor.png")
+allPC.sm.lat <- readPNG("../Data/Processed/Heatmaps/PCA_mean-sm_lat.png")
+allPC.big.lat <- readPNG("../Data/Processed/Heatmaps/PCA_mean-bg_lat.png")
+allPC.sm.dor <- readPNG("../Data/Processed/Heatmaps/PCA_mean-sm_dor.png")
+allPC.big.dor <- readPNG("../Data/Processed/Heatmaps/PCA_mean-bg_dor.png")
 
 # Load in without allometry residuals PC1
-resid.sm.lat <- readPNG("../Data/Processed/heatmap_RES_sm-mean_lat.png")
-resid.big.lat <- readPNG("../Data/Processed/heatmap_RES_mean-big_lat.png")
-resid.sm.dor <- readPNG("../Data/Processed/heatmap_RES_sm-mean_dor.png")
-resid.big.dor <- readPNG("../Data/Processed/heatmap_RES_mean-big_dor.png")
+resid.sm.lat <- readPNG("../Data/Processed/Heatmaps/RES_mean-sm_lat.png")
+resid.big.lat <- readPNG("../Data/Processed/Heatmaps/RES_mean-bg_lat.png")
+resid.sm.dor <- readPNG("../Data/Processed/Heatmaps/RES_mean-sm_dor.png")
+resid.big.dor <- readPNG("../Data/Processed/Heatmaps/RES_mean-bg_dor.png")
 
 # Load in without allometry residuals PC2
-resP2.sm.lat <- readPNG("../Data/Processed/heatmap_RP2_sm-mean_lat.png")
-resP2.big.lat <- readPNG("../Data/Processed/heatmap_RP2_mean-big_lat.png")
-resP2.sm.dor <- readPNG("../Data/Processed/heatmap_RP2_sm-mean_dor.png")
-resP2.big.dor <- readPNG("../Data/Processed/heatmap_RP2_mean-big_dor.png")
+resP2.sm.lat <- readPNG("../Data/Processed/Heatmaps/RP2_mean-sm_lat.png")
+resP2.big.lat <- readPNG("../Data/Processed/Heatmaps/RP2_mean-bg_lat.png")
+resP2.sm.dor <- readPNG("../Data/Processed/Heatmaps/RP2_mean-sm_dor.png")
+resP2.big.dor <- readPNG("../Data/Processed/Heatmaps/RP2_mean-bg_dor.png")
 
 # Load in without allometry residuals PC1 - no Notomys
-resid.sm.lat.no <- readPNG("../Data/Processed/heatmap_RES_sm-mean_lat_NOt.png")
-resid.big.lat.no <- readPNG("../Data/Processed/heatmap_RES_mean-big_lat_NOt.png")
-resid.sm.dor.no <- readPNG("../Data/Processed/heatmap_RES_sm-mean_dor_NOt.png")
-resid.big.dor.no <- readPNG("../Data/Processed/heatmap_RES_mean-big_dor_NOt.png")
+resid.sm.lat.no <- readPNG("../Data/Processed/Heatmaps/NOt_mean-sm_lat.png")
+resid.big.lat.no <- readPNG("../Data/Processed/Heatmaps/NOt_mean-bg_lat.png")
+resid.sm.dor.no <- readPNG("../Data/Processed/Heatmaps/NOt_mean-sm_dor.png")
+resid.big.dor.no <- readPNG("../Data/Processed/Heatmaps/NOt_mean-bg_dor.png")
 ```
 
 ## 2) Make multi-panel Figure 2, heatmaps with allometry
