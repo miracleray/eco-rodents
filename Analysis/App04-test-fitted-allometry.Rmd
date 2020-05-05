@@ -18,10 +18,8 @@ knitr::opts_knit$set(root.dir = '../eco-rodents')
 
 This script produces Supplementary Figure TK and is relevant to Figure 2's second column, which is currently using the method from #1 (script 05).  
 
-# Two conclusions after running this:
-1) `$fitted` and `$GM$fitted` are exactly the same (`$fitted` just needs `arrayspecs()` to be in the right coordinates format for *geomorph*). Either is appropriate to use for allometric fitted shape heatmaps - see Figure 2 for this ms. 
-
-2) Surprisingly, the workflow recommended in the documentation (#3) seems to produce the residual shape variation along PC1! You can compare column 3 in the figure made by this script with column 1 in Figure 3, the residual heatmap figure in this ms. 
+# One conclusion after running this:
+All three methods -- `$fitted`, `$GM$fitted`, and the lengthy workflow -- produce exactly the same (`$fitted` just needs `arrayspecs()` to be in the right coordinates format for *geomorph*). Any are appropriate to use for allometric fitted shape heatmaps - see Figure 2 for this ms. 
 
 ### Load packages, functions, and data
 ```{r message = FALSE}
@@ -69,25 +67,25 @@ Export images for plots
 open3d(windowRect = c(0, 0, 600, 600))
 procrustes.var.plot(allom.mean, smallest.shape, col = heat.colors, col.val = allom.diff.mean$Pseudomys_delicatulus[, "radius"])
 view3d(phi = 90)
-rgl.snapshot("../Data/Processed/heatmap_ALL_sm-mean_lat.png")
+rgl.snapshot("../Data/Processed/Heatmaps/ALL2_mean-sm_lat.png")
 
 # Lateral view of mean to biggest
 open3d(windowRect = c(0, 0, 600, 600))
 procrustes.var.plot(allom.mean, biggest.shape, col = heat.colors, col.val = allom.diff.mean$Uromys_caudimaculatus[, "radius"])
 view3d(phi = 90)
-rgl.snapshot("../Data/Processed/heatmap_ALL_mean-big_lat.png")
+rgl.snapshot("../Data/Processed/Heatmaps/ALL2_mean-bg_lat.png")
 
 # Dorsal view of smallest to mean
 open3d(windowRect = c(0, 0, 600, 600))
 procrustes.var.plot(allom.mean, smallest.shape, col = heat.colors, col.val = allom.diff.mean$Pseudomys_delicatulus[, "radius"]) 
 view3d(phi = 0)  # flip cranium
-rgl.snapshot("../Data/Processed/heatmap_ALL_sm-mean_dor.png")
+rgl.snapshot("../Data/Processed/Heatmaps/ALL2_mean-sm_dor.png")
 
 # Dorsal view of mean to biggest
 open3d(windowRect = c(0, 0, 600, 600))
 procrustes.var.plot(allom.mean, biggest.shape, col = heat.colors, col.val = allom.diff.mean$Uromys_caudimaculatus[, "radius"])
 view3d(phi = 0)  # flip cranium
-rgl.snapshot("../Data/Processed/heatmap_ALL_mean-big_dor.png")
+rgl.snapshot("../Data/Processed/Heatmaps/ALL2_mean-bg_dor.png")
 ```
 
 ## 2) Heatmaps using procD.lm's $GM$fitted
@@ -113,25 +111,25 @@ Export images for plots
 open3d(windowRect = c(0, 0, 600, 600))
 procrustes.var.plot(allom.mean.GM, smallest.shape.GM, col = heat.colors, col.val = allom.diff.mean.GM$Pseudomys_delicatulus[, "radius"])
 view3d(phi = 90)
-rgl.snapshot("../Data/Processed/heatmap_AGM_sm-mean_lat.png")
+rgl.snapshot("../Data/Processed/Heatmaps/AGM_mean-sm_lat.png")
 
 # Lateral view of mean to biggest
 open3d(windowRect = c(0, 0, 600, 600))
 procrustes.var.plot(allom.mean.GM, biggest.shape.GM, col = heat.colors, col.val = allom.diff.mean.GM$Uromys_caudimaculatus[, "radius"])
 view3d(phi = 90)
-rgl.snapshot("../Data/Processed/heatmap_AGM_mean-big_lat.png")
+rgl.snapshot("../Data/Processed/Heatmaps/AGM_mean-bg_lat.png")
 
 # Dorsal view of smallest to mean
 open3d(windowRect = c(0, 0, 600, 600))
 procrustes.var.plot(allom.mean.GM, smallest.shape.GM, col = heat.colors, col.val = allom.diff.mean.GM$Pseudomys_delicatulus[, "radius"]) 
 view3d(phi = 0)  # flip cranium
-rgl.snapshot("../Data/Processed/heatmap_AGM_sm-mean_dor.png")
+rgl.snapshot("../Data/Processed/Heatmaps/AGM_mean-sm_dor.png")
 
 # Dorsal view of mean to biggest
 open3d(windowRect = c(0, 0, 600, 600))
 procrustes.var.plot(allom.mean.GM, biggest.shape.GM, col = heat.colors, col.val = allom.diff.mean.GM$Uromys_caudimaculatus[, "radius"])
 view3d(phi = 0)  # flip cranium
-rgl.snapshot("../Data/Processed/heatmap_AGM_mean-big_dor.png")
+rgl.snapshot("../Data/Processed/Heatmaps/AGM_mean-bg_dor.png")
 ```
 
 ## 3) Suggested workaround from procD.lm's documentation
@@ -156,55 +154,55 @@ Export images for plots
 open3d(windowRect = c(0, 0, 600, 600))
 procrustes.var.plot(allom.mean.GM, preds$predmin, col = heat.colors, col.val = allom.diff.mean.Reg$predmin[, "radius"])
 view3d(phi = 90)
-rgl.snapshot("../Data/Processed/heatmap_REG_sm-mean_lat.png")
+rgl.snapshot("../Data/Processed/Heatmaps/REG_mean-sm_lat.png")
 
 # Lateral view of mean to biggest
 open3d(windowRect = c(0, 0, 600, 600))
 procrustes.var.plot(allom.mean.GM, preds$predmax, col = heat.colors, col.val = allom.diff.mean.Reg$predmax[, "radius"])
 view3d(phi = 90)
-rgl.snapshot("../Data/Processed/heatmap_REG_mean-big_lat.png")
+rgl.snapshot("../Data/Processed/Heatmaps/REG_mean-bg_lat.png")
 
 # Dorsal view of smallest to mean
 open3d(windowRect = c(0, 0, 600, 600))
 procrustes.var.plot(allom.mean.GM, preds$predmax, col = heat.colors, col.val = allom.diff.mean.Reg$predmin[, "radius"]) 
 view3d(phi = 0)  # flip cranium
-rgl.snapshot("../Data/Processed/heatmap_REG_sm-mean_dor.png")
+rgl.snapshot("../Data/Processed/Heatmaps/REG_mean-sm_dor.png")
 
 # Dorsal view of mean to biggest
 open3d(windowRect = c(0, 0, 600, 600))
 procrustes.var.plot(allom.mean.GM, preds$predmax, col = heat.colors, col.val = allom.diff.mean.Reg$predmax[, "radius"])
 view3d(phi = 0)  # flip cranium
-rgl.snapshot("../Data/Processed/heatmap_REG_mean-big_dor.png")
+rgl.snapshot("../Data/Processed/Heatmaps/REG_mean-bg_dor.png")
 ```
 
 ### Clean and load in all heatmaps
 ```{r}
 # Remove whitespace from all heatmaps (requires ImageMagik installed on PC)
-system("mogrify ../Data/Processed/heatmap_*.png -trim ../Data/Processed/*.png")
+system("mogrify ../Data/Processed/Heatmaps/*.png -trim ../Data/Processed/Heatmaps/*.png")
 
 # 1) Load in $fitted allometry
-allom.sm.lat <- readPNG("../Data/Processed/heatmap_ALL_sm-mean_lat.png")
-allom.big.lat <- readPNG("../Data/Processed/heatmap_ALL_mean-big_lat.png")
-allom.sm.dor <- readPNG("../Data/Processed/heatmap_ALL_sm-mean_dor.png")
-allom.big.dor <- readPNG("../Data/Processed/heatmap_ALL_mean-big_dor.png")
+allom.sm.lat <- readPNG("../Data/Processed/Heatmaps/ALL2_mean-sm_lat.png")
+allom.big.lat <- readPNG("../Data/Processed/Heatmaps/ALL2_mean-bg_lat.png")
+allom.sm.dor <- readPNG("../Data/Processed/Heatmaps/ALL2_mean-sm_dor.png")
+allom.big.dor <- readPNG("../Data/Processed/Heatmaps/ALL2_mean-bg_dor.png")
 
 # 2) Load in $GM$fitted
-GMfit.sm.lat <- readPNG("../Data/Processed/heatmap_AGM_sm-mean_lat.png")
-GMfit.big.lat <- readPNG("../Data/Processed/heatmap_AGM_mean-big_lat.png")
-GMfit.sm.dor <- readPNG("../Data/Processed/heatmap_AGM_sm-mean_dor.png")
-GMfit.big.dor <- readPNG("../Data/Processed/heatmap_AGM_mean-big_dor.png")
+GMfit.sm.lat <- readPNG("../Data/Processed/Heatmaps/AGM_mean-sm_lat.png")
+GMfit.big.lat <- readPNG("../Data/Processed/Heatmaps/AGM_mean-bg_lat.png")
+GMfit.sm.dor <- readPNG("../Data/Processed/Heatmaps/AGM_mean-sm_dor.png")
+GMfit.big.dor <- readPNG("../Data/Processed/Heatmaps/AGM_mean-bg_dor.png")
 
 # 3) Suggested workaround
-regsc.sm.lat <- readPNG("../Data/Processed/heatmap_RES_sm-mean_lat.png")
-regsc.big.lat <- readPNG("../Data/Processed/heatmap_RES_mean-big_lat.png")
-regsc.sm.dor <- readPNG("../Data/Processed/heatmap_RES_sm-mean_dor.png")
-regsc.big.dor <- readPNG("../Data/Processed/heatmap_RES_mean-big_dor.png")
+regsc.sm.lat <- readPNG("../Data/Processed/Heatmaps/REG_mean-sm_lat.png")
+regsc.big.lat <- readPNG("../Data/Processed/Heatmaps/REG_mean-bg_lat.png")
+regsc.sm.dor <- readPNG("../Data/Processed/Heatmaps/REG_mean-sm_dor.png")
+regsc.big.dor <- readPNG("../Data/Processed/Heatmaps/REG_mean-bg_dor.png")
 ```
 
 ## 4) Make multi-panel Supplementary Figure TK for comparison
 ```{r}
 # Set up export and muli-panel figure 
-pdf("../Data/Results/SFigure_Allometry_Compare.pdf")
+pdf("../Data/Results/SFigure0_Allometry_Compare.pdf")
 mat <- matrix(c(1:12), 4, 3, byrow = FALSE)  # 12 plots, 4 rows, 3 columns
 layout(mat, widths = rep(1, dim(mat)[2]), heights = rep(0.5, dim(mat)[1]))  
 
