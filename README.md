@@ -23,7 +23,7 @@ If you use these data, please cite the original authors:
 * [Fossil calibrated ultrametric tree from Smissen & Rowe 2018 and Marcy et al. 2020](/Data/Processed/Marcy-BEAST01.con.tre)
 
 If you use these data, please cite the original authors:
-> Smissen PJ & Rowe KC. 2018. Repeated biome transitions in the evolution of Australian Rodents. Molecular Phylogenetics and Evolution. 128:182–191. doi: 10.1016/j.ympev.2018.07.015.
+> Smissen PJ & Rowe KC. 2018. Repeated biome transitions in the evolution of Australian Rodents. Molecular Phylogenetics and Evolution. 128:182–191. doi: [10.1016/j.ympev.2018.07.015.](https://doi.org/10.1016/j.ympev.2018.07.015)
 
 > Marcy AE, Guillerme T, Sherratt E, Rowe KC, Phillips MJ, and Weisbecker V. 2020. Australian rodents reveal conserved Cranial Evolutionary Allometry across 10 million years of murid evolution. bioRxiv. [https://www.biorxiv.org/content/early/2020/05/01/2020.04.30.071308](https://www.biorxiv.org/content/early/2020/05/01/2020.04.30.071308)
     
@@ -37,18 +37,18 @@ If you use these data, please cite the original authors:
 **The next four scripts perform the analyses**, the tables and figures they generate are saved to the [..Data/Results](/Data/Results) folder.
 
 * [**04-compare-PCAs.Rmd**](/Analysis/04-compare-PCAs.Rmd) Plots the full shape PCA versus shape residual PCAs colored by genus or by diet/locomotion. Tests for correlation between PC1 of the two datasets and runs Mantel tests comparing the entire morphospaces of both datasets. **Generates Figure 1 and Supplementary Figure TK.**
-* [**05-heatmap-both-datasets.Rmd**](/Analysis/05-heatmap-both-datasets.Rmd) Plots the `landvR` heatplots of shape changes over the PC axes for both allometric and residual datasets. **Generates Figures 2 and 3.**
-* [**06-test-modularity.Rmd**](/Analysis/06-test-modularity.Rmd) Tests modularity and integration using the modules defined for mammalian skulls in Goswami 2006 & 2007. Modularity tests include `geomorph` function `phylo.modularity`and pairwise Mantel tests of each moduel. Tests for global integration with `geomorph` function `globalIntegration`. **Generates Figure 4, Table 1, and Supplementary Figure TK.**
+* [**05-heatmap-both-datasets.Rmd**](/Analysis/05-heatmap-both-datasets.Rmd) Plots the `landvR` heatmaps of shape changes over the PC axes for both allometric and residual datasets. **Generates Figures 2 and 3.**
+* [**06-test-modularity.Rmd**](/Analysis/06-test-modularity.Rmd) Tests modularity and integration using the modules defined for mammalian skulls in Goswami 2006 & 2007. Modularity tests include `geomorph` function `phylo.modularity`and pairwise Mantel tests of each module. Tests for global integration with `geomorph` function `globalIntegration`. **Generates Figure 4, Table 1, and Supplementary Figure 2.**
 * [**07-plot-phylomorph-dist.Rmd**](/Analysis/07-plot-phylomorph-dist.Rmd) Plots phylo-morphological distance plots for both the full shape and shape residual datasets. **Generates Figure 5.**
 
 ### Appendices
-These contain related analyses, mostly ensuring the dataset and the methods are sound for the analyses above. The last two scripts generate supplementary heatplots that would not fit in the main manuscript.
+These contain related analyses, mostly ensuring the dataset and the methods are sound for the analyses above. The last two scripts generate supplementary heatmaps that would not fit in the main manuscript.
 
 * [**App01-compare-sliding methods.Rmd**](/Analysis/App01-compare-sliding-methods.Rmd) Double checks whether sliding in Viewbox before sliding in `geomorph` impacts the landmark variation patterns underlying our shape dataset. 
 * [**App02-compare-patch-protocols.Rmd**](/Analysis/App02-compare-patch-protocols.Rmd) Plots PCAs colored by genus and runs shape ~ genus * centroid size ANOVAs for both big and small patch protocols included in the data (the main analyses only use the "small patch" protocol. Visualizes landmark variation differences with `landvR`, in color-coded heatmaps for both patch protocols and for both PC1 and PC2. 
 * [**App03-explore-PCAs.Rmd**](/Analysis/App03-explore-PCAs.Rmd) Plots exploratory PCAs with point colors and shapes according to taxa or trait information provided in the metadata table. Creates plots, including a phylomorphospace, better suited to powerpoint. 
-* [**App04-test-fitted-allometry.Rmd**](/Analysis/App04-test-fitted-allometry.Rmd) Plots `landvR` heatplots after performing 3 variations on methods to get the fitted allometric shapes from `procD.lm()`. **Generates Supplementary Figure TK.**
-* [**App05-supplementary-heatmaps.Rmd**](/Analysis/App05-supplementary-heatmaps.Rmd) Plots `landvR` heatplots of shape changes for the residual dataset without Notomys PC2 and for the residual dataset without Notomys or the aquatic carnivores both PC1 and PC2. **Generates Supplementary Figure TK.**
+* [**App04-test-fitted-allometry.Rmd**](/Analysis/App04-test-fitted-allometry.Rmd) Plots `landvR` heatmaps after performing 3 variations on methods to get the fitted allometric shapes from `procD.lm()`. **Creates a figure not used on the manuscript.**
+* [**App05-supplementary-heatmaps.Rmd**](/Analysis/App05-supplementary-heatmaps.Rmd) Plots `landvR` heatmaps of shape changes for the residual dataset without Notomys PC2 and for the residual dataset without Notomys or the aquatic carnivores both PC1 and PC2. **Generates Supplementary Figure 1.**
 
 ### Custom functions
 Some analyses call custom functions, most of which are defined in the [..Data/Functions/utilities.R](/Data/Functions/utilities.R) file. A modified version of `geomorph`'s function `plotGMPhyloMorphoSpace` is defined in the [..Data/Functions/plotGMPhyloMorphoSpace_plotmod.R](/Data/Functions/plotGMPhyloMorphoSpace_plotmod.R) file.
