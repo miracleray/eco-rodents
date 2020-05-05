@@ -20,10 +20,11 @@ If you use these data, please cite the original authors:
 > Breed B & Ford F. 2007. Native Mice and Rats. Australian Natural History Series, CSIRO Publishing: Colling-wood, Victoria, Australia, 185 pp. ISBN 978-0-6430-9166-5.
 
 **Phylogenetic data:**
-* [Fossil calibrated ultrametric tree from Smissen & Rowe 2018](/Data/Processed/Smissen-Rowe-2018-concat.tre)
+* [Fossil calibrated ultrametric tree from Smissen & Rowe 2018 and Marcy et al. 2020](/Data/Processed/Marcy-BEAST01.con.tre)
 
 If you use these data, please cite the original authors:
 > Smissen PJ & Rowe KC. 2018. Repeated biome transitions in the evolution of Australian Rodents. Molecular Phylogenetics and Evolution. 128:182–191. doi: 10.1016/j.ympev.2018.07.015.
+
 > Marcy AE, Guillerme T, Sherratt E, Rowe KC, Phillips MJ, and Weisbecker V. 2020. Australian rodents reveal conserved Cranial Evolutionary Allometry across 10 million years of murid evolution. bioRxiv. [https://www.biorxiv.org/content/early/2020/05/01/2020.04.30.071308](https://www.biorxiv.org/content/early/2020/05/01/2020.04.30.071308)
     
 ## Analyses
