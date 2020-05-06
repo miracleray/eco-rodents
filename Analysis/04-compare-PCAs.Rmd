@@ -257,24 +257,24 @@ rnot.PC.impt <- data.frame(PC = 1:length(wrap.PCA.r.n$pc.summary$importance[2, ]
 ### Create supplementary figure
 ```{r}
 # Make simple multipanel figure
-pdf("../Data/Results/SFigure_Screeplots.pdf")
+pdf("../Data/Results/SFigure1_Screeplots.pdf")
 mat <- matrix(c(1:3), 3, 1, byrow = TRUE)  # 3 plots, 3 rows, 1 column
-layout(mat, widths = rep(1, dim(mat)[2]), heights = rep(0.5, dim(mat)[1])) 
+layout(mat, widths = rep(0.5, dim(mat)[2]), heights = rep(0.25, dim(mat)[1])) 
 
 # 1) 
 barplot(full.PC.impt[, 2], ylab = "% of variance", ylim = c(0, 0.5))
 abline(h = 0.1, col = 'deeppink4')
-legend("topleft", inset = c(0.07, -0.07), legend = "A) full shape dataset", bty = "n", cex = 1.2)
+mtext("A) full shape dataset", 3, line = 1, cex = 0.8, adj = 0, col = "black")
 
 # 2)
 barplot(res.PC.impt[, 2], ylab = "% of variance", ylim = c(0, 0.5))
 abline(h = 0.1, col = 'deeppink4')
-legend("topleft", inset = c(0.07, -0.07), legend = "B) shape residual dataset", bty = "n", cex = 1.2)
+mtext("B) shape residual dataset", 3, line = 1, cex = 0.8, adj = 0, col = "black")
 
 # 3)
 barplot(rnot.PC.impt[, 2], xlab = "Principal component" , ylab = "% of variance", ylim = c(0, 0.5))
 abline(h = 0.1, col = 'deeppink4')
-legend("topleft", inset = c(0.07, -0.07), legend = expression(paste("C) shape residual dataset without ", italic(Notomys))), bty = "n", cex = 1.2)
+mtext(expression(paste("C) shape residual dataset without ", italic(Notomys))), 3, line = 1, cex = 0.8, adj = 0, col = "black")
 
 dev.off()
 ```
