@@ -262,19 +262,23 @@ mat <- matrix(c(1:3), 3, 1, byrow = TRUE)  # 3 plots, 3 rows, 1 column
 layout(mat, widths = rep(0.5, dim(mat)[2]), heights = rep(0.25, dim(mat)[1])) 
 
 # 1) 
-barplot(full.PC.impt[, 2], ylab = "% of variance", ylim = c(0, 0.5))
+barplot(full.PC.impt[, 2], ylim = c(0, 0.5))
 abline(h = 0.1, col = 'deeppink4')
-mtext("A) full shape dataset", 3, line = 1, cex = 0.8, adj = 0, col = "black")
+mtext("A) full shape dataset", 3, line = 1.5, cex = 0.9, adj = 0, col = "black")
+mtext("% of variance", 2, line = 2.5, cex = 0.83, col = "black")
 
 # 2)
-barplot(res.PC.impt[, 2], ylab = "% of variance", ylim = c(0, 0.5))
+barplot(res.PC.impt[, 2], ylim = c(0, 0.5))
 abline(h = 0.1, col = 'deeppink4')
-mtext("B) shape residual dataset", 3, line = 1, cex = 0.8, adj = 0, col = "black")
+mtext("B) shape residual dataset", 3, line = 1, cex = 0.9, adj = 0, col = "black")
+mtext("% of variance", 2, line = 2.5, cex = 0.83, col = "black")
 
 # 3)
-barplot(rnot.PC.impt[, 2], xlab = "Principal component" , ylab = "% of variance", ylim = c(0, 0.5))
+barplot(rnot.PC.impt[, 2], ylim = c(0, 0.5))
 abline(h = 0.1, col = 'deeppink4')
-mtext(expression(paste("C) shape residual dataset without ", italic(Notomys))), 3, line = 1, cex = 0.8, adj = 0, col = "black")
+mtext(expression(paste("C) shape residual dataset without ", italic(Notomys))), 3, line = 1, cex = 0.9, adj = 0, col = "black")
+mtext("% of variance", 2, line = 2.5, cex = 0.83, col = "black")
+mtext("Principal component", 1, line = 1, cex = 0.83, col = "black")
 
 dev.off()
 ```
