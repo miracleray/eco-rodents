@@ -41,7 +41,7 @@ load(file = "../Data/Processed/03-graphing-vectors.rda")
 ## 1) Heatmaps using procD.lm's $fitted
 First find mean specimen, then smallest and largest fitted allometric shape. Uses Dr Thomas Guillerme's new package, `landvR` to see how landmarks vary between these specimens.
 
-Exact same code as script 05; can skip if script 05 has been run.
+Exact same code as script 05.
 ```{r}
 # Fit specimens
 allom.fit <- procD.lm(mean.shapes ~ log(info.means$MeanCsize))

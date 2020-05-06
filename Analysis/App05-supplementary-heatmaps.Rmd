@@ -15,7 +15,7 @@ knitr::opts_knit$set(root.dir = '../eco-rodents')
 
 2) Make heatmaps for residuals without Notomys and without carnivores PC1 & PC2
 
-Produces multipanel Supplementary Figure TK.
+Produces multipanel Supplementary Figure 1.
 
 ### Load packages, functions, and data
 ```{r message = FALSE}
@@ -39,7 +39,7 @@ load(file = "../Data/Processed/05-residual-data.rda")
 ```
 
 ## 1) Prepare heatmaps
-This script is dominated by the code needed to generate, export, and clean the heatmap images which are tiled in Supplementary Figure TK.
+This script is dominated by the code needed to generate, export, and clean the heatmap images which are tiled in Supplementary Figure 1.
 
 ### Remove Notomys and find hypothetical shapes for PC2
 ```{r}
@@ -81,25 +81,25 @@ res.PC1.max.h.n2 <- wrap.PCA.r.n2$pc.shapes[[4]]
 open3d(windowRect = c(0, 0, 600, 600))
 procrustes.var.plot(res.mean.no, res.PC1.min.h.n2, col = heat.colors, col.val = PC1.var.r.n2[, "radius"])
 view3d(phi = 90)
-rgl.snapshot("../Data/Processed/heatmap_RES_sm-mean_lat_NO2.png")
+rgl.snapshot("../Data/Processed/Heatmaps/NO2_mean-sm_lat.png")
 
 # Lateral view of mean to biggest
 open3d(windowRect = c(0, 0, 600, 600))
 procrustes.var.plot(res.mean.no, res.PC1.max.h.n2, col = heat.colors, col.val = PC1.var.r.n2[, "radius"])
 view3d(phi = 90)
-rgl.snapshot("../Data/Processed/heatmap_RES_mean-big_lat_NO2.png")
+rgl.snapshot("../Data/Processed/Heatmaps/NO2_mean-bg_lat.png")
 
 # Dorsal view of mean to smallest
 open3d(windowRect = c(0, 0, 600, 600))
 procrustes.var.plot(res.mean.no, res.PC1.min.h.n2, col = heat.colors, col.val = PC1.var.r.n2[, "radius"]) 
 view3d(phi = 0)  # flip cranium
-rgl.snapshot("../Data/Processed/heatmap_RES_sm-mean_dor_NO2.png")
+rgl.snapshot("../Data/Processed/Heatmaps/NO2_mean-sm_dor.png")
 
 # Dorsal view of mean to biggest
 open3d(windowRect = c(0, 0, 600, 600))
 procrustes.var.plot(res.mean.no, res.PC1.max.h.n2, col = heat.colors, col.val = PC1.var.r.n2[, "radius"])
 view3d(phi = 0)  # flip cranium
-rgl.snapshot("../Data/Processed/heatmap_RES_mean-big_dor_NO2.png")
+rgl.snapshot("../Data/Processed/Heatmaps/NO2_mean-bg_dor.png")
 ```
 
 ### Remove Notomys and carnivores, then find hypothetical shapes for PC1
@@ -142,25 +142,25 @@ res.PC1.max.NC <- wrap.PCA.r.NC$pc.shapes[[2]]
 open3d(windowRect = c(0, 0, 600, 600))
 procrustes.var.plot(res.mean.NC, res.PC1.min.NC, col = heat.colors, col.val = PC1.var.NC1[, "radius"])
 view3d(phi = 90)
-rgl.snapshot("../Data/Processed/heatmap_NC1_sm-mean_lat_NC1.png")
+rgl.snapshot("../Data/Processed/Heatmaps/NC1_mean-sm_lat.png")
 
 # Lateral view of mean to biggest
 open3d(windowRect = c(0, 0, 600, 600))
 procrustes.var.plot(res.mean.NC, res.PC1.max.NC, col = heat.colors, col.val = PC1.var.NC1[, "radius"])
 view3d(phi = 90)
-rgl.snapshot("../Data/Processed/heatmap_NC1_mean-big_lat_NC1.png")
+rgl.snapshot("../Data/Processed/Heatmaps/NC1_mean-bg_lat.png")
 
 # Dorsal view of mean to smallest
 open3d(windowRect = c(0, 0, 600, 600))
 procrustes.var.plot(res.mean.NC, res.PC1.min.NC, col = heat.colors, col.val = PC1.var.NC1[, "radius"]) 
 view3d(phi = 0)  # flip cranium
-rgl.snapshot("../Data/Processed/heatmap_NC1_sm-mean_dor_NC1.png")
+rgl.snapshot("../Data/Processed/Heatmaps/NC1_mean-sm_dor.png")
 
 # Dorsal view of mean to biggest
 open3d(windowRect = c(0, 0, 600, 600))
 procrustes.var.plot(res.mean.NC, res.PC1.max.NC, col = heat.colors, col.val = PC1.var.NC1[, "radius"])
 view3d(phi = 0)  # flip cranium
-rgl.snapshot("../Data/Processed/heatmap_NC1_mean-big_dor_NC1.png")
+rgl.snapshot("../Data/Processed/Heatmaps/NC1_mean-bg_dor.png")
 ```
 
 ### Make heatmaps for PC2 residual coordinates (no notomys or carnivores)
@@ -179,55 +179,55 @@ res.PC2.max.NC2 <- wrap.PCA.r.NC$pc.shapes[[3]]
 open3d(windowRect = c(0, 0, 600, 600))
 procrustes.var.plot(res.mean.NC, res.PC2.min.NC2, col = heat.colors, col.val = PC1.var.r.NC2[, "radius"])
 view3d(phi = 90)
-rgl.snapshot("../Data/Processed/heatmap_NC2_sm-mean_lat_NC2.png")
+rgl.snapshot("../Data/Processed/Heatmaps/NC2_mean-sm_lat.png")
 
 # Lateral view of mean to biggest
 open3d(windowRect = c(0, 0, 600, 600))
 procrustes.var.plot(res.mean.NC, res.PC2.max.NC2, col = heat.colors, col.val = PC1.var.r.NC2[, "radius"])
 view3d(phi = 90)
-rgl.snapshot("../Data/Processed/heatmap_NC2_mean-big_lat_NC2.png")
+rgl.snapshot("../Data/Processed/Heatmaps/NC2_mean-bg_lat.png")
 
 # Dorsal view of mean to smallest
 open3d(windowRect = c(0, 0, 600, 600))
 procrustes.var.plot(res.mean.NC, res.PC2.min.NC2, col = heat.colors, col.val = PC1.var.r.NC2[, "radius"]) 
 view3d(phi = 0)  # flip cranium
-rgl.snapshot("../Data/Processed/heatmap_NC2_sm-mean_dor_NC2.png")
+rgl.snapshot("../Data/Processed/Heatmaps/NC2_mean-sm_dor.png")
 
 # Dorsal view of mean to biggest
 open3d(windowRect = c(0, 0, 600, 600))
 procrustes.var.plot(res.mean.NC, res.PC2.max.NC2, col = heat.colors, col.val = PC1.var.r.NC2[, "radius"])
 view3d(phi = 0)  # flip cranium
-rgl.snapshot("../Data/Processed/heatmap_NC2_mean-big_dor_NC2.png")
+rgl.snapshot("../Data/Processed/Heatmaps/NC2_mean-bg_dor.png")
 ```
 
 ### Load in all heatmaps
 ```{r}
 # Remove whitespace from all heatmaps (requires ImageMagik installed on PC)
-system("mogrify ../Data/Processed/heatmap_*.png -trim ../Data/Processed/*.png")
+system("mogrify ../Data/Processed/Heatmaps/*.png -trim ../Data/Processed/Heatmaps/*.png")
 
 # Load in without allometry residuals PC2 - no Notomys
-resid.sm.lat.n2 <- readPNG("../Data/Processed/heatmap_RES_sm-mean_lat_NO2.png")
-resid.big.lat.n2 <- readPNG("../Data/Processed/heatmap_RES_mean-big_lat_NO2.png")
-resid.sm.dor.n2 <- readPNG("../Data/Processed/heatmap_RES_sm-mean_dor_NO2.png")
-resid.big.dor.n2 <- readPNG("../Data/Processed/heatmap_RES_mean-big_dor_NO2.png")
+resid.sm.lat.n2 <- readPNG("../Data/Processed/Heatmaps/NO2_mean-sm_lat.png")
+resid.big.lat.n2 <- readPNG("../Data/Processed/Heatmaps/NO2_mean-bg_lat.png")
+resid.sm.dor.n2 <- readPNG("../Data/Processed/Heatmaps/NO2_mean-sm_dor.png")
+resid.big.dor.n2 <- readPNG("../Data/Processed/Heatmaps/NO2_mean-bg_dor.png")
 
 # Load in without notomys or carnivores residuals PC1
-resNC1.sm.lat <- readPNG("../Data/Processed/heatmap_NC1_sm-mean_lat_NC1.png")
-resNC1.big.lat <- readPNG("../Data/Processed/heatmap_NC1_mean-big_lat_NC1.png")
-resNC1.sm.dor <- readPNG("../Data/Processed/heatmap_NC1_sm-mean_dor_NC1.png")
-resNC1.big.dor <- readPNG("../Data/Processed/heatmap_NC1_mean-big_dor_NC1.png")
+resNC1.sm.lat <- readPNG("../Data/Processed/Heatmaps/NC1_mean-sm_lat.png")
+resNC1.big.lat <- readPNG("../Data/Processed/Heatmaps/NC1_mean-bg_lat.png")
+resNC1.sm.dor <- readPNG("../Data/Processed/Heatmaps/NC1_mean-sm_dor.png")
+resNC1.big.dor <- readPNG("../Data/Processed/Heatmaps/NC1_mean-bg_dor.png")
 
 # Load in without notomys or carnivores residuals PC2
-resNC2.sm.lat <- readPNG("../Data/Processed/heatmap_NC2_sm-mean_lat_NC2.png")
-resNC2.big.lat <- readPNG("../Data/Processed/heatmap_NC2_mean-big_lat_NC2.png")
-resNC2.sm.dor <- readPNG("../Data/Processed/heatmap_NC2_sm-mean_dor_NC2.png")
-resNC2.big.dor <- readPNG("../Data/Processed/heatmap_NC2_mean-big_dor_NC2.png")
+resNC2.sm.lat <- readPNG("../Data/Processed/Heatmaps/NC2_mean-sm_lat.png")
+resNC2.big.lat <- readPNG("../Data/Processed/Heatmaps/NC2_mean-bg_lat.png")
+resNC2.sm.dor <- readPNG("../Data/Processed/Heatmaps/NC2_mean-sm_dor.png")
+resNC2.big.dor <- readPNG("../Data/Processed/Heatmaps/NC2_mean-bg_dor.png")
 ```
 
-## 2) Make multi-panel Supplementary Figure TK: Heatmaps with Residuals
+## 2) Make multi-panel Supplementary Figure 1: Heatmaps with Residuals
 ```{r}
 # Set up muli-panel figure
-pdf("../Data/Results/SFigure_more_Heatmap_Residuals.pdf")
+pdf("../Data/Results/SFigure1_NOt_Heatmap_Residuals.pdf")
 mat <- matrix(c(1:12), 4, 3, byrow = FALSE)  # 12 plots, 4 rows, 3 columns
 layout(mat, widths = rep(1, dim(mat)[2]), heights = rep(0.5, dim(mat)[1])) 
 
