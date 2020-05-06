@@ -17,7 +17,7 @@ Creates multipanel Figure 1.
 
 Compares morphospace similarity of the two datasets with Mantel tests and a correlation test.
 
-Creates supplementary Figure TK, a screeplot of the the PCs for each dataset.
+Creates supplementary Figure 1, a screeplot of the the PCs for each dataset.
 
 Produces shape residual data used in later analyses, stored in rda file 04.
 
@@ -254,7 +254,7 @@ res.PC.impt <- data.frame(PC = 1:length(res.PCA$pc.summary$importance[2, ]), imp
 rnot.PC.impt <- data.frame(PC = 1:length(wrap.PCA.r.n$pc.summary$importance[2, ]), impt = wrap.PCA.r.n$pc.summary$importance[2, ])
 ```
 
-### Create supplementary figure
+### Create supplementary figure 1
 ```{r}
 # Make simple multipanel figure
 pdf("../Data/Results/SFigure1_Screeplots.pdf")

@@ -15,7 +15,7 @@ knitr::opts_knit$set(root.dir = '../eco-rodents')
 
 2) Make heatmaps for residuals without Notomys and without carnivores PC1 & PC2
 
-Produces multipanel Supplementary Figure 1.
+Produces multipanel Supplementary Figure 2.
 
 ### Load packages, functions, and data
 ```{r message = FALSE}
@@ -39,7 +39,7 @@ load(file = "../Data/Processed/05-residual-data.rda")
 ```
 
 ## 1) Prepare heatmaps
-This script is dominated by the code needed to generate, export, and clean the heatmap images which are tiled in Supplementary Figure 1.
+This script is dominated by the code needed to generate, export, and clean the heatmap images which are tiled in Supplementary Figure 2.
 
 ### Remove Notomys and find hypothetical shapes for PC2
 ```{r}
@@ -224,10 +224,10 @@ resNC2.sm.dor <- readPNG("../Data/Processed/Heatmaps/NC2_mean-sm_dor.png")
 resNC2.big.dor <- readPNG("../Data/Processed/Heatmaps/NC2_mean-bg_dor.png")
 ```
 
-## 2) Make multi-panel Supplementary Figure 1: Heatmaps with Residuals
+## 2) Make multi-panel Supplementary Figure 2: Heatmaps with Residuals
 ```{r}
 # Set up muli-panel figure
-pdf("../Data/Results/SFigure1_NOt_Heatmap_Residuals.pdf")
+pdf("../Data/Results/SFigure2_NOt_Heatmap_Residuals.pdf")
 mat <- matrix(c(1:12), 4, 3, byrow = FALSE)  # 12 plots, 4 rows, 3 columns
 layout(mat, widths = rep(1, dim(mat)[2]), heights = rep(0.5, dim(mat)[1])) 
 

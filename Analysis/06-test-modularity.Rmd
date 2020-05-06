@@ -19,7 +19,7 @@ What is causing high levels of allometry? Is it functional integration of the gn
 
 3) Tests for global integration
 
-Makes Figure 4, Table 1, and Supplementary Figure TK
+Makes Figure 4, Table 1, and Supplementary Figure 3
 
 ### Load packages, functions, and data from previous steps
 ```{r message = FALSE}
@@ -263,11 +263,11 @@ write.table(mantel.full, "../Data/Results/Table1A_MantelTest_Full.csv", sep = ",
 write.table(mantel.res, "../Data/Results/Table1B_MantelTest_Res.csv", sep = ",", col.names = NA)
 ```
 
-### Whole integration test - Supplementary Figure TK
+### Whole integration test - Supplementary Figure 3
 Test whether rodent skull is integrated as a whole
 ```{r}
 # Set up for export
-pdf("../Data/Results/SFigure_GlobalIntegration.pdf")
+pdf("../Data/Results/SFigure3_GlobalIntegration.pdf")
 globalIntegration(mean.shapes, ShowPlot = TRUE)
 text(12, -16, "slope of -1", col = "red")
 dev.off()

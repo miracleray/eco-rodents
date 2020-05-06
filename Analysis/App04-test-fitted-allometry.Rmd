@@ -16,7 +16,7 @@ knitr::opts_knit$set(root.dir = '../eco-rodents')
 
 3) Using the lengthy workflow suggested by the function's documentation involving plot objects and regression scores.
 
-This script produces Supplementary Figure TK and is relevant to Figure 2's second column, which is currently using the method from #1 (script 05).  
+This script produces a Supplementary Figure and is relevant to Figure 2's second column, which is currently using the method from #1 (script 05).  
 
 # One conclusion after running this:
 All three methods -- `$fitted`, `$GM$fitted`, and the lengthy workflow -- produce exactly the same (`$fitted` just needs `arrayspecs()` to be in the right coordinates format for *geomorph*). Any are appropriate to use for allometric fitted shape heatmaps - see Figure 2 for this ms. 
