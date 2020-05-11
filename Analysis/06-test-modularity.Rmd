@@ -192,7 +192,7 @@ dev.off()
 ```
 
 ## Mantel Test to see if PCs of modules are equivalent
-Uses method similar to workflow from Sherratt et al. TK
+Uses method similar to workflow from Heatherington and Sherratt 2015 DOI: https://doi.org/10.1111/pala.12159
 ```{r}
 # Define (admittably brute force) function to run Mantel test on 5 modules named as in Figure 4A. Takes in a shape dataset and landmark definitions of modules made earlier in the script.
 MantelModularity <- function(shapes, lm.modules) { 

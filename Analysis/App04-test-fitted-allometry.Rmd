@@ -199,7 +199,7 @@ regsc.sm.dor <- readPNG("../Data/Processed/Heatmaps/REG_mean-sm_dor.png")
 regsc.big.dor <- readPNG("../Data/Processed/Heatmaps/REG_mean-bg_dor.png")
 ```
 
-## 4) Make multi-panel Supplementary Figure TK for comparison
+## 4) Make multi-panel Supplementary Figure for comparison (not included in manuscript)
 ```{r}
 # Set up export and muli-panel figure 
 pdf("../Data/Results/SFigure0_Allometry_Compare.pdf")
