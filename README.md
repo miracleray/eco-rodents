@@ -11,7 +11,7 @@ As of May 2020, this is still a work in progress. Relies on `R` (v. 3.6.1), `geo
 ## Data
 **Landmarking data:**
 * [MorphoSource Project 561](https://www.morphosource.org/Detail/ProjectDetail/Show/project_id/561) publically provides 3D meshes for all surface scanned crania landmarked in the study.
-* [Raw_Coordinates.csv](Data/Raw/Raw_Coord_Data.csv) provides the shape coordinates from landmarked 3D skulls exported from Viewbox.
+* [Raw_Coordinates.csv](Data/Raw/Raw_Coord_Data.csv) provides the shape coordinates from landmarked 3D crania exported from Viewbox.
 
 **Ecological metadata:**
 * [Trait data from Breed & Ford 2007](/Data/Processed/in_ex_traits.csv)
