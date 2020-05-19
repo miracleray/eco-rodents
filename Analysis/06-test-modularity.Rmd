@@ -35,7 +35,7 @@ load(file = "../Data/Processed/03-tree-data.rda")
 load(file = "../Data/Processed/03-graphing-vectors.rda")
 load(file = "../Data/Processed/04-residual-data.rda")
 
-# Can load in time consuming modularity test after first run:
+# Can load in time consuming modularity tests after first run:
 load(file = "../Data/Processed/06-modularity.rda")
 ```
 
@@ -139,7 +139,7 @@ save(mod.test.5.phy, mod.test.5.res, mod.result.phy, mod.result.res, file = "../
 # Set up for export and for multiple panels
 pdf("../Data/Results/Figure4_Modularity.pdf")
 mat <- matrix(c(1, 1, 2, 3), 2, 2, byrow = TRUE)  # 3 plots, 2 row, 2 columns
-layout(mat, widths = rep.int(1, ncol(mat)), heights = rep.int(1, nrow(mat)))  
+layout(mat, widths = rep.int(1, ncol(mat)), heights = rep.int(0.5, nrow(mat))) 
 
 # 1) Plot of modules
 par(mar = c(1, 1, 1, 1))  # sets the margins
@@ -147,12 +147,12 @@ plot(c(0, dim(module.plot)[2]), c(0, dim(module.plot)[1]), type = "n", axes = FA
 rasterImage(module.plot, 0, 0, dim(module.plot)[2], dim(module.plot)[1])
 # Labels for module plot
 legend("topleft", "A", cex = 1.5, bty = "n")
-legend("topleft", "module definitions (observed condition)", cex = 0.9, bty = "n", inset = c(0.05, 0.018))
-text(60, -3, "Basicranium", cex = 0.9, bty = "n", col = darken(mod.colors[1]))
-text(360, 20, "Molar", cex = 0.9, bty = "n", col = mod.colors[2])
-text(330, 260, "Orbital", cex = 0.9, bty = "n", col = darken(mod.colors[3]))
-text(585, 200, "Rostrum", cex = 0.9, bty = "n", col = darken(mod.colors[4], amount = 0.3))
-text(10, 220, "Vault", cex = 0.9, bty = "n", col = darken(mod.colors[5], amount = 0.35))
+legend("topleft", "module definitions (observed condition)", cex = 0.9, bty = "n", inset = c(0.05, 0.015))
+text(60, -3, "Basicranium", bty = "n", col = darken(mod.colors[1]))
+text(360, 20, "Molar", bty = "n", col = mod.colors[2])
+text(330, 260, "Orbital", bty = "n", col = darken(mod.colors[3]))
+text(585, 200, "Rostrum", bty = "n", col = darken(mod.colors[4], amount = 0.3))
+text(10, 220, "Vault", bty = "n", col = darken(mod.colors[5], amount = 0.35))
 
 # 2) Plot of observed and resampled CR coefficients (w/ phylo correction)
 par(mar = c(3.5, 3.5, 1.5, 0.5))
@@ -160,16 +160,17 @@ hist(mod.test.5.phy$random.CR,
      main = NULL,
      xlab = "",
      xlim = c(0.65, 1.1),
+     ylim = c(0, 450),
      ylab = "",
      cex.axis = 0.9,
      col = "black")
 # Labels for histogram
 title(xlab = "Covariance ratio (CR) coefficient", line = 2.4)
 title(ylab = "Frequency (out of 1000)", line = 2.35)
-arrows(x0 = mod.test.5.phy$CR, y0 = 175, y1 = 8, length = 0.15, lwd = 1.5, col = "darkred")
-text(mod.test.5.phy$CR - 0.055, 200, "observed CR", cex = 0.9, col = "darkred")
+arrows(x0 = mod.test.5.phy$CR, y0 = 105, y1 = 8, length = 0.15, lwd = 1.5, col = "darkred")
+text(mod.test.5.phy$CR - 0.0887, 120, paste("observed CR =", round(mod.test.5.phy$CR, 2)), cex = 0.9, col = "darkred")
 legend("topleft", "B", cex = 1.5, bty = "n", inset = -0.05)
-legend("topleft", "full shape", cex = 0.9, bty = "n", inset = c(0.06, 0.02))
+legend("topleft", "full shape", cex = 0.9, bty = "n", inset = c(0.06, 0))
 
 # 3) Plot of CR coefficients (w/ phylo correction) for shape residual dataset
 par(mar = c(3.5, 3.5, 1.5, 0.5))
@@ -177,16 +178,17 @@ hist(mod.test.5.res$random.CR,
      main = NULL,
      xlab = "",
      xlim = c(0.65, 1.1),
+     ylim = c(0, 450),
      ylab = "",
      cex.axis = 0.9,
      col = "black")
 # Labels for histogram
-title(xlab = "Covariance ratio (CR) coefficient", line = 2.4)
-title(ylab = "Frequency (out of 1000)", line = 2.35)
+title(xlab = "CR coefficient", line = 2.4)
+#title(ylab = "Frequency (out of 1000)", line = 2.35)
 arrows(x0 = mod.test.5.res$CR, y0 = 105, y1 = 8, length = 0.15, lwd = 1.5, col = "darkred")
-text(mod.test.5.res$CR - 0.03, 120, "observed CR", cex = 0.9, col = "darkred")
+text(mod.test.5.res$CR - 0.0884, 120, paste("observed CR =", round(mod.test.5.res$CR, 2)), cex = 0.9, col = "darkred")
 legend("topleft", "C", cex = 1.5, bty = "n", inset = -0.05)
-legend("topleft", "shape residual", cex = 0.9, bty = "n", inset = c(0.06, 0.02))
+legend("topleft", "shape residual", cex = 0.9, bty = "n", inset = c(0.07, 0))
 
 dev.off()
 ```
