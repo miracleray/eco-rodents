@@ -269,9 +269,10 @@ write.table(mantel.res, "../Data/Results/Table1B_MantelTest_Res.csv", sep = ",",
 Test whether rodent skull is integrated as a whole
 ```{r}
 # Set up for export
-pdf("../Data/Results/SFigure3_GlobalIntegration.pdf")
+setEPS()
+postscript("../Data/Results/SFigure3_GlobalIntegration.eps")
 globalIntegration(mean.shapes, ShowPlot = TRUE)
-text(12, -16, "slope of -1", col = "red")
+
 dev.off()
 ```
 

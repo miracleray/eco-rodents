@@ -12,7 +12,7 @@ Notomys,alexis,Pseudomys,Omnivorous,Hopping,0,1,0,0,0.5,0.5,0
 Notomys,cervinus,Pseudomys,Omnivorous,Hopping,0,1,0,0,0,0,0
 Notomys,fuscus,Pseudomys,Omnivorous,Hopping,0,1,0,0,0,0,0
 Notomys,mitchellii,Pseudomys,Omnivorous,Hopping,0,1,0,0,0,1,1
-Pogonomys,mollipilosis,Pogonomys,Frugivorous,Arboreal,0,0,1,0,0,0,0
+Pogonomys,mollipilosus,Pogonomys,Frugivorous,Arboreal,0,0,1,0,0,0,0
 Pseudomys,australis,Pseudomys,Granivorous,Terrestrial,0,1,0,0.5,0,0,0.5
 Pseudomys,delicatulus,Pseudomys,Granivorous,Terrestrial,1,0.5,0,1,1,0,0.5
 Pseudomys,desertor,Pseudomys,Herbivorus,Terrestrial,0.5,1,0,1,0.5,0.5,0.5

@@ -125,7 +125,8 @@ master.table$col.spp2 <- PlotByGroup(master.table, "spp2", alpha.col.spp2)
 genera.phylo.full <- c("Mus", "Rattus", "Pogonomys", "Xeromys", "Hydromys", "Notomys", "Pseudomys", "Zyzomys", "Leggadina", "Uromys", "Melomys", "Leporillus", "Mesembrio.", "Conilurus")
 
 # Set up multipanel figure for export
-pdf("../Data/Results/Figure5_PhyloMorph_Dist.pdf")
+setEPS()
+postscript("../Data/Results/Figure5_PhyloMorph_Dist.eps")
 mat <- matrix(c(1, 2), 2, 1, byrow = TRUE)  # 2 rows, 1 column
 layout(mat, widths = rep.int(1, ncol(mat)), heights = rep.int(1, nrow(mat))) 
 
