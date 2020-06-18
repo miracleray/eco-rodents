@@ -99,9 +99,6 @@ rgl.snapshot("../Data/Processed/modules.png")
 
 # Remove whitespace from new image (requires ImageMagik installed on PC)
 system("mogrify ../Data/Processed/modules.png -trim ../Data/Processed/*.png")
-
-# Load png back in
-module.plot <- readPNG("../Data/Processed/modules.png")
 ```
 
 ## Test modularity with 5 modules for full shape dataset
@@ -136,6 +133,9 @@ save(mod.test.5.phy, mod.test.5.res, mod.result.phy, mod.result.res, file = "../
 
 ## Make and export Figure 4
 ```{r}
+# Load png back in
+module.plot <- readPNG("../Data/Processed/modules.png")
+
 # Set up for export and for multiple panels
 pdf("../Data/Results/Figure4_Modularity.pdf")
 mat <- matrix(c(1, 1, 2, 3), 2, 2, byrow = TRUE)  # 3 plots, 2 row, 2 columns
@@ -274,22 +274,4 @@ postscript("../Data/Results/SFigure3_GlobalIntegration.eps")
 globalIntegration(mean.shapes, ShowPlot = TRUE)
 
 dev.off()
-```
-
-Test for phylogenetic signal
-```{r}
-globalIntegration(residuals, ShowPlot = TRUE)
-
-  mod.1 <- mean.shapes[which(lm.modules[, 4] == "basicran"), ,]
-  mod.2 <- mean.shapes[which(lm.modules[, 4] == "molar"), ,]
-  mod.3 <- mean.shapes[which(lm.modules[, 4] == "orbital"), ,]
-  mod.4 <- mean.shapes[which(lm.modules[, 4] == "rostrum"), ,]
-  mod.5 <- mean.shapes[which(lm.modules[, 4] == "vault"), ,]
-
-  
-  physignal(mod.1, aus.tree)
-  physignal(mod.2, aus.tree)
-  physignal(mod.3, aus.tree)
-  physignal(mod.4, aus.tree)
-  physignal(mod.5, aus.tree)
 ```
