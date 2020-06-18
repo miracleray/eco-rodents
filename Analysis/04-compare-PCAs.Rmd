@@ -55,6 +55,8 @@ All other PCA plots in figure use this dataset
 ### Extract shape residuals by removing allometric shape signal
 Code thanks to Dr Vera Weisbecker
 ```{r}
+gpa <- gpagen(mean.shapes)
+
 # Use pgls of coords with size to get residuals
 allom.GDF <- geomorph.data.frame(coords = mean.shapes, Csize = info.means$MeanCsize)
 allometry.all <- procD.pgls(coords ~ Csize, aus.tree, data = allom.GDF)
@@ -64,7 +66,7 @@ dimnames(mean.shapes)[[3]] <- info.means$FullName
 allom.resid <- arrayspecs(allometry.all$pgls.residuals, dim(mean.shapes)[[1]], 3)
 
 # Add the consensus shape (from the GPA) to the residuals if you want to understand the landmark variation in the residuals - needed for script 06
-residuals <- allom.resid + array(mean.shapes, dim(allom.resid))
+residuals <- allom.resid + array(gpa$consensus, dim(allom.resid))
 ```
 
 ### Make PCA of shape residuals
@@ -130,7 +132,7 @@ Finally, we compare the full shape PCA to the shape residuals PCAs. All PCAs are
 part.coords <- c(-0.105, 0.145)  # formatting parameters for B, C, D locations
 
 setEPS()
-postscript("../Data/Results/Figure1_PCAs_Chapter.eps")
+postscript("../Data/Results/Figure1_PCAs_new.eps")
 mat <- matrix(c(1:4), 2, 2, byrow = TRUE)  # 4 plots, 2 rows, 2 columns
 layout(mat, widths = rep(1, dim(mat)[2]), heights = rep(0.5, dim(mat)[1]))   
 
