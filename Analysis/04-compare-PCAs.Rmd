@@ -243,7 +243,7 @@ man.pc13$signif
 
 ### Correlation of PC1s
 ```{r}
-cor.pc1 <- cor(mean.PCA$pc.scores[, 1], res.PCA$pc.scores[, 1])
+cor.pc1 <- cor(mean.PCA$pc.scores[, 1], -res.PCA$pc.scores[, 1])
 cor.pc1
 ```
 
