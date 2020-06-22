@@ -122,7 +122,7 @@ master.table$col.spp2 <- PlotByGroup(master.table, "spp2", alpha.col.spp2)
 
 ### Export Figure 5
 ```{r}
-genera.phylo.full <- c("Mus", "Rattus", "Pogonomys", "Xeromys", "Hydromys", "Notomys", "Pseudomys", "Zyzomys", "Leggadina", "Uromys", "Melomys", "Leporillus", "Mesembrio.", "Conilurus")
+genera.phylo.full <- c("Mus", "Rattus", "Pogonomys", "Xeromys", "Hydromys", "Notomys", "Pseudomys", "Zyzomys", "Leggadina", "Uromys", "Melomys", "Leporillus", "Mesembriomys", "Conilurus")
 
 # Set up multipanel figure for export
 setEPS()
@@ -143,7 +143,7 @@ plot(master.table.r$phylo.d, master.table.r$morph.d.r, col = master.table$col.sp
 title(xlab = "Phylogenetic distance (~million years since common ancestor)", line = 2.3)
 text(0.25, 0.197, "B", cex = 1.5)
 legend("topleft", legend = "shape residual", inset = c(0.004, 0.01), bty = "n")
-legend(4.5, 0.21, legend = genera.phylo.full, text.font = 3, col = col.phylo, pch = 16, cex = 0.65, pt.cex = 0.7, ncol = 5, x.intersp = 0.8, text.width = 1.2, bty = "n", inset = c(0.12, 0))
+legend(4, 0.21, legend = genera.phylo.full, text.font = 3, col = col.phylo, pch = 16, cex = 0.65, pt.cex = 0.7, ncol = 5, x.intersp = 0.8, text.width = 1.2, bty = "n", inset = c(0.12, 0))
 
 dev.off()
 ```
