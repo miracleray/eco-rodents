@@ -217,8 +217,8 @@ PC1.var.r <- variation.range(gpagen.shape, return.ID = FALSE, axis = 1, ordinati
 wrap.PCA.r <- plotTangentSpace(residuals, verbose = FALSE)
 
 # Select extreme specimens (the ones that make the warp-meshes)
-res.PC1.min.h <- wrap.PCA.r$pc.shapes[[2]]  # flipped b/c axes are flipped
-res.PC1.max.h <- wrap.PCA.r$pc.shapes[[1]]
+res.PC1.min.h <- wrap.PCA.r$pc.shapes[[1]]
+res.PC1.max.h <- wrap.PCA.r$pc.shapes[[2]]
 ```
 
 ### Export the variation for shape residual change
@@ -255,8 +255,8 @@ Steps as above but for PC2; hypothetical shapes
 PC1.var.r2 <- variation.range(gpagen.shape, return.ID = FALSE, axis = 2, ordination = ordination.r, type = "spherical")
 
 # Select extreme specimens (the ones that make the warp-meshes)
-res.PC2.min.h <- wrap.PCA.r$pc.shapes[[4]]
-res.PC2.max.h <- wrap.PCA.r$pc.shapes[[3]]
+res.PC2.min.h <- wrap.PCA.r$pc.shapes[[3]]
+res.PC2.max.h <- wrap.PCA.r$pc.shapes[[4]]
 
 # Set up graphics for PC2 colors
 #diff.min <- variation.range(res.mean, res.PC2.min.h)
@@ -348,13 +348,13 @@ open3d(windowRect = c(0, 0, 600, 600))
 procrustes.var.plot(res.mean, res.PC1.max.h.n, col = heat.colors, col.val = PC1.var.r.n[, "radius"])
 view3d(phi = 0)  # flip cranium
 rgl.snapshot("../Data/Processed/Heatmaps/NOt_mean-bg_dor.png")
-
-# Remove whitespace from all heatmaps (requires ImageMagik installed on PC)
-system("mogrify ../Data/Processed/Heatmaps/*.png -trim ../Data/Processed/Heatmaps/*.png")
 ```
 
 ### Load in all heatmaps
 ```{r}
+# Remove whitespace from all heatmaps (requires ImageMagik installed on PC)
+system("mogrify ../Data/Processed/Heatmaps/*.png -trim ../Data/Processed/Heatmaps/*.png")
+
 # Load in with allometry smallest to largest
 indiv.sm.lat <- readPNG("../Data/Processed/Heatmaps/IND_mean-sm_lat.png")
 indiv.big.lat <- readPNG("../Data/Processed/Heatmaps/IND_mean-bg_lat.png")
@@ -510,7 +510,7 @@ layout(mat, widths = rep(1, dim(mat)[2]), heights = rep(0.5, dim(mat)[1]))
 par(mar = c(0, 0, 0, 0))
 plot(c(0, dim(resid.sm.lat)[2]), c(0, dim(resid.sm.lat)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
 rasterImage(resid.sm.lat, 0, 0, dim(resid.sm.lat)[2], dim(resid.sm.lat)[1])
-text(0, dim(resid.sm.lat)[1]-10, "A", cex = 2)
+text(0, dim(resid.sm.lat)[1] - 10, "A", cex = 2)
 legend("topright", inset = c(0.3, 0), legend = "PC1 shape residual", bty = "n", cex = 1.2)
 legend("bottomleft", "Mean to hypothetical minimum", bty = "n", inset = c(0.1, 0.07))
 
