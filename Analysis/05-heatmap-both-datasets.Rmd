@@ -354,7 +354,9 @@ rgl.snapshot("../Data/Processed/Heatmaps/NOt_mean-bg_dor.png")
 ```{r}
 # Remove whitespace from all heatmaps (requires ImageMagik installed on PC)
 system("mogrify ../Data/Processed/Heatmaps/*.png -trim ../Data/Processed/Heatmaps/*.png")
+```
 
+```{r}
 # Load in with allometry smallest to largest
 indiv.sm.lat <- readPNG("../Data/Processed/Heatmaps/IND_mean-sm_lat.png")
 indiv.big.lat <- readPNG("../Data/Processed/Heatmaps/IND_mean-bg_lat.png")
