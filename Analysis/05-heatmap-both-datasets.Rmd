@@ -217,8 +217,8 @@ PC1.var.r <- variation.range(gpagen.shape, return.ID = FALSE, axis = 1, ordinati
 wrap.PCA.r <- plotTangentSpace(residuals, verbose = FALSE)
 
 # Select extreme specimens (the ones that make the warp-meshes)
-res.PC1.min.h <- wrap.PCA.r$pc.shapes[[1]]
-res.PC1.max.h <- wrap.PCA.r$pc.shapes[[2]]
+res.PC1.min.h <- wrap.PCA.r$pc.shapes$PC1min
+res.PC1.max.h <- wrap.PCA.r$pc.shapes$PC1max
 ```
 
 ### Export the variation for shape residual change
@@ -255,36 +255,39 @@ Steps as above but for PC2; hypothetical shapes
 PC1.var.r2 <- variation.range(gpagen.shape, return.ID = FALSE, axis = 2, ordination = ordination.r, type = "spherical")
 
 # Select extreme specimens (the ones that make the warp-meshes)
-res.PC2.min.h <- wrap.PCA.r$pc.shapes[[3]]
-res.PC2.max.h <- wrap.PCA.r$pc.shapes[[4]]
+res.PC2.min.h <- wrap.PCA.r$pc.shapes$PC2max  # switch for consistency
+res.PC2.max.h <- wrap.PCA.r$pc.shapes$PC2min
 
-# Set up graphics for PC2 colors
-#diff.min <- variation.range(res.mean, res.PC2.min.h)
+# Calculate distances between shapes to ensure correct point color
+min.coords <- cbind(res.mean, res.PC2.min.h)
+min.dist <- apply(min.coords, 1, function(x) dist(matrix(x, nrow = 2, byrow = TRUE)))
+max.coords <- cbind(res.mean, res.PC2.max.h)
+max.dist <- apply(max.coords, 1, function(x) dist(matrix(x, nrow = 2, byrow = TRUE)))
 ```
 
 ### Export the variation for shape residual change
 ```{r}
 # Lateral view of mean to smallest
 open3d(windowRect = c(0, 0, 600, 600))
-procrustes.var.plot(res.mean, res.PC2.min.h, col = heat.colors, col.val = PC1.var.r2[, "radius"])
+procrustes.var.plot(res.mean, res.PC2.min.h, col = heat.colors, col.val = min.dist)
 view3d(phi = 90)
 rgl.snapshot("../Data/Processed/Heatmaps/RP2_mean-sm_lat.png")
 
 # Lateral view of mean to biggest
 open3d(windowRect = c(0, 0, 600, 600))
-procrustes.var.plot(res.mean, res.PC2.max.h, col = heat.colors, col.val = PC1.var.r2[, "radius"])
+procrustes.var.plot(res.mean, res.PC2.max.h, col = heat.colors, col.val = min.dist)
 view3d(phi = 90)
 rgl.snapshot("../Data/Processed/Heatmaps/RP2_mean-bg_lat.png")
 
 # Dorsal view of mean to smallest
 open3d(windowRect = c(0, 0, 600, 600))
-procrustes.var.plot(res.mean, res.PC2.min.h, col = heat.colors, col.val = PC1.var.r2[, "radius"]) 
+procrustes.var.plot(res.mean, res.PC2.min.h, col = heat.colors, col.val = max.dist) 
 view3d(phi = 0)  # flip cranium
 rgl.snapshot("../Data/Processed/Heatmaps/RP2_mean-sm_dor.png")
 
 # Dorsal view of mean to biggest
 open3d(windowRect = c(0, 0, 600, 600))
-procrustes.var.plot(res.mean, res.PC2.max.h, col = heat.colors, col.val = PC1.var.r2[, "radius"])
+procrustes.var.plot(res.mean, res.PC2.max.h, col = heat.colors, col.val = max.dist)
 view3d(phi = 0)  # flip cranium
 rgl.snapshot("../Data/Processed/Heatmaps/RP2_mean-bg_dor.png")
 ```
@@ -319,8 +322,8 @@ PC1.var.r.n <- variation.range(gpagen.shape.no, return.ID = FALSE, axis = 1, ord
 wrap.PCA.r.n <- plotTangentSpace(residuals.no, verbose = FALSE)
 
 # Select extreme specimens (the ones that make the warp-meshes)
-res.PC1.min.h.n <- wrap.PCA.r.n$pc.shapes[[1]] 
-res.PC1.max.h.n <- wrap.PCA.r.n$pc.shapes[[2]]
+res.PC1.min.h.n <- wrap.PCA.r.n$pc.shapes$PC1min 
+res.PC1.max.h.n <- wrap.PCA.r.n$pc.shapes$PC1max
 ```
 
 ### Export residual no Notomys heatmaps
@@ -599,9 +602,9 @@ legend("bottomleft", "Dorsal view of J", bty = "n", inset = c(0.2, 0.05))
 
 # Make gradient legend
 legend_image <- as.raster(matrix(heat.colors(20), ncol = 1))
-rasterImage(legend_image, 443, 150, 465, 215)
-text(365, 208, "High variation", col = "dark grey", cex = 1)
-text(413, 162, "Low", col = "dark grey", cex = 1)
+rasterImage(legend_image, 443, 150, 465, 245)
+text(365, 235, "High variation", col = "dark grey", cex = 1)
+text(413, 165, "Low", col = "dark grey", cex = 1)
 
 dev.off()
 ```
