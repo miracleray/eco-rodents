@@ -35,7 +35,7 @@ load(file = "../Data/Processed/03-main-data.rda")
 load(file = "../Data/Processed/03-tree-data.rda")
 load(file = "../Data/Processed/03-graphing-vectors.rda")
 load(file = "../Data/Processed/04-PCA.rda")
-load(file = "../Data/Processed/05-residual-data.rda")
+load(file = "../Data/Processed/04-residual-data.rda")
 ```
 
 ## 1) Prepare heatmaps
@@ -71,33 +71,39 @@ PC1.var.r.n2 <- variation.range(gpagen.shape.no, return.ID = FALSE, axis = 2, or
 wrap.PCA.r.n2 <- plotTangentSpace(residuals.no, verbose = FALSE)
 
 # Select extreme specimens (the ones that make the warp-meshes)
-res.PC1.min.h.n2 <- wrap.PCA.r.n2$pc.shapes[[3]] 
-res.PC1.max.h.n2 <- wrap.PCA.r.n2$pc.shapes[[4]]
+res.PC2.min.h.n2 <- wrap.PCA.r.n2$pc.shapes$PC2min
+res.PC2.max.h.n2 <- wrap.PCA.r.n2$pc.shapes$PC2max
+
+# Calculate distances between shapes to ensure correct point color
+min.coords.n2 <- cbind(res.mean.no, res.PC2.min.h.n2)
+min.dist.n2 <- apply(min.coords.n2, 1, function(x) dist(matrix(x, nrow = 2, byrow = TRUE)))
+max.coords.n2 <- cbind(res.mean.no, res.PC2.max.h.n2)
+max.dist.n2 <- apply(max.coords.n2, 1, function(x) dist(matrix(x, nrow = 2, byrow = TRUE)))
 ```
 
 ### Export residual no Notomys heatmaps
 ```{r}
 # Lateral view of mean to smallest
 open3d(windowRect = c(0, 0, 600, 600))
-procrustes.var.plot(res.mean.no, res.PC1.min.h.n2, col = heat.colors, col.val = PC1.var.r.n2[, "radius"])
+procrustes.var.plot(res.mean.no, res.PC1.min.h.n2, col = heat.colors, col.val = min.dist.n2)
 view3d(phi = 90)
 rgl.snapshot("../Data/Processed/Heatmaps/NO2_mean-sm_lat.png")
 
 # Lateral view of mean to biggest
 open3d(windowRect = c(0, 0, 600, 600))
-procrustes.var.plot(res.mean.no, res.PC1.max.h.n2, col = heat.colors, col.val = PC1.var.r.n2[, "radius"])
+procrustes.var.plot(res.mean.no, res.PC1.max.h.n2, col = heat.colors, col.val = min.dist.n2)
 view3d(phi = 90)
 rgl.snapshot("../Data/Processed/Heatmaps/NO2_mean-bg_lat.png")
 
 # Dorsal view of mean to smallest
 open3d(windowRect = c(0, 0, 600, 600))
-procrustes.var.plot(res.mean.no, res.PC1.min.h.n2, col = heat.colors, col.val = PC1.var.r.n2[, "radius"]) 
+procrustes.var.plot(res.mean.no, res.PC1.min.h.n2, col = heat.colors, col.val = max.dist.n2) 
 view3d(phi = 0)  # flip cranium
 rgl.snapshot("../Data/Processed/Heatmaps/NO2_mean-sm_dor.png")
 
 # Dorsal view of mean to biggest
 open3d(windowRect = c(0, 0, 600, 600))
-procrustes.var.plot(res.mean.no, res.PC1.max.h.n2, col = heat.colors, col.val = PC1.var.r.n2[, "radius"])
+procrustes.var.plot(res.mean.no, res.PC1.max.h.n2, col = heat.colors, col.val = max.dist.n2)
 view3d(phi = 0)  # flip cranium
 rgl.snapshot("../Data/Processed/Heatmaps/NO2_mean-bg_dor.png")
 ```
@@ -169,33 +175,39 @@ rgl.snapshot("../Data/Processed/Heatmaps/NC1_mean-bg_dor.png")
 PC1.var.r.NC2 <- variation.range(gpagen.shape.NC, return.ID = FALSE, axis = 2, ordination = ordination.r.NC, type = "spherical")
 
 # Select extreme specimens (the ones that make the warp-meshes)
-res.PC2.min.NC2 <- wrap.PCA.r.NC$pc.shapes[[4]]
-res.PC2.max.NC2 <- wrap.PCA.r.NC$pc.shapes[[3]]
+res.PC2.min.NC2 <- wrap.PCA.r.NC$pc.shapes$PC2min
+res.PC2.max.NC2 <- wrap.PCA.r.NC$pc.shapes$PC2max
+
+# Calculate distances between shapes to ensure correct point color
+min.coords.nc2 <- cbind(res.mean.NC, res.PC2.min.NC2)
+min.dist.nc2 <- apply(min.coords.n2, 1, function(x) dist(matrix(x, nrow = 2, byrow = TRUE)))
+max.coords.nc2 <- cbind(res.mean.NC, res.PC2.max.NC2)
+max.dist.nc2 <- apply(max.coords.nc2, 1, function(x) dist(matrix(x, nrow = 2, byrow = TRUE)))
 ```
 
 ### Export residual PC1 no Notomys nor carnivores heatmaps
 ```{r}
 # Lateral view of mean to smallest
 open3d(windowRect = c(0, 0, 600, 600))
-procrustes.var.plot(res.mean.NC, res.PC2.min.NC2, col = heat.colors, col.val = PC1.var.r.NC2[, "radius"])
+procrustes.var.plot(res.mean.NC, res.PC2.min.NC2, col = heat.colors, col.val = min.dist.nc2)
 view3d(phi = 90)
 rgl.snapshot("../Data/Processed/Heatmaps/NC2_mean-sm_lat.png")
 
 # Lateral view of mean to biggest
 open3d(windowRect = c(0, 0, 600, 600))
-procrustes.var.plot(res.mean.NC, res.PC2.max.NC2, col = heat.colors, col.val = PC1.var.r.NC2[, "radius"])
+procrustes.var.plot(res.mean.NC, res.PC2.max.NC2, col = heat.colors, col.val = min.dist.nc2)
 view3d(phi = 90)
 rgl.snapshot("../Data/Processed/Heatmaps/NC2_mean-bg_lat.png")
 
 # Dorsal view of mean to smallest
 open3d(windowRect = c(0, 0, 600, 600))
-procrustes.var.plot(res.mean.NC, res.PC2.min.NC2, col = heat.colors, col.val = PC1.var.r.NC2[, "radius"]) 
+procrustes.var.plot(res.mean.NC, res.PC2.min.NC2, col = heat.colors, col.val = max.dist.nc2) 
 view3d(phi = 0)  # flip cranium
 rgl.snapshot("../Data/Processed/Heatmaps/NC2_mean-sm_dor.png")
 
 # Dorsal view of mean to biggest
 open3d(windowRect = c(0, 0, 600, 600))
-procrustes.var.plot(res.mean.NC, res.PC2.max.NC2, col = heat.colors, col.val = PC1.var.r.NC2[, "radius"])
+procrustes.var.plot(res.mean.NC, res.PC2.max.NC2, col = heat.colors, col.val = max.dist.nc2)
 view3d(phi = 0)  # flip cranium
 rgl.snapshot("../Data/Processed/Heatmaps/NC2_mean-bg_dor.png")
 ```
@@ -323,9 +335,9 @@ legend("bottomleft", "Dorsal view of J", bty = "n", inset = c(0.2, 0.05))
 
 # Make gradient legend
 legend_image <- as.raster(matrix(heat.colors(20), ncol = 1))
-rasterImage(legend_image, 443, 150, 465, 215)
-text(365, 208, "High variation", col = "dark grey", cex = 1)
-text(413, 162, "Low", col = "dark grey", cex = 1)
+rasterImage(legend_image, 443, 150, 465, 245)
+text(365, 235, "High variation", col = "dark grey", cex = 1)
+text(413, 165, "Low", col = "dark grey", cex = 1)
 
 dev.off()
 ```
