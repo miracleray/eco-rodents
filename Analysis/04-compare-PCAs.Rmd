@@ -198,7 +198,7 @@ text(-0.002, part.coords[2] - 0.003, "shape residual (locomotion and diet)")
 # D) Plot of shape reisiduals PCA without Notomys - genus colors
 par(mar = c(4.5, 4.5, 2, 1))
 plot(x = wrap.PCA.r.n$pc.scores[, 1],  
-                 y = -wrap.PCA.r.n$pc.scores[, 2],  # flip for consistency
+                 y = wrap.PCA.r.n$pc.scores[, 2],  # no flip for consistency
                  xlab = PCx.lab.n, 
                  ylab = PCy.lab.n,
                  asp = TRUE,
@@ -241,11 +241,18 @@ man.pc13$statistic
 man.pc13$signif
 ```
 
-### Correlation of PC1s
+### Correlation of residual PC1 and full shape PC2
 ```{r}
-cor.pc1 <- cor(mean.PCA$pc.scores[, 1], -res.PCA$pc.scores[, 1])
+cor.pc1 <- cor(mean.PCA$pc.scores[, 2], -res.PCA$pc.scores[, 1])
 cor.pc1
 ```
+
+### Correlation of full shape PC1 and centroid size
+```{r}
+cor.size <- cor(-mean.PCA$pc.scores[, 1], info.means$MeanCsize)
+cor.size
+```
+
 
 ## 3) Export skreeplots for PC importance scores for 3 separate datasets
 Set up 3 datasets for screeplots
