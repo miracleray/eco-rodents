@@ -243,7 +243,7 @@ pdf("../Data/Results/SFigure2_NOt_Heatmap_Residuals.pdf")
 mat <- matrix(c(1:12), 4, 3, byrow = FALSE)  # 12 plots, 4 rows, 3 columns
 layout(mat, widths = rep(1, dim(mat)[2]), heights = rep(0.5, dim(mat)[1])) 
 
-## PC1 Residuals -- without Notomys
+## PC2 Residuals -- without Notomys
 # 1) Mean to Small, residuals PC2, lateral view - without Notomys
 par(mar = c(0, 0, 0, 0))
 plot(c(0, dim(resid.sm.lat.n2)[2]), c(0, dim(resid.sm.lat.n2)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
