@@ -275,3 +275,13 @@ globalIntegration(mean.shapes, ShowPlot = TRUE)
 
 dev.off()
 ```
+
+Test whether rodent skull is integrated as a whole -- residual shapes
+```{r}
+# Set up for export
+setEPS()
+postscript("../Data/Results/SFigure4_GlobalInt_Res.eps")
+globalIntegration(residuals, ShowPlot = TRUE)
+
+dev.off()
+```
