@@ -265,23 +265,24 @@ write.table(mantel.full, "../Data/Results/Table1A_MantelTest_Full.csv", sep = ",
 write.table(mantel.res, "../Data/Results/Table1B_MantelTest_Res.csv", sep = ",", col.names = NA)
 ```
 
-### Whole integration test - Supplementary Figure 3
+### Run global integration tests and make Supplementary Figure 3
 Test whether rodent skull is integrated as a whole
 ```{r}
-# Set up for export
-setEPS()
-postscript("../Data/Results/SFigure3_GlobalIntegration.eps")
+pdf("../Data/Results/SFigure3_GItests.pdf")
+mat <- matrix(c(1:2), 1, 2, byrow = TRUE)  # 2 plots, 1 rows, 2 columns
+layout(mat, widths = rep(1, dim(mat)[2]), heights = rep(0.5, dim(mat)[1]))   
+
+# A) Full shape test
+par(mar = c(4.5, 4.5, 2, 1))
 globalIntegration(mean.shapes, ShowPlot = TRUE)
+legend("bottomleft", "A", cex = 1.5, bty = 'n', inset = c(-0.15, 0))
+legend("bottomleft", "full shape", cex = 1, bty = 'n', inset = c(0, 0.012))
 
-dev.off()
-```
-
-Test whether rodent skull is integrated as a whole -- residual shapes
-```{r}
-# Set up for export
-setEPS()
-postscript("../Data/Results/SFigure4_GlobalInt_Res.eps")
+# B) Residual test
+par(mar = c(4.5, 4.5, 2, 1))
 globalIntegration(residuals, ShowPlot = TRUE)
+legend("bottomleft", "B", cex = 1.5, bty = 'n', inset = c(-0.15, 0))
+legend("bottomleft", "shape residual", cex = 1, bty = 'n', inset = c(0, 0.012))
 
 dev.off()
 ```
