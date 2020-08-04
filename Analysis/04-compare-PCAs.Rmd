@@ -154,8 +154,8 @@ text(-0.083, 0.097, "A", cex = 1.5)
 text(0.02, 0.094, "full shape dataset, with allometry")
 # Subtitle options
 #text(-0.023, 0.08, "(Chapter 3, Fig. 3.4B)", cex = 0.8)  # for PhD thesis
-text(-0.02, 0.08, expression(paste("(Marcy et al. ", italic("in review"), ")")), cex = 0.8)  # first submission
-#text(-0.029, 0.08, expression(paste("(Marcy ", italic("et al. "), "2020)")), cex = 0.8)  # once Chapter 3 is published
+#text(0, 0.08, expression(paste("(Marcy et al. ", italic("in press"), ")")), cex = 0.8)  # first submission
+text(-0.029, 0.08, expression(paste("(Marcy ", italic("et al. "), "2020)")), cex = 0.8)  # once Chapter 3 is published
 
 # B) Plot of shape residuals PCA - genus colors
 par(mar = c(4.5, 4.5, 2, 1))
