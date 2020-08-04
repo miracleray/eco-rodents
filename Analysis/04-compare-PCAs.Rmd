@@ -131,7 +131,7 @@ Finally, we compare the full shape PCA to the shape residuals PCAs. All PCAs are
 part.coords <- c(-0.107, 0.098)  # formatting parameters for B, C, D locations
 
 setEPS()
-postscript("../Data/Results/Figure1_PCAs.eps")
+postscript("../Data/Results/Figure1_PCAs_d.eps")
 mat <- matrix(c(1:4), 2, 2, byrow = TRUE)  # 4 plots, 2 rows, 2 columns
 layout(mat, widths = rep(1, dim(mat)[2]), heights = rep(0.5, dim(mat)[1]))   
 
@@ -171,7 +171,6 @@ plot(x = res.PCA$pc.scores[, 1],  # no flip for consistency
                  cex = 1.5,
                  cex.axis = 1.1, 
                  cex.lab = 1.3)
-legend("bottomleft", legend = genera.phylo.full, col = col.phylo, pch = 16, pt.bg = col.unique.spp, cex = 0.8, pt.cex = 0.85, bty = "n", text.font = 3)
 text(part.coords[1], part.coords[2], "B", cex = 1.5)
 text(-0.016, part.coords[2] - 0.003, "shape residual dataset (genera)")
 
@@ -209,6 +208,7 @@ plot(x = wrap.PCA.r.n$pc.scores[, 1],
                  cex = 1.5,
                  cex.axis = 1.1, 
                  cex.lab = 1.3)
+legend("bottomleft", legend = genera.phylo.full, col = col.phylo, pch = 16, pt.bg = col.unique.spp, cex = 0.8, pt.cex = 0.85, bty = "n", text.font = 3)
 text(part.coords[1] - 0.005, part.coords[2], "D", cex = 1.5)
 text(-0.013, part.coords[2] - 0.003, expression(paste("shape residual without ", italic("Notomys"))))
 
