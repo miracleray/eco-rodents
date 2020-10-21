@@ -1,9 +1,6 @@
 # Australian rodent cranial ecomorphology (Chapter 4 of Thesis) - data and code
 Code authors: Ariel E. Marcy, Dr Thomas Guillerme, Dr Vera Weisbecker
 
-To cite the paper, data, and/or code:
-> Coming soonish
-
 As of Oct 2020, this is still a work in progress. Relies on `R` (v. 3.6.1), `geomorph` (v. 3.2.1), and `landvR` (v. 0.4).
 
 *All scripts are in RMarkdown format (.Rmd), which can be opened in RStudio. There, you can edit and run code chunks as normal or use the Knit button to create HTML versions with both code and output. After cloning this repo, remember to either set your working directory to the eco-rodents folder on your computer or open an RStudio project from that folder.*
@@ -12,6 +9,9 @@ As of Oct 2020, this is still a work in progress. Relies on `R` (v. 3.6.1), `geo
 **Landmarking data:**
 * [MorphoSource Project 561](https://www.morphosource.org/Detail/ProjectDetail/Show/project_id/561) publically provides 3D meshes for all surface scanned crania landmarked in the study.
 * [Raw_Coordinates.csv](Data/Raw/Raw_Coord_Data.csv) provides the shape coordinates from landmarked 3D crania exported from Viewbox.
+
+If you use these data, please cite: 
+> Marcy, A. E., T. Guillerme, E. Sherratt, K. C. Rowe, M. J. Phillips, and V. Weisbecker. 2020. Australian Rodents Reveal Conserved Cranial Evolutionary Allometry across 10 Million Years of Murid Evolution. The American Naturalist. https://doi.org/10.1086/711398
 
 **Ecological metadata:**
 * [Trait data from Breed & Ford 2007](/Data/Processed/in_ex_traits.csv)
