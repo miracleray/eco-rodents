@@ -252,10 +252,14 @@ cor.pc2 <- cor(mean.PCA$pc.scores[, 1], res.PCA$pc.scores[, 2])
 cor.pc2
 ```
 
-### Correlation of full shape PC1 and centroid size
+### Correlation of full shape PC1 and residual PC2 to centroid size
 ```{r}
 cor.size <- cor(-mean.PCA$pc.scores[, 1], info.means$MeanCsize)
 cor.size
+
+# Correlation of PC2 to centroid size
+cor.pc2.size <- cor(res.PCA$pc.scores[, 2], info.means$MeanCsize)
+cor.pc2.size
 ```
 
 
