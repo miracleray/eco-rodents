@@ -243,6 +243,19 @@ man.pc13$statistic
 man.pc13$signif
 ```
 
+### Comaparison of morphospaces without allometric PC1
+```{r}
+# Make distance matrices
+d.full.wo1 <- dist(mean.PCA$pc.scores[, 2:dim(mean.PCA$pc.scores)[2]])
+d.res.woL <- dist(res.PCA$pc.scores[, 1:dim(res.PCA$pc.scores)[2]-1])
+
+# Mantel test for all PC scores
+man.pc.wo1 <- mantel(d.full.wo1, d.res.woL, method = "pearson", permutations = 1000) 
+man.pc.wo1$statistic
+man.pc.wo1$signif
+```
+
+
 ### Correlation of residual PC1 to full shape PC2 and vice versa
 ```{r}
 cor.pc1 <- cor(mean.PCA$pc.scores[, 2], -res.PCA$pc.scores[, 1])
@@ -250,6 +263,9 @@ cor.pc1
 
 cor.pc2 <- cor(mean.PCA$pc.scores[, 1], res.PCA$pc.scores[, 2])
 cor.pc2
+
+cor.pc2v3 <- cor(mean.PCA$pc.scores[, 3], res.PCA$pc.scores[, 2])
+cor.pc2v3
 ```
 
 ### Correlation of full shape PC1 and residual PC2 to centroid size
