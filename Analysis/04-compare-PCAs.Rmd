@@ -139,6 +139,11 @@ evo.allo.rs <- plotAllometry(fit.pgls, size = info.means$MeanCsize, method = "Re
 ### Export Figure 1 to pdf
 Finally, we compare the full shape PCA to the shape residuals PCAs. All PCAs are relevant to Figure 2 heatmaps.
 ```{r}
+# Set up Notomys abline
+not.index <- which(info.means$Genus.y == "Notomys")
+not.Reg <- evo.allo.rs$RegScore[not.index]
+not.Cs <- info.means$MeanCsize[not.index]
+
 # Set up for export and for multiple panels
 part.coords <- c(-0.117, 0.095)  # plotting parameters for A, C, D, E placement
 
@@ -183,6 +188,7 @@ text(4.8, 0.006, "B", cex = 1.5)
 text(5.1, 0.0058, "evolutionary allometry")
 abline(lm(-evo.allo.rs$RegScore ~ log(info.means$MeanCsize)), col = "dark grey", lwd = 1)  # common evolutionary allometry line
 #text(x = log(info.means$MeanCsize), y = -evo.allo.rs$RegScore, labels = info.means$Genus)  # labels genera on plot points
+abline(lm(-not.Reg ~ log(not.Cs)), col = "dark blue", lwd = 0.25)
 
 # C) FULL SHAPE PCA - genus colors
 par(mar = c(4.5, 4.5, 2, 1))
