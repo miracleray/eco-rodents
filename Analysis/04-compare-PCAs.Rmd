@@ -84,7 +84,7 @@ PCy.lab <- paste("PC2", " (", PCy.per, "%)", sep = "")
 
 ### C) Plot colors by diet and point shapes by locomotion
 ```{r}
-# Set up pallete for 5 diet types
+# Set up palette for 5 diet types
 warm <- sequential_hcl(5, "LaJolla")  
 col.carn <- warm[4]  # meat colored red
 col.frug <- warm[3]  # fruit colored orange
@@ -92,7 +92,7 @@ col.gran <- warm[2]  # grain colored gold
 col.foli <- sequential_hcl(5, "Greens 3")[2]  # green grass color for folivores
 col.omni <- sequential_hcl(5, "Grays")[3]  # gray for anything goes omnivores
 
-# Define color pallete for diets of mean specimens
+# Define color palette for diets of mean specimens
 col.diet.5 <- c(col.carn, col.frug, col.gran, col.foli, col.omni)
 col.diet.means <- PlotByGroup(info.means, "Feeding", col.diet.5)
 
@@ -166,7 +166,7 @@ plot(x = -mean.PCA$x[, 1],  # Flip for consistency
                  cex = 1.5,
                  cex.axis = 1.1, 
                  cex.lab = 1.3)
-text(part.coords[1], part.coords[2], "A", cex = 1.5)
+text(part.coords[1], part.coords[2], "a", cex = 1.5)
 text(-0.045, 0.092, "full shape dataset (ecology)")
 text(-0.078, 0.075, expression(paste("Marcy ", italic("et al. "), "2020")), cex = 0.8)
 
@@ -184,11 +184,10 @@ plot(x = log(info.means$MeanCsize),
      xlab = "Log centroid size", 
      ylab = "Shape  (Reg Score)",
      bty = "n")
-text(4.8, 0.006, "B", cex = 1.5)
+text(4.8, 0.006, "b", cex = 1.5)
 text(5.1, 0.0058, "evolutionary allometry")
 abline(lm(-evo.allo.rs$RegScore ~ log(info.means$MeanCsize)), col = "dark grey", lwd = 1)  # common evolutionary allometry line
 #text(x = log(info.means$MeanCsize), y = -evo.allo.rs$RegScore, labels = info.means$Genus)  # labels genera on plot points
-abline(lm(-not.Reg ~ log(not.Cs)), col = "dark blue", lwd = 0.25)
 
 # C) FULL SHAPE PCA - genus colors
 par(mar = c(4.5, 4.5, 2, 1))
@@ -204,7 +203,7 @@ plot(x = -mean.PCA$x[, 1],  # flip for consistency
                  cex = 1.5,
                  cex.axis = 1.1, 
                  cex.lab = 1.3)
-text(part.coords[1], part.coords[2], "C", cex = 1.5)
+text(part.coords[1], part.coords[2], "c", cex = 1.5)
 text(-0.046, 0.092, "full shape dataset (genera)")
 
 legend("bottomleft", legend = genera.phylo.full, col = col.phylo, pch = 16, cex = 0.68, pt.cex = 0.85, bty = "n", text.font = 3)
@@ -223,7 +222,7 @@ plot(x = res.PCA$x[, 1],  # no flip for consistency
                  cex = 1.5,
                  cex.axis = 1.1, 
                  cex.lab = 1.3)
-text(part.coords[1], part.coords[2], "D", cex = 1.5)
+text(part.coords[1], part.coords[2], "d", cex = 1.5)
 text(-0.035, 0.092, "shape residual dataset (genera)")
 
 # E) No Notomys shape reisiduals PCA - genus colors
@@ -240,7 +239,7 @@ plot(x = wrap.PCA.r.n$x[, 1],
                  cex = 1.5,
                  cex.axis = 1.1, 
                  cex.lab = 1.3)
-text(part.coords[1], part.coords[2], "E", cex = 1.5)
+text(part.coords[1], part.coords[2], "e", cex = 1.5)
 text(-0.034, 0.092, expression(paste("shape residual without ", italic("Notomys"))))
 
 # F) shape Residuals PCA - ecology
@@ -257,219 +256,10 @@ plot(x = res.PCA$x[, 1],  # no flip for consistency
                  cex = 1.5,
                  cex.axis = 1.1, 
                  cex.lab = 1.3)
-text(part.coords[1], part.coords[2], "F", cex = 1.5)
+text(part.coords[1], part.coords[2], "f", cex = 1.5)
 text(-0.053, 0.092, "shape residual (ecology)")
 
 dev.off()
-```
-### TEST
-```{r}
-part.coords <- c(-0.107, 0.098)  # formatting parameters for B, C, D locations
-
-#setEPS()
-#postscript("../Data/Results/Figure1_PCAs.eps")
-layout(matrix(1, 2,
-              3, 4,
-              5, 5), nr = 2, byrow = TRUE)  
-
-# A) Plot of allometry PCA - genus colors
-par(mar = c(4.5, 4.5, 2, 1))
-plot(x = -mean.PCA$x[, 1],  # Flip for consistency
-                 y = mean.PCA$x[, 2],  
-                 #xlab = PCx.lab.allo, 
-                 #ylab = PCy.lab.allo,
-                 asp = TRUE,
-                 xlim = c(-0.08, 0.12),
-                 ylim = c(-0.1, 0.1),
-                 col = alpha.col,
-                 pch = 16,
-                 bg = alpha.col,
-                 cex = 1.5,
-                 cex.axis = 1.1, 
-                 cex.lab = 1.3)
-text(-0.083, 0.097, "A", cex = 1.5)
-text(0.02, 0.094, "full shape dataset, with allometry")
-# Subtitle options
-#text(-0.023, 0.08, "(Chapter 3, Fig. 3.4B)", cex = 0.8)  # for PhD thesis
-#text(0, 0.08, expression(paste("(Marcy et al. ", italic("in press"), ")")), cex = 0.8)  # first submission
-text(-0.029, 0.08, expression(paste("(Marcy ", italic("et al. "), "2020)")), cex = 0.8)  # once Chapter 3 is published
-
-# B) Plot of shape residuals PCA - genus colors
-par(mar = c(4.5, 4.5, 2, 1))
-plot(x = res.PCA$x[, 1],  # no flip for consistency
-                 y = -res.PCA$x[, 2],  
-                 #xlab = PCx.lab, 
-                 #ylab = PCy.lab,
-                 xlim = c(-0.11, 0.09),
-                 ylim = c(-0.1, 0.1),
-                 col = alpha.col,
-                 pch = 16,
-                 bg = alpha.col,
-                 cex = 1.5,
-                 cex.axis = 1.1, 
-                 cex.lab = 1.3)
-text(part.coords[1], part.coords[2], "B", cex = 1.5)
-text(-0.016, part.coords[2] - 0.003, "shape residual dataset (genera)")
-
-# C) Plot of shape reisiduals PCA without Notomys - genus colors
-par(mar = c(4.5, 4.5, 2, 1))
-plot(x = wrap.PCA.r.n$x[, 1],  
-                 y = wrap.PCA.r.n$x[, 2],  # no flip for consistency
-                 #xlab = PCx.lab.n, 
-                 #ylab = PCy.lab.n,
-                 asp = TRUE,
-                 xlim = c(-0.11, 0.09),
-                 ylim = c(-0.1, 0.1),
-                 col = alpha.col.no, 
-                 pch = 16, 
-                 bg = alpha.col.no,
-                 cex = 1.5,
-                 cex.axis = 1.1, 
-                 cex.lab = 1.3)
-legend("bottomleft", legend = genera.phylo.full, col = col.phylo.full, pch = 16, cex = 0.8, pt.cex = 0.85, bty = "n", text.font = 3)
-text(part.coords[1] - 0.005, part.coords[2], "C", cex = 1.5)
-text(-0.013, part.coords[2] - 0.003, expression(paste("shape residual without ", italic("Notomys"))))
-
-# D) Plot of Shape Residuals PCA - diet colors
-par(mar = c(4.5, 4.5, 2, 1))
-plot(x = res.PCA$x[, 1],  # no flip for consistency
-                 y = -res.PCA$x[, 2],  
-                 #xlab = PCx.lab, 
-                 #ylab = PCy.lab,
-                 asp = TRUE,
-                 xlim = c(-0.11, 0.09),
-                 ylim = c(-0.1, 0.1),
-                 col = col.diet.means, 
-                 pch = pch.gld.means, 
-                 bg = col.diet.means,
-                 cex = 1.5,
-                 cex.axis = 1.1, 
-                 cex.lab = 1.3)
-legend("bottomleft", legend = c("Arboreal", "Hopping", "Terrestrial", "Semi-aquatic", "", "Carnivore", "Frugivore", "Granivore", "Folivore", "Omnivore"), col = c(rep("black", 4), "white", col.diet.5), border = NULL, pch = c(24:21, rep(16, 6)), cex = 0.85, bty = "n")
-text(part.coords[1] - 0.005, part.coords[2], "D", cex = 1.5)
-text(-0.002, part.coords[2] - 0.003, "shape residual (locomotion and diet)")
-
-# E) Evolutionary Allometry plot
-par(mar = c(4, 4, 1, 1))  # sets the margins
-plot(x = log(info.means$MeanCsize),
-     y = -evo.allo.rs$RegScore,
-     xlim = c(4.75, 6),
-     col = col.diet.means, 
-     pch = pch.gld.means, 
-     bg = col.diet.means,
-     xlab = "Log centroid size", 
-     ylab = "Shape",
-     bty = "n")
-text(4.75, 0.08, "E", cex = 1.5)
-#text(x = log(info.means$MeanCsize), y = -evo.allo.rs$RegScore, labels = info.means$Genus)  # labels points on plot
-#legend("bottomright", inset = c(0.026, 0), legend = gen.phylo.new, col = col.phylo.new, pch = pch.phylo.new, cex = 0.9, pt.cex = 0.95, ncol = 3, bty = "n", text.font = 3)
-
-abline(lm(-evo.allo.rs$RegScore ~ log(info.means$MeanCsize)), col = "dark grey", lwd = 1)  # plots evolutionary allometry line of best fit
-
-#dev.off()
-```
-
-## 2) Compare the full shape and shape residual datasets
-Mantel tests to compare full shape morphospace to the shape residual morphospace
-```{r}
-# Make distance matrices
-d.full.pca <- dist(mean.PCA$pc.scores)
-d.res.pca <- dist(res.PCA$pc.scores)
-
-# Mantel test for all PC scores
-man.all <- mantel(d.full.pca, d.res.pca, method = "pearson", permutations = 1000) 
-man.all$statistic
-man.all$signif
-```
-
-### Mantel tests to compare just the 3 most important PCs
-```{r}
-# Make distance matrices
-d.full.pc <- dist(mean.PCA$pc.scores[, 1:3])
-d.res.pc <- dist(res.PCA$pc.scores[, 1:3])
-
-# Mantel test for all PC scores
-man.pc13 <- mantel(d.full.pc, d.res.pc, method = "pearson", permutations = 1000) 
-man.pc13$statistic
-man.pc13$signif
-```
-
-### Comaparison of morphospaces without allometric PC1
-```{r}
-# Make distance matrices
-d.full.wo1 <- dist(mean.PCA$pc.scores[, 2:dim(mean.PCA$pc.scores)[2]])
-d.res.woL <- dist(res.PCA$pc.scores[, 1:dim(res.PCA$pc.scores)[2]-1])
-
-# Mantel test for all PC scores
-man.pc.wo1 <- mantel(d.full.wo1, d.res.woL, method = "pearson", permutations = 1000) 
-man.pc.wo1$statistic
-man.pc.wo1$signif
-```
-
-
-### Correlation of residual PC1 to full shape PC2 and vice versa
-```{r}
-cor.pc1 <- cor(mean.PCA$pc.scores[, 2], -res.PCA$pc.scores[, 1])
-cor.pc1
-
-cor.pc2 <- cor(mean.PCA$pc.scores[, 1], res.PCA$pc.scores[, 2])
-cor.pc2
-
-cor.pc2v3 <- cor(mean.PCA$pc.scores[, 3], res.PCA$pc.scores[, 2])
-cor.pc2v3
-```
-
-### Correlation of full shape PC1 and residual PC2 to centroid size
-```{r}
-cor.size <- cor(-mean.PCA$pc.scores[, 1], info.means$MeanCsize)
-cor.size
-
-# Correlation of PC2 to centroid size
-cor.pc2.size <- cor(res.PCA$pc.scores[, 2], info.means$MeanCsize)
-cor.pc2.size
-```
-
-
-## 3) Export skreeplots for PC importance scores for 3 separate datasets
-Set up 3 datasets for screeplots
-```{r}
-# Full shape
-full.PC.impt <- data.frame(PC = 1:length(mean.PCA$pc.summary$importance[2, ]), impt = mean.PCA$pc.summary$importance[2, ])
-
-# Shape residual
-res.PC.impt <- data.frame(PC = 1:length(res.PCA$pc.summary$importance[2, ]), impt = res.PCA$pc.summary$importance[2, ])
-
-# Shape residual without Notomys
-rnot.PC.impt <- data.frame(PC = 1:length(wrap.PCA.r.n$pc.summary$importance[2, ]), impt = wrap.PCA.r.n$pc.summary$importance[2, ])
-```
-
-### Create supplementary figure 1
-```{r}
-# Make simple multipanel figure
-pdf("../Data/Results/SFigure1_Screeplots.pdf")
-mat <- matrix(c(1:3), 3, 1, byrow = TRUE)  # 3 plots, 3 rows, 1 column
-layout(mat, widths = rep(0.5, dim(mat)[2]), heights = rep(0.25, dim(mat)[1])) 
-
-# 1) 
-barplot(full.PC.impt[, 2], ylim = c(0, 0.5))
-abline(h = 0.1, col = 'deeppink4')
-mtext("A) full shape dataset", 3, line = 1.5, cex = 0.9, adj = 0, col = "black")
-mtext("% of variance", 2, line = 2.5, cex = 0.83, col = "black")
-
-# 2)
-barplot(res.PC.impt[, 2], ylim = c(0, 0.5))
-abline(h = 0.1, col = 'deeppink4')
-mtext("B) shape residual dataset", 3, line = 1, cex = 0.9, adj = 0, col = "black")
-mtext("% of variance", 2, line = 2.5, cex = 0.83, col = "black")
-
-# 3)
-barplot(rnot.PC.impt[, 2], ylim = c(0, 0.5))
-abline(h = 0.1, col = 'deeppink4')
-mtext(expression(paste("C) shape residual dataset without ", italic(Notomys))), 3, line = 1, cex = 0.9, adj = 0, col = "black")
-mtext("% of variance", 2, line = 2.5, cex = 0.83, col = "black")
-mtext("Principal component", 1, line = 1, cex = 0.83, col = "black")
-
-#dev.off()
 ```
 
 ### Save intermediate data

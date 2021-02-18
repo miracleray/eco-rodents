@@ -32,6 +32,7 @@ library(geomorph)
 library(devtools)
 if(!require(dispRity)) install.packages("dispRity")  
 if(!require(landvR)) install_github("TGuillerme/landvR")  # needed for heatmaps
+library(landvR)
 library(png)  # needed to work with screenshots
 load(file = "../Data/Processed/03-main-data.rda")
 load(file = "../Data/Processed/03-tree-data.rda")
@@ -156,11 +157,11 @@ class(gpagen.shape) <- "gpagen"
 PC1.var <- variation.range(gpagen.shape, return.ID = FALSE, axis = 1, ordination = ordination, type = "spherical")
 
 # Wrap specimens on the tangent space
-wrap.PCA <- plotTangentSpace(mean.shapes, verbose = FALSE)
+wrap.PCA <- gm.prcomp(mean.shapes)
 
 # Select extremes (the hypotheticals that make the warp-meshes)
-allom.PC1.min.h <- wrap.PCA$pc.shapes[[2]]  # switched b/c axes are flipped
-allom.PC1.max.h <- wrap.PCA$pc.shapes[[1]]
+allom.PC1.min.h <- wrap.PCA$shapes[[1]]$max  # switched b/c axes are flipped
+allom.PC1.max.h <- wrap.PCA$shapes[[1]]$min
 ```
 
 ### Export the PC1 variation for with allometry shape change
@@ -214,11 +215,11 @@ class(gpagen.shape) <- "gpagen"
 PC1.var.r <- variation.range(gpagen.shape, return.ID = FALSE, axis = 1, ordination = ordination.r, type = "spherical")
 
 # Wrap specimens on the tangent space
-wrap.PCA.r <- plotTangentSpace(residuals, verbose = FALSE)
+wrap.PCA.r <- gm.prcomp(residuals)
 
 # Select extreme specimens (the ones that make the warp-meshes)
-res.PC1.min.h <- wrap.PCA.r$pc.shapes$PC1min
-res.PC1.max.h <- wrap.PCA.r$pc.shapes$PC1max
+res.PC1.min.h <- wrap.PCA.r$shapes[[1]]$min
+res.PC1.max.h <- wrap.PCA.r$shapes[[1]]$max
 ```
 
 ### Export the variation for shape residual change
@@ -255,8 +256,8 @@ Steps as above but for PC2; hypothetical shapes
 PC1.var.r2 <- variation.range(gpagen.shape, return.ID = FALSE, axis = 2, ordination = ordination.r, type = "spherical")
 
 # Select extreme specimens (the ones that make the warp-meshes)
-res.PC2.min.h <- wrap.PCA.r$pc.shapes$PC2max  # switch for consistency
-res.PC2.max.h <- wrap.PCA.r$pc.shapes$PC2min
+res.PC2.min.h <- wrap.PCA.r$shapes[[2]]$max  # switch for consistency
+res.PC2.max.h <- wrap.PCA.r$shapes[[2]]$min
 
 # Calculate distances between shapes to ensure correct point color
 min.coords <- cbind(res.mean, res.PC2.min.h)
@@ -319,11 +320,11 @@ class(gpagen.shape.no) <- "gpagen"
 PC1.var.r.n <- variation.range(gpagen.shape.no, return.ID = FALSE, axis = 1, ordination = ordination.r, type = "spherical")
 
 # Wrap specimens on the tangent space
-wrap.PCA.r.n <- plotTangentSpace(residuals.no, verbose = FALSE)
+wrap.PCA.r.n <- gm.prcomp(residuals.no)
 
 # Select extreme specimens (the ones that make the warp-meshes)
-res.PC1.min.h.n <- wrap.PCA.r.n$pc.shapes$PC1min 
-res.PC1.max.h.n <- wrap.PCA.r.n$pc.shapes$PC1max
+res.PC1.min.h.n <- wrap.PCA.r.n$shapes[[2]]$min 
+res.PC1.max.h.n <- wrap.PCA.r.n$shapes[[2]]$max
 ```
 
 ### Export residual no Notomys heatmaps
@@ -356,8 +357,8 @@ rgl.snapshot("../Data/Processed/Heatmaps/NOt_mean-bg_dor.png")
 ### Find no Notomys PC2 shapes 
 ```{r}
 # Select extreme specimens (the ones that make the warp-meshes)
-res.PC2.min.h.n2 <- wrap.PCA.r.n$pc.shapes$PC2min
-res.PC2.max.h.n2 <- wrap.PCA.r.n$pc.shapes$PC2max
+res.PC2.min.h.n2 <- wrap.PCA.r.n$shapes[[2]]$min
+res.PC2.max.h.n2 <- wrap.PCA.r.n$shapes[[2]]$max
 
 # Calculate distances between shapes to ensure correct point color
 min.coords.n2 <- cbind(res.mean.no, res.PC2.min.h.n2)
@@ -370,38 +371,38 @@ max.dist.n2 <- apply(max.coords.n2, 1, function(x) dist(matrix(x, nrow = 2, byro
 ```{r}
 # Lateral view of mean to smallest
 open3d(windowRect = c(0, 0, 600, 600))
-procrustes.var.plot(res.mean.no, res.PC1.min.h.n2, col = heat.colors, col.val = min.dist.n2)
+procrustes.var.plot(res.mean.no, res.PC2.min.h.n2, col = heat.colors, col.val = min.dist.n2)
 view3d(phi = 90)
 rgl.snapshot("../Data/Processed/Heatmaps/NO2_mean-sm_lat.png")
 
 # Lateral view of mean to biggest
 open3d(windowRect = c(0, 0, 600, 600))
-procrustes.var.plot(res.mean.no, res.PC1.max.h.n2, col = heat.colors, col.val = min.dist.n2)
+procrustes.var.plot(res.mean.no, res.PC2.max.h.n2, col = heat.colors, col.val = min.dist.n2)
 view3d(phi = 90)
 rgl.snapshot("../Data/Processed/Heatmaps/NO2_mean-bg_lat.png")
 
 # Dorsal view of mean to smallest
 open3d(windowRect = c(0, 0, 600, 600))
-procrustes.var.plot(res.mean.no, res.PC1.min.h.n2, col = heat.colors, col.val = max.dist.n2) 
+procrustes.var.plot(res.mean.no, res.PC2.min.h.n2, col = heat.colors, col.val = max.dist.n2) 
 view3d(phi = 0)  # flip cranium
 rgl.snapshot("../Data/Processed/Heatmaps/NO2_mean-sm_dor.png")
 
 # Dorsal view of mean to biggest
 open3d(windowRect = c(0, 0, 600, 600))
-procrustes.var.plot(res.mean.no, res.PC1.max.h.n2, col = heat.colors, col.val = max.dist.n2)
+procrustes.var.plot(res.mean.no, res.PC2.max.h.n2, col = heat.colors, col.val = max.dist.n2)
 view3d(phi = 0)  # flip cranium
 rgl.snapshot("../Data/Processed/Heatmaps/NO2_mean-bg_dor.png")
 ```
 
 ### Load in all heatmaps
 ```{r}
-# Remove whitespace from all heatmaps (requires ImageMagik installed on PC)
+# Remove white space from all heatmaps (requires ImageMagik installed on PC)
 system("mogrify ../Data/Processed/Heatmaps/*.png -trim ../Data/Processed/Heatmaps/*.png")
 ```
 
 ```{r}
 # Load in with allometry smallest to largest
-indiv.sm.lat <- readPNG("../Data/Processed/Heatmaps/IND_mean-sm_lat.png")
+indiv.sm.lat <- readPNG("../Data/Processed/Heatmaps/IND_mean-sm_lat.png") 
 indiv.big.lat <- readPNG("../Data/Processed/Heatmaps/IND_mean-bg_lat.png")
 indiv.sm.dor <- readPNG("../Data/Processed/Heatmaps/IND_mean-sm_dor.png")
 indiv.big.dor <- readPNG("../Data/Processed/Heatmaps/IND_mean-bg_dor.png")
@@ -445,7 +446,7 @@ resid.big.dor.n2 <- readPNG("../Data/Processed/Heatmaps/NO2_mean-bg_dor.png")
 
 ## 2) Make multi-panel Figure 2, heatmaps with allometry
 ```{r}
-# Set up muli-panel figure; lateral 
+# Set up multi-panel figure; lateral 
 pdf("../Data/Results/Figure2_Heatmap_Allometry.pdf")
 mat <- matrix(c(1:12), 4, 3, byrow = FALSE)  # 12 plots, 4 rows, 3 columns
 layout(mat, widths = rep(1, dim(mat)[2]), heights = rep(0.5, dim(mat)[1]))
@@ -455,7 +456,7 @@ layout(mat, widths = rep(1, dim(mat)[2]), heights = rep(0.5, dim(mat)[1]))
 par(mar = c(0, 0, 0, 0))  # sets the margins
 plot(c(0, dim(allom.sm.lat)[2]), c(0, dim(allom.sm.lat)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
 rasterImage(allom.sm.lat, 0, 0, dim(allom.sm.lat)[2], dim(allom.sm.lat)[1])
-text(0, dim(allom.sm.lat)[1]-10, "A", cex = 2)
+text(0, dim(allom.sm.lat)[1]-10, "a", cex = 2)
 legend("topright", inset = c(0.28, 0), legend = "Fitted Allometry", bty = "n", cex = 1.2)
 legend("bottomleft", legend = expression(paste("Mean to ", italic("P. delicatulus"), " fitted shape")), bty = "n", inset = c(0.03, 0.07))
 
@@ -463,29 +464,29 @@ legend("bottomleft", legend = expression(paste("Mean to ", italic("P. delicatulu
 par(mar = c(0, 0, 0, 0))
 plot(c(0, dim(allom.big.lat)[2]), c(0, dim(allom.big.lat)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
 rasterImage(allom.big.lat, 0, 0, dim(allom.big.lat)[2], dim(allom.big.lat)[1])
-text(0, dim(allom.big.lat)[1]-10, "B", cex = 2)
+text(0, dim(allom.big.lat)[1]-10, "b", cex = 2)
 legend("bottomleft", legend = expression(paste("Mean to ", italic("U. caudimaculatus"), " fitted shape")), bty = "n", inset = c(0.03, 0.07))
 
 # 3) Mean to Small, with Allometry, dorsal view
 par(mar = c(0, 0, 0, 0))  # sets the margins
 plot(c(0, dim(allom.big.dor)[2]), c(0, dim(allom.big.dor)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
 rasterImage(allom.sm.dor, 0, 0, dim(allom.big.dor)[2], dim(allom.big.dor)[1])
-text(0, dim(allom.big.dor)[1]-10, "C", cex = 2)
-legend("bottomleft", "Dorsal view of A", bty = "n", inset = c(0.2, 0.05))
+text(0, dim(allom.big.dor)[1]-10, "c", cex = 2)
+legend("bottomleft", "Dorsal view of a", bty = "n", inset = c(0.2, 0.05))
 
 # 4) Mean to Big, with allometry, dorsal view
 par(mar = c(0, 0, 0, 0))
 plot(c(0, dim(allom.big.dor)[2]), c(0, dim(allom.big.dor)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
 rasterImage(allom.big.dor, 0, 0, dim(allom.big.dor)[2], dim(allom.big.dor)[1])
-text(0, dim(allom.big.dor)[1]-10, "D", cex = 2)
-legend("bottomleft", "Dorsal view of B", bty = "n", inset = c(0.2, 0.05))
+text(0, dim(allom.big.dor)[1]-10, "d", cex = 2)
+legend("bottomleft", "Dorsal view of b", bty = "n", inset = c(0.2, 0.05))
 
 ## Individuals
 # 5) Mean to Small, with allometry, lateral view
 par(mar = c(0, 0, 0, 0))  # sets the margins
 plot(c(0, dim(indiv.sm.lat)[2]), c(0, dim(indiv.sm.lat)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
 rasterImage(indiv.sm.lat, 0, 0, dim(indiv.sm.lat)[2], dim(indiv.sm.lat)[1])
-text(0, dim(indiv.sm.lat)[1]-10, "E", cex = 2)
+text(0, dim(indiv.sm.lat)[1]-10, "e", cex = 2)
 legend("topleft", inset = c(.02, 0), legend = "Smallest/Largest Species", bty = "n", cex = 1.2)
 legend("bottomleft", legend = expression(paste("Mean to ", italic("P. delicatulus"))), bty = "n", inset = c(0.1, 0.07))
 
@@ -493,29 +494,29 @@ legend("bottomleft", legend = expression(paste("Mean to ", italic("P. delicatulu
 par(mar = c(0, 0, 0, 0))
 plot(c(0, dim(indiv.big.lat)[2]), c(0, dim(indiv.big.lat)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
 rasterImage(indiv.big.lat, 0, 0, dim(indiv.big.lat)[2], dim(indiv.big.lat)[1])
-text(0, dim(indiv.big.lat)[1]-10, "F", cex = 2)
+text(0, dim(indiv.big.lat)[1]-10, "f", cex = 2)
 legend("bottomleft", legend = expression(paste("Mean to ", italic("U. caudimaculatus"))), bty = "n", inset = c(0.1, 0.07))
 
 # 7) Mean to Small, with Allometry, dorsal view
 par(mar = c(0, 0, 0, 0))  # sets the margins
 plot(c(0, dim(indiv.big.dor)[2]), c(0, dim(indiv.big.dor)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
 rasterImage(indiv.sm.dor, 0, 0, dim(indiv.big.dor)[2], dim(indiv.big.dor)[1])
-text(0, dim(indiv.big.dor)[1]-10, "G", cex = 2)
-legend("bottomleft", "Dorsal view of E", bty = "n", inset = c(0.2, 0.05))
+text(0, dim(indiv.big.dor)[1]-10, "g", cex = 2)
+legend("bottomleft", "Dorsal view of e", bty = "n", inset = c(0.2, 0.05))
 
 # 8) Mean to Big, with allometry, dorsal view
 par(mar = c(0, 0, 0, 0))
 plot(c(0, dim(indiv.big.dor)[2]), c(0, dim(indiv.big.dor)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
 rasterImage(indiv.big.dor, 0, 0, dim(indiv.big.dor)[2], dim(indiv.big.dor)[1])
-text(0, dim(indiv.big.dor)[1]-10, "H", cex = 2)
-legend("bottomleft", "Dorsal view of F", bty = "n", inset = c(0.2, 0.05))
+text(0, dim(indiv.big.dor)[1]-10, "h", cex = 2)
+legend("bottomleft", "Dorsal view of f", bty = "n", inset = c(0.2, 0.05))
 
 ## PC1 
 # 9) Mean to Small, PCA allometry, lateral view
 par(mar = c(0, 0, 0, 0))  # sets the margins
 plot(c(0, dim(allPC.sm.lat)[2]), c(0, dim(allPC.sm.lat)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
 rasterImage(allPC.sm.lat, 0, 0, dim(allPC.sm.lat)[2], dim(allPC.sm.lat)[1])
-text(0, dim(allPC.sm.lat)[1]-10, "I", cex = 2)
+text(0, dim(allPC.sm.lat)[1]-10, "i", cex = 2)
 legend("topright", inset = c(0.16, 0), legend = "Principal Component 1", bty = "n", cex = 1.2)
 legend("bottomleft", "Mean to hypothetical minimum", bty = "n", inset = c(0.1, 0.07))
 
@@ -523,22 +524,22 @@ legend("bottomleft", "Mean to hypothetical minimum", bty = "n", inset = c(0.1, 0
 par(mar = c(0, 0, 0, 0))
 plot(c(0, dim(allPC.big.lat)[2]), c(0, dim(allPC.big.lat)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
 rasterImage(allPC.big.lat, 0, 0, dim(allPC.big.lat)[2], dim(allPC.big.lat)[1])
-text(0, dim(allPC.big.lat)[1]-10, "J", cex = 2)
+text(0, dim(allPC.big.lat)[1]-10, "j", cex = 2)
 legend("bottomleft", "Mean to hypothetical maximum", bty = "n", inset = c(0.1, 0.07))
 
 # 11) Mean to Small, PCA allometry, dorsal view
 par(mar = c(0, 0, 0, 0))  # sets the margins
 plot(c(0, dim(allPC.big.dor)[2]), c(0, dim(allPC.big.dor)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
 rasterImage(allPC.sm.dor, 0, 0, dim(allPC.big.dor)[2], dim(allPC.big.dor)[1])
-text(0, dim(allPC.big.dor)[1]-10, "K", cex = 2)
-legend("bottomleft", "Dorsal view of I", bty = "n", inset = c(0.2, 0.05))
+text(0, dim(allPC.big.dor)[1]-10, "k", cex = 2)
+legend("bottomleft", "Dorsal view of i", bty = "n", inset = c(0.2, 0.05))
 
 # 12) Mean to Big, PCA allometry: dorsal view
 par(mar = c(0, 0, 0, 0))
 plot(c(0, dim(allPC.big.dor)[2]), c(0, dim(allPC.big.dor)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
 rasterImage(allPC.big.dor, 0, 0, dim(allPC.big.dor)[2], dim(allPC.big.dor)[1])
-text(0, dim(allPC.big.dor)[1]-10, "L", cex = 2)
-legend("bottomleft", "Dorsal view of J", bty = "n", inset = c(0.2, 0.05))
+text(0, dim(allPC.big.dor)[1]-10, "l", cex = 2)
+legend("bottomleft", "Dorsal view of j", bty = "n", inset = c(0.2, 0.05))
 
 # Make gradient legend
 legend_image <- as.raster(matrix(heat.colors(20), ncol = 1))
@@ -561,7 +562,7 @@ layout(mat, widths = rep(1, dim(mat)[2]), heights = rep(0.5, dim(mat)[1]))
 par(mar = c(0, 0, 0, 0))
 plot(c(0, dim(resid.sm.lat)[2]), c(0, dim(resid.sm.lat)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
 rasterImage(resid.sm.lat, 0, 0, dim(resid.sm.lat)[2], dim(resid.sm.lat)[1])
-text(0, dim(resid.sm.lat)[1] - 10, "A", cex = 2)
+text(0, dim(resid.sm.lat)[1] - 10, "a", cex = 2)
 legend("topright", inset = c(0.3, 0), legend = "PC1 shape residual", bty = "n", cex = 1.2)
 legend("bottomleft", "Mean to hypothetical minimum", bty = "n", inset = c(0.1, 0.07))
 
@@ -569,29 +570,29 @@ legend("bottomleft", "Mean to hypothetical minimum", bty = "n", inset = c(0.1, 0
 par(mar = c(0, 0, 0, 0))
 plot(c(0, dim(resid.big.lat)[2]), c(0, dim(resid.big.lat)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
 rasterImage(resid.big.lat, 0, 0, dim(resid.big.lat)[2], dim(resid.big.lat)[1])
-text(0, dim(resid.big.lat)[1]-10, "B", cex = 2)
+text(0, dim(resid.big.lat)[1]-10, "b", cex = 2)
 legend("bottomleft", "Mean to hypothetical maximum", bty = "n", inset = c(0.1, 0.07))
 
 # 3) Mean to Small, residuals PC1, dorsal view
 par(mar = c(0, 0, 0, 0))
 plot(c(0, dim(resid.big.dor)[2]), c(0, dim(resid.big.dor)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
 rasterImage(resid.sm.dor, 0, 0, dim(resid.big.dor)[2], dim(resid.big.dor)[1])
-text(0, dim(resid.big.dor)[1]-10, "C", cex = 2)
-legend("bottomleft", "Dorsal view of A", bty = "n", inset = c(0.2, 0.05))
+text(0, dim(resid.big.dor)[1]-10, "c", cex = 2)
+legend("bottomleft", "Dorsal view of a", bty = "n", inset = c(0.2, 0.05))
 
 # 4) Mean to Big, residuals PC1, dorsal view
 par(mar = c(0, 0, 0, 0))
 plot(c(0, dim(resid.big.dor)[2]), c(0, dim(resid.big.dor)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
 rasterImage(resid.big.dor, 0, 0, dim(resid.big.dor)[2], dim(resid.big.dor)[1])
-text(0, dim(resid.big.dor)[1]-10, "D", cex = 2)
-legend("bottomleft", "Dorsal view of B", bty = "n", inset = c(0.2, 0.05))
+text(0, dim(resid.big.dor)[1]-10, "d", cex = 2)
+legend("bottomleft", "Dorsal view of b", bty = "n", inset = c(0.2, 0.05))
 
 ## PC2 Residuals
 # 5) Mean to Small, residuals PC2, lateral view
 par(mar = c(0, 0, 0, 0))
 plot(c(0, dim(resP2.sm.lat)[2]), c(0, dim(resP2.sm.lat)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
 rasterImage(resP2.sm.lat, 0, 0, dim(resP2.sm.lat)[2], dim(resP2.sm.lat)[1])
-text(0, dim(resP2.sm.lat)[1]-10, "E", cex = 2)
+text(0, dim(resP2.sm.lat)[1]-10, "e", cex = 2)
 legend("topright", inset = c(0.3, 0), legend = "PC2 shape residual", bty = "n", cex = 1.2)
 legend("bottomleft", "Mean to PC2 hypothetical minimum", bty = "n", inset = c(0.07, 0.07))
 
@@ -599,29 +600,29 @@ legend("bottomleft", "Mean to PC2 hypothetical minimum", bty = "n", inset = c(0.
 par(mar = c(0, 0, 0, 0))
 plot(c(0, dim(resP2.big.lat)[2]), c(0, dim(resP2.big.lat)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
 rasterImage(resP2.big.lat, 0, 0, dim(resP2.big.lat)[2], dim(resP2.big.lat)[1])
-text(0, dim(resP2.big.lat)[1]-10, "F", cex = 2)
+text(0, dim(resP2.big.lat)[1]-10, "f", cex = 2)
 legend("bottomleft", "Mean to PC2 hypothetical maximum", bty = "n", inset = c(0.07, 0.07))
 
 # 7) Mean to Small, residuals PC2, dorsal view
 par(mar = c(0, 0, 0, 0))
 plot(c(0, dim(resP2.big.dor)[2]), c(0, dim(resP2.big.dor)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
 rasterImage(resP2.sm.dor, 0, 0, dim(resP2.big.dor)[2], dim(resP2.big.dor)[1])
-text(0, dim(resP2.big.dor)[1]-10, "G", cex = 2)
-legend("bottomleft", "Dorsal view of E", bty = "n", inset = c(0.2, 0.05))
+text(0, dim(resP2.big.dor)[1]-10, "g", cex = 2)
+legend("bottomleft", "Dorsal view of e", bty = "n", inset = c(0.2, 0.05))
 
 # 8) Mean to Big, residuals PC2, dorsal view
 par(mar = c(0, 0, 0, 0))
 plot(c(0, dim(resP2.big.dor)[2]), c(0, dim(resP2.big.dor)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
 rasterImage(resP2.big.dor, 0, 0, dim(resP2.big.dor)[2], dim(resP2.big.dor)[1])
-text(0, dim(resP2.big.dor)[1]-10, "H", cex = 2)
-legend("bottomleft", "Dorsal view of F", bty = "n", inset = c(0.2, 0.05))
+text(0, dim(resP2.big.dor)[1]-10, "h", cex = 2)
+legend("bottomleft", "Dorsal view of f", bty = "n", inset = c(0.2, 0.05))
 
 ## PC2 Residuals -- without Notomys
 # 9) Mean to Small, residuals PC2, lateral view - without Notomys
 par(mar = c(0, 0, 0, 0))
 plot(c(0, dim(resid.sm.lat.n2)[2]), c(0, dim(resid.sm.lat.n2)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
 rasterImage(resid.sm.lat.n2, 0, 0, dim(resid.sm.lat.n2)[2], dim(resid.sm.lat.n2)[1])
-text(0, dim(resid.sm.lat.n2)[1]-10, "I", cex = 2)
+text(0, dim(resid.sm.lat.n2)[1]-10, "i", cex = 2)
 legend("topright", inset = c(0.12, 0), legend = expression(paste("PC2 residual (no ", italic("Notomys"), ")")), bty = "n", cex = 1.2)
 legend("bottomleft", "Mean to hypothetical minimum", bty = "n", inset = c(0.1, 0.07))
 
@@ -629,22 +630,22 @@ legend("bottomleft", "Mean to hypothetical minimum", bty = "n", inset = c(0.1, 0
 par(mar = c(0, 0, 0, 0))
 plot(c(0, dim(resid.big.lat.n2)[2]), c(0, dim(resid.big.lat.n2)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
 rasterImage(resid.big.lat.n2, 0, 0, dim(resid.big.lat.n2)[2], dim(resid.big.lat.n2)[1])
-text(0, dim(resid.big.lat.n2)[1]-10, "J", cex = 2)
+text(0, dim(resid.big.lat.n2)[1]-10, "j", cex = 2)
 legend("bottomleft", "Mean to hypothetical maximum", bty = "n", inset = c(0.1, 0.07))
 
 # 11) Mean to Small, residuals PC2, dorsal view - without Notomys
 par(mar = c(0, 0, 0, 0))
 plot(c(0, dim(resid.big.dor.n2)[2]), c(0, dim(resid.big.dor.n2)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
 rasterImage(resid.sm.dor.n2, 0, 0, dim(resid.big.dor.n2)[2], dim(resid.big.dor.n2)[1])
-text(0, dim(resid.big.dor.n2)[1]-10, "K", cex = 2)
-legend("bottomleft", "Dorsal view of I", bty = "n", inset = c(0.2, 0.05))
+text(0, dim(resid.big.dor.n2)[1]-10, "k", cex = 2)
+legend("bottomleft", "Dorsal view of i", bty = "n", inset = c(0.2, 0.05))
 
 # 12) Mean to Big, residuals PC2, dorsal view - without Notomys
 par(mar = c(0, 0, 0, 0))
 plot(c(0, dim(resid.big.dor.n2)[2]), c(0, dim(resid.big.dor.n2)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
 rasterImage(resid.big.dor.n2, 0, 0, dim(resid.big.dor.n2)[2], dim(resid.big.dor.n2)[1])
-text(0, dim(resid.big.dor.n2)[1]-10, "L", cex = 2)
-legend("bottomleft", "Dorsal view of J", bty = "n", inset = c(0.2, 0.05))
+text(0, dim(resid.big.dor.n2)[1]-10, "l", cex = 2)
+legend("bottomleft", "Dorsal view of j", bty = "n", inset = c(0.2, 0.05))
 
 # Make gradient legend
 legend_image <- as.raster(matrix(heat.colors(20), ncol = 1))
