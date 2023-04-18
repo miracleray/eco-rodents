@@ -45,8 +45,8 @@ This script is dominated by the code needed to generate, export, and clean the h
 ### Make heatmaps involving the smallest and largest native species 
 We specify native species because technically *Mus musculus* has smallest centroid size but since it is not native, it is less relevant than *P. delicatulus*, which is only slightly larger than it.
 ```{r}
-# Find mean configuration - i.e. mean shape in dataset
-mean.config <- (select.procrustes(mean.shapes, selector = mean))[[1]]
+# Find mean configuration - i.e. mean shape in dataset (VW - had to specify that "mean" is a base R function)
+mean.config <- (select.procrustes(mean.shapes, selector = base::mean))[[1]]
 
 # Measure spherical coordinates differences from the mean for each specimen for each landmark
 diff.mean <- coordinates.difference(coordinates = mean.shapes, reference = mean.config, type = "spherical")
@@ -60,7 +60,7 @@ smallest.mean <- mean.shapes[, , sm.index]
 biggest.mean <- mean.shapes[, , big.index]
 ```
 
-### Export the heatmaps for individual allometric shape changes
+### Export the heatmaps for individual allometric shape changes; create "Heatmaps" folder here when running first
 Export images for plots
 ```{r}
 # Lateral view of mean to smallest
@@ -96,7 +96,7 @@ allom.fit <- procD.lm(mean.shapes ~ log(info.means$MeanCsize))
 fit.shapes <- arrayspecs(allom.fit$fitted, 325, 3)
 
 # Find mean configuration - i.e. mean shape in dataset
-allom.mean <- (select.procrustes(fit.shapes, selector = mean))[[1]]
+allom.mean <- (select.procrustes(fit.shapes, selector = base::mean))[[1]]
 
 # Measure spherical coordinates differences from the mean for each specimen for each landmark
 allom.diff.mean <- coordinates.difference(coordinates = fit.shapes, reference = allom.mean, type = "spherical")
@@ -138,7 +138,7 @@ rgl.snapshot("../Data/Processed/Heatmaps/ALL_mean-bg_dor.png")
 Using hypothetical shapes for min and max
 ```{r}
 # Find mean configuration - i.e. mean shape in dataset
-PC.allom.mean <- (select.procrustes(mean.shapes, selector = mean))[[1]]
+PC.allom.mean <- (select.procrustes(mean.shapes, selector = base::mean))[[1]]
 
 # Measure spherical coordinates differences from the mean for each specimen for each landmark
 PC.allom.diff.mean <- coordinates.difference(coordinates = mean.shapes, reference = PC.allom.mean, type = "spherical")
@@ -196,7 +196,7 @@ rgl.snapshot("../Data/Processed/Heatmaps/PCA_mean-bg_dor.png")
 Steps as above.
 ```{r}
 # Find mean configuration - i.e. mean shape in dataset
-res.mean <- (select.procrustes(residuals, selector = mean))[[1]]
+res.mean <- (select.procrustes(residuals, selector = base::mean))[[1]]
 
 # Measure spherical coordinates differences from the mean for each specimen for each landmark
 res.diff.mean <- coordinates.difference(coordinates = residuals, reference = res.mean, type = "spherical")
@@ -301,7 +301,7 @@ residuals.no <- residuals[, , -index.not]
 info.means.no <- info.means[-index.not, ]
 
 # Find new mean
-res.mean.no <- (select.procrustes(residuals.no, selector = mean))[[1]]
+res.mean.no <- (select.procrustes(residuals.no, selector = base::mean))[[1]]
 
 # Measure spherical coordinates differences from the mean for each specimen for each landmark
 res.diff.mean.no <- coordinates.difference(coordinates = residuals.no, reference = res.mean.no, type = "spherical")
