@@ -35,7 +35,11 @@ phylo.matrix <- cophenetic(aus.tree) / 2  # divide by two to convert distance to
 
 # Morphological distance matrix
 mean.gpa <- gpagen(mean.shapes, ProcD = TRUE)  # use mean shapes of species
-morph.matrix <- as.matrix(mean.gpa$procD)  # ProcD = Procrustes distance
+#morph.matrix <- as.matrix(mean.gpa$procD)  # ProcD = Procrustes distance
+#mean.gpa$procD isn't created on some computers because of memory allocation issues. As per the instructions in geomorph, instead creating the distance matrix using the dist function. Note that this requires taking the coordinates into a 2D array, not mentioned in instructions. 
+morph.matrix <- dist(two.d.array(mean.gpa$coords), method="euclidean")
+
+morph.matrix <- as.matrix(morph.matrix)
 
 # Make names shorter
 long.names <- colnames(phylo.matrix)
@@ -87,7 +91,14 @@ master.table <- merge(phylo.table, morph.table[, 3:4], by = "pair")
 ```{r}
 # Morphological distance matrix for residuals
 mean.gpa.res <- gpagen(residuals, ProcD = TRUE)
-morph.matrix.res <- as.matrix(mean.gpa.res$procD)
+
+#again here separately creating the distance matrix
+#morph.matrix.res <- as.matrix(mean.gpa.res$procD)
+
+morph.matrix.res <- dist(two.d.array(mean.gpa.res$coords), method="euclidean")
+
+morph.matrix.res <- as.matrix(morph.matrix.res)
+
 
 # Shorten row and column names
 row.names(morph.matrix.res) <- short.names
