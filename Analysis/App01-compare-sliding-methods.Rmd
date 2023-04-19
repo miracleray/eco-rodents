@@ -27,7 +27,7 @@ library(data.table)
 library(geomorph)
 source("../Functions/utilities.R")  # custom functions
 load(file = "../Data/Processed/01-data-for-appendix.rda")  # pre-gpagen() shape data from script 01, to be re-slid in this script
-load(file = "../Data/Processed/02-data-for-analyses.rda")  # main data set
+load(file = "../Data/Processed/03-main-data.rda")  # main data set
 ```
 
 ## Run GPA treating all points as fixed landmarks
@@ -57,7 +57,7 @@ unslid.info <- sm.bY.unslid.info[main, ]
 We can use the `procrustes.var.plot()` function by Dr Thomas Guillerme to see how landmarks vary in the unslid dataset compared to the slid.
 ```{r}
 # Find mean configuration
-unslid.consensus <- (select.procrustes(unslid.shape, selector = mean))[[1]]
+unslid.consensus <- (select.procrustes(unslid.shape, selector = base:: mean))[[1]]
 
 # Measure spherical coordinates differences from the mean
 diff.from.mean <- coordinates.difference(coordinates = unslid.shape, reference = unslid.consensus, type = "spherical")
@@ -82,11 +82,11 @@ unslid.PC1.var <- variation.range(unslid.gpagen.shape, return.ID = FALSE, axis =
 The next step is to make a heatmap showing the size of variation and direction of movement for each landmark in the dataset, comparing between the min and max specimens along PC1.
 ```{r}
 # Wrap specimens on the tangent space
-unslid.wrap.PCA <- plotTangentSpace(unslid.shape, verbose = FALSE)
+unslid.wrap.PCA <- gm.prcomp(unslid.shape)
 
-# Select extreme specimens (the ones that make the warp-meshes)
-un.hypothetical.1 <- unslid.wrap.PCA$pc.shapes[[1]]
-un.hypothetical.2 <- unslid.wrap.PCA$pc.shapes[[2]]
+# Select extreme specimens (the ones that make the warp-meshes); [[1]] is for PC1
+un.hypothetical.1 <- unslid.wrap.PCA$shapes[[1]]$min
+un.hypothetical.2 <- unslid.wrap.PCA$shapes[[1]]$max
 
 # Plot the range of variation along PC1 using a heat color scheme
 PC1.var.plot <- procrustes.var.plot(un.hypothetical.1, un.hypothetical.2, col = heat.colors, col.val = unslid.PC1.var[, "radius"], labels = F)
@@ -102,6 +102,6 @@ hist(var.range.unslid[, 1])
 ### Compare to slid 
 ```{r}
 # Plot the histogram of variation in landmarks for this protocol
-var.range <- variation.range(gpagen.shape)
+var.range <- variation.range(shape)
 hist(var.range[, 1])
 ```
