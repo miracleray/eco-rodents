@@ -396,7 +396,7 @@ rgl.snapshot("../Data/Processed/Heatmaps/NO2_mean-bg_dor.png")
 
 ### Load in all heatmaps
 ```{r}
-# Remove white space from all heatmaps (requires ImageMagik installed on PC)
+# Remove white space from all heatmaps (requires ImageMagik installed on PC; when installing ImageMagick, make sure you tick the option of installing legacy utilities, otherwise the below own't work)
 system("mogrify ../Data/Processed/Heatmaps/*.png -trim ../Data/Processed/Heatmaps/*.png")
 ```
 

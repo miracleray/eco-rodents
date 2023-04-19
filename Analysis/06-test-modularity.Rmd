@@ -29,6 +29,7 @@ library(colorspace)  # darken colors
 library(vegan)  # for Mantel tests
 library(geomorph)
 library(data.table)
+library(magick)
 source("../Functions/utilities.R")  # custom functions
 load(file = "../Data/Processed/03-main-data.rda")
 load(file = "../Data/Processed/03-tree-data.rda")
@@ -206,18 +207,18 @@ MantelModularity <- function(shapes, lm.modules) {
   mod.5 <- shapes[which(lm.modules[, 4] == "vault"), ,]
   
   # Run PCAs
-  PCA.1 <- plotTangentSpace(mod.1)
-  PCA.2 <- plotTangentSpace(mod.2)
-  PCA.3 <- plotTangentSpace(mod.3)
-  PCA.4 <- plotTangentSpace(mod.4)
-  PCA.5 <- plotTangentSpace(mod.5)
+  PCA.1 <- gm.prcomp(mod.1)
+  PCA.2 <- gm.prcomp(mod.2)
+  PCA.3 <- gm.prcomp(mod.3)
+  PCA.4 <- gm.prcomp(mod.4)
+  PCA.5 <- gm.prcomp(mod.5)
 
   # Make distance matrices
-  d.PCA.1 <- dist(PCA.1$pc.scores)
-  d.PCA.2 <- dist(PCA.2$pc.scores)
-  d.PCA.3 <- dist(PCA.3$pc.scores)
-  d.PCA.4 <- dist(PCA.4$pc.scores)
-  d.PCA.5 <- dist(PCA.5$pc.scores)
+  d.PCA.1 <- dist(PCA.1$x)
+  d.PCA.2 <- dist(PCA.2$x)
+  d.PCA.3 <- dist(PCA.3$x)
+  d.PCA.4 <- dist(PCA.4$x)
+  d.PCA.5 <- dist(PCA.5$x)
   
   # Run Mantel tests
   m.1v2 <- mantel(d.PCA.1, d.PCA.2, method = "pearson", permutations = 1000) 
