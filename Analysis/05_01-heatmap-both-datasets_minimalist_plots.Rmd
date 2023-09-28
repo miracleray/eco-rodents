@@ -1,0 +1,435 @@
+---
+title: "05-heatmap-both-datasets"
+author: "Ariel Marcy"
+date: "9/18/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = '../eco-rodents')
+```
+
+# Heatmaps both with-allometry and without-allometry 3D coordinates
+1) Make heatmaps with shape dataset including allometry.
+        A) Smallest to mean to largest
+        B) Smallest projected shape to mean to largest projected shape
+        C) PC1 minimum to mean to PC maximum
+
+Produces multipanel Figure 2.
+
+2) Make heatmaps for residuals aka size-less shape dataset.
+        A) PC1 min to mean to PC1 max
+        B) PC1 min on subset without Notomys to mean to PC1 max of this subset
+        C) PC2 min to mean to PC2 max
+
+Produces multipanel Figure 3.
+
+### Load packages and data
+Including installing libraries for landvR package, which creates the heatmaps.
+```{r message = FALSE}
+library(geomorph)
+library(devtools)
+if(!require(dispRity)) install.packages("dispRity")  
+if(!require(landvR)) install_github("TGuillerme/landvR")  # needed for heatmaps
+library(landvR)
+library(png)  # needed to work with screenshots
+load(file = "../Data/Processed/03-main-data.rda")
+load(file = "../Data/Processed/03-tree-data.rda")
+load(file = "../Data/Processed/04-residual-data.rda")
+```
+
+## 1) Create heatmap figures
+This script is dominated by the code needed to generate, export, and clean the heatmap images which are tiled in Figures 2 and 3. 
+
+### Make heatmaps involving the smallest and largest native species 
+We specify native species because technically *Mus musculus* has smallest centroid size but since it is not native, it is less relevant than *P. delicatulus*, which is only slightly larger than it.
+```{r}
+
+# Get index for smallest and largest native species 
+sm.index <- which(info.means$Species == "del")
+big.index <- which(info.means$MeanCsize == max(info.means$MeanCsize))
+
+# Designate mean shapes for individual species with indices
+smallest.mean <- mean.shapes[, , sm.index]
+biggest.mean <- mean.shapes[, , big.index]
+
+# Measure spherical coordinates differences from the smallest to the biggest mean. This results in a list of just 1 (diff.mean[[1]])
+diff.mean_smallest_largest <- coordinates.difference(coordinates = biggest.mean, reference = smallest.mean, type = "spherical")
+
+
+```
+
+### Export the heatmaps for individual allometric shape changes; create "Heatmaps" folder here when running first
+Export images for plots
+```{r}
+# Lateral view of biggest to smallest
+open3d(windowRect = c(0, 0, 600, 600))
+procrustes.var.plot( smallest.mean,biggest.mean, col = heat.colors, col.val = diff.mean_smallest_largest[[1]] [, "radius"])
+view3d(phi = 90)
+rgl.snapshot("../Data/Processed/Heatmaps/smallest_to_biggest_meanshape.png")
+
+
+```
+
+## Make heatmaps involving smallest and largest fitted allometric shapes
+First find mean specimen, then smallest and largest. Uses Dr Thomas Guillerme's  package, `landvR` to see how landmarks vary between these specimens.
+```{r}
+# Fit specimens
+allom.fit <- procD.lm(mean.shapes ~ log(info.means$MeanCsize))
+fit.shapes <- arrayspecs(allom.fit$fitted, 325, 3)
+
+# Find largest and smallest native species from mean centroid size
+smallest.shape <- fit.shapes[, , sm.index]
+biggest.shape <- fit.shapes[, , big.index]
+
+# Measure spherical coordinates differences from the mean for each specimen for each landmark
+allom.diff.mean <- coordinates.difference(coordinates = biggest.shape, reference = smallest.shape, type = "spherical")
+
+
+```
+
+### Export the variation for fitted allometry shape change
+Export images for plots
+```{r}
+# Lateral view of smallest to mean
+open3d(windowRect = c(0, 0, 600, 600))
+procrustes.var.plot(smallest.shape,biggest.shape, col = heat.colors, col.val = allom.diff.mean[[1]][,"radius"])
+view3d(phi = 90)
+rgl.snapshot("../Data/Processed/Heatmaps/ALL_sm_big_lat.png")
+
+
+```
+
+### Make heatmaps for PC1 with allometry
+Using hypothetical shapes for min and max
+```{r}
+# Find mean configuration - i.e. mean shape in dataset
+allom.mean <- (select.procrustes(fit.shapes, selector = base::mean))[[1]]
+
+# Ordinate the data
+twoD.shape <- two.d.array(mean.shapes)
+ordination <- stats::prcomp(twoD.shape)
+
+# Force the symmetric component of shape into class "gpagen" (required for variation.range)
+gpagen.shape <- list()
+gpagen.shape$coords <- mean.shapes
+gpagen.shape$consensus <- allom.mean
+class(gpagen.shape) <- "gpagen"
+
+# Measure extremes of variation from mean on PC1
+PC1.var <- variation.range(gpagen.shape, return.ID = FALSE, axis = 1, ordination = ordination, type = "spherical")
+
+# Wrap specimens on the tangent space
+wrap.PCA <- gm.prcomp(mean.shapes)
+
+# Select extremes (the hypotheticals that make the warp-meshes)
+allom.PC1.min.h <- wrap.PCA$shapes[[1]]$max  # switched b/c axes are flipped
+allom.PC1.max.h <- wrap.PCA$shapes[[1]]$min
+```
+
+### Export the PC1 variation for with allometry shape change. VW I am going from min to max here because that is the same landmark displacement direction as in the other two plots
+Export images for plots
+```{r}
+# Lateral view of mean to smallest
+open3d(windowRect = c(0, 0, 600, 600))
+procrustes.var.plot(allom.PC1.min.h, allom.PC1.max.h, col = heat.colors, col.val = PC1.var[, "radius"])
+view3d(phi = 90)
+rgl.snapshot("../Data/Processed/Heatmaps/PC1lg_-sm_lat.png")
+
+
+```
+
+
+
+### Make heatmaps for PC1 with residual coordinates
+Steps as above.
+```{r}
+# Find mean configuration - i.e. mean shape in dataset
+res.mean <- (select.procrustes(residuals, selector = base::mean))[[1]]
+
+# Measure spherical coordinates differences from the mean for each specimen for each landmark
+res.diff.mean <- coordinates.difference(coordinates = residuals, reference = res.mean, type = "spherical")
+
+# Ordinate the data
+twoD.shape.r <- two.d.array(residuals)
+ordination.r <- stats::prcomp(twoD.shape.r)
+
+# Force the symmetric component of shape into class "gpagen" (required for variation.range)
+gpagen.shape <- list()
+gpagen.shape$coords <- residuals
+gpagen.shape$consensus <- res.mean
+class(gpagen.shape) <- "gpagen"
+
+# Measure extremes of variation from mean on PC1. VW I added "coords" here because, as per Thomas' explanation in the help file, this should give us the differences between the specimen with the minimum and maximun variation and gpagen.shape has $consensus which we don't want.
+PC1.var.r <- variation.range(gpagen.shape$coords, return.ID = FALSE, axis = 1, ordination = ordination.r, type = "spherical")
+
+# Wrap specimens on the tangent space
+wrap.PCA.r <- gm.prcomp(residuals)
+
+# Select extreme specimens (the ones that make the warp-meshes)
+res.PC1.min.h <- wrap.PCA.r$shapes[[1]]$min
+res.PC1.max.h <- wrap.PCA.r$shapes[[1]]$max
+```
+
+### Export the variation for shape residual change
+```{r}
+# Lateral view of mean to smallest
+open3d(windowRect = c(0, 0, 600, 600))
+procrustes.var.plot(res.PC1.max.h,res.PC1.min.h, col = heat.colors, col.val = PC1.var.r[, "radius"])
+view3d(phi = 90)
+rgl.snapshot("../Data/Processed/Heatmaps/RES_Pc1max_min.png")
+
+
+```
+
+### Make heatmaps for PC2 residual coordinates
+Steps as above but for PC2; hypothetical shapes
+```{r}
+# Measure extremes of variation from mean on PC1
+PC1.var.r2 <- variation.range(gpagen.shape, return.ID = FALSE, axis = 2, ordination = ordination.r, type = "spherical")
+
+# Select extreme specimens (the ones that make the warp-meshes)
+res.PC2.min.h <- wrap.PCA.r$shapes[[2]]$max  # switch for consistency
+res.PC2.max.h <- wrap.PCA.r$shapes[[2]]$min
+
+# Calculate distances between shapes to ensure correct point color
+min.coords <- cbind(res.mean, res.PC2.min.h)
+min.dist <- apply(min.coords, 1, function(x) dist(matrix(x, nrow = 2, byrow = TRUE)))
+max.coords <- cbind(res.mean, res.PC2.max.h)
+max.dist <- apply(max.coords, 1, function(x) dist(matrix(x, nrow = 2, byrow = TRUE)))
+```
+
+### Export the variation for shape residual change
+```{r}
+# Lateral view of mean to smallest
+open3d(windowRect = c(0, 0, 600, 600))
+procrustes.var.plot(res.PC2.max.h, res.PC2.min.h, col = heat.colors, col.val = min.dist)
+view3d(phi = 90)
+rgl.snapshot("../Data/Processed/Heatmaps/Res_PC2_max-sm_lat.png")
+
+
+```
+
+### Remove Notomys and find hypothetical shapes
+```{r}
+# Remove Notomys from dataset
+index.not <- which(info.means$Genus == "Not")
+residuals.no <- residuals[, , -index.not]
+info.means.no <- info.means[-index.not, ]
+
+# Find new mean
+res.mean.no <- (select.procrustes(residuals.no, selector = base::mean))[[1]]
+
+# Measure spherical coordinates differences from the mean for each specimen for each landmark
+res.diff.mean.no <- coordinates.difference(coordinates = residuals.no, reference = res.mean.no, type = "spherical")
+
+# Ordinate the data
+twoD.shape.r.n <- two.d.array(residuals.no)
+ordination.r.n <- stats::prcomp(twoD.shape.r.n)
+
+# Force the symmetric component of shape into class "gpagen" (required for variation.range)
+gpagen.shape.no <- list()
+gpagen.shape.no$coords <- residuals.no
+gpagen.shape.no$consensus <- res.mean.no
+class(gpagen.shape.no) <- "gpagen"
+
+
+# Wrap specimens on the tangent space
+wrap.PCA.r.n <- gm.prcomp(residuals.no)
+
+```
+
+
+### Find no Notomys PC2 shapes 
+```{r}
+# Select extreme specimens (the ones that make the warp-meshes)
+res.PC2.min.h.n2 <- wrap.PCA.r.n$shapes[[2]]$min
+res.PC2.max.h.n2 <- wrap.PCA.r.n$shapes[[2]]$max
+
+# Calculate distances between shapes to ensure correct point color
+min.coords.n2 <- cbind(res.mean.no, res.PC2.min.h.n2)
+min.dist.n2 <- apply(min.coords.n2, 1, function(x) dist(matrix(x, nrow = 2, byrow = TRUE)))
+max.coords.n2 <- cbind(res.mean.no, res.PC2.max.h.n2)
+max.dist.n2 <- apply(max.coords.n2, 1, function(x) dist(matrix(x, nrow = 2, byrow = TRUE)))
+```
+
+### Export residual no Notomys heatmaps
+```{r}
+# Lateral view of mean to smallest
+open3d(windowRect = c(0, 0, 600, 600))
+procrustes.var.plot(res.PC2.max.h.n2, res.PC2.min.h.n2, col = heat.colors, col.val = min.dist.n2)
+view3d(phi = 90)
+rgl.snapshot("../Data/Processed/Heatmaps/NO2_max-min_lat.png")
+
+```
+
+### Load in all heatmaps
+```{r}
+# Remove white space from all heatmaps (requires ImageMagik installed on PC; when installing ImageMagick, make sure you tick the option of installing legacy utilities, otherwise the below own't work)
+system("mogrify ../Data/Processed/Heatmaps/*.png -trim ../Data/Processed/Heatmaps/*.png")
+```
+
+```{r}
+# Load in images
+Fitted_allometry <- readPNG("../Data/Processed/Heatmaps/ALL_sm_big_lat.png") 
+Smalles_largest_mshape <- readPNG("../Data/Processed/Heatmaps/smallest_to_biggest_meanshape.png")
+Pc1 <- readPNG("../Data/Processed/Heatmaps/PC1lg_-sm_lat.png")
+Res_PC1 <- readPNG("../Data/Processed/Heatmaps/RES_Pc1max_min.png")
+Res_PC2 <- readPNG("../Data/Processed/Heatmaps/Res_PC2_max-sm_lat.png")
+Res_PC2_no_notomys <- readPNG("../Data/Processed/Heatmaps/NO2_max-min_lat.png")
+
+```
+
+## 2) Make multi-panel Figure 2, heatmaps with allometry
+```{r}
+# Set up multi-panel figure; lateral 
+#pdf("../Data/Results/Figure2_Heatmap_Allometry.pdf")
+mat <- matrix(c(1:6), 3, 2, byrow = FALSE)  # 6plots, 3 rows, 2 columns
+layout(mat, widths = rep(1, dim(mat)[2]), heights = rep(0.5, dim(mat)[1]))
+
+## Fitted allometry
+# 1) Large to Small, with allometry, lateral view
+par(mar = c(0, 0, 0, 0))  # sets the margins
+plot(c(0, dim(Fitted_allometry)[2]), c(0, dim(Fitted_allometry)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
+rasterImage(Fitted_allometry, 0, 0, dim(Fitted_allometry)[2], dim(Fitted_allometry)[1])
+text(0, dim(Fitted_allometry)[1]-10, "a", cex = 2)
+legend("topright", inset = c(0.28, 0), legend = "Fitted Allometry", bty = "n", cex = 1.2)
+legend("bottomleft", legend = expression(paste(italic("P. delicatulus "), "to largest fitted shape")), bty = "n", inset = c(0.03, 0.07))
+
+##################continue here
+
+## Individuals
+# 5) Large to Small, with allometry, lateral view
+par(mar = c(0, 0, 0, 0))  # sets the margins
+plot(c(0, dim(indiv.sm.lat)[2]), c(0, dim(indiv.sm.lat)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
+rasterImage(indiv.sm.lat, 0, 0, dim(indiv.sm.lat)[2], dim(indiv.sm.lat)[1])
+text(0, dim(indiv.sm.lat)[1]-10, "e", cex = 2)
+legend("topleft", inset = c(.02, 0), legend = "Smallest/Largest Species", bty = "n", cex = 1.2)
+legend("bottomleft", legend = expression(paste("Largest to ", italic("P. delicatulus"))), bty = "n", inset = c(0.1, 0.07))
+
+
+## PC1 
+# 9) Mean to Small, PCA allometry, lateral view
+par(mar = c(0, 0, 0, 0))  # sets the margins
+plot(c(0, dim(allPC.sm.lat)[2]), c(0, dim(allPC.sm.lat)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
+rasterImage(allPC.sm.lat, 0, 0, dim(allPC.sm.lat)[2], dim(allPC.sm.lat)[1])
+text(0, dim(allPC.sm.lat)[1]-10, "i", cex = 2)
+legend("topright", inset = c(0.16, 0), legend = "Principal Component 1", bty = "n", cex = 1.2)
+legend("bottomleft", "Hypothetical maximum to minimum", bty = "n", inset = c(0.1, 0.07))
+
+
+# Make gradient legend
+legend_image <- as.raster(matrix(heat.colors(20), ncol = 1))
+rasterImage(legend_image, 463, 165, 485, 230)
+text(381, 223, "High variation", col = "dark grey", cex = 1)
+text(431, 175, "Low", col = "dark grey", cex = 1)
+
+dev.off()
+```
+
+## 3) Make multi-panel Figure 3: Heatmaps with Residuals
+```{r}
+# Set up muli-panel figure 
+pdf("../Data/Results/Figure3_Heatmap_Residuals.pdf")
+mat <- matrix(c(1:12), 4, 3, byrow = FALSE)  # 12 plots, 4 rows, 3 columns
+layout(mat, widths = rep(1, dim(mat)[2]), heights = rep(0.5, dim(mat)[1])) 
+
+## PC1 Residuals
+# 1) Mean to Small, residuals PC1, lateral view
+par(mar = c(0, 0, 0, 0))
+plot(c(0, dim(resid.sm.lat)[2]), c(0, dim(resid.sm.lat)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
+rasterImage(resid.sm.lat, 0, 0, dim(resid.sm.lat)[2], dim(resid.sm.lat)[1])
+text(0, dim(resid.sm.lat)[1] - 10, "a", cex = 2)
+legend("topright", inset = c(0.3, 0), legend = "PC1 shape residual", bty = "n", cex = 1.2)
+legend("bottomleft", "Mean to hypothetical minimum", bty = "n", inset = c(0.1, 0.07))
+
+# 2) Mean to Big, residuals PC1, lateral view
+par(mar = c(0, 0, 0, 0))
+plot(c(0, dim(resid.big.lat)[2]), c(0, dim(resid.big.lat)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
+rasterImage(resid.big.lat, 0, 0, dim(resid.big.lat)[2], dim(resid.big.lat)[1])
+text(0, dim(resid.big.lat)[1]-10, "b", cex = 2)
+legend("bottomleft", "Mean to hypothetical maximum", bty = "n", inset = c(0.1, 0.07))
+
+# 3) Mean to Small, residuals PC1, dorsal view
+par(mar = c(0, 0, 0, 0))
+plot(c(0, dim(resid.big.dor)[2]), c(0, dim(resid.big.dor)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
+rasterImage(resid.sm.dor, 0, 0, dim(resid.big.dor)[2], dim(resid.big.dor)[1])
+text(0, dim(resid.big.dor)[1]-10, "c", cex = 2)
+legend("bottomleft", "Dorsal view of a", bty = "n", inset = c(0.2, 0.05))
+
+# 4) Mean to Big, residuals PC1, dorsal view
+par(mar = c(0, 0, 0, 0))
+plot(c(0, dim(resid.big.dor)[2]), c(0, dim(resid.big.dor)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
+rasterImage(resid.big.dor, 0, 0, dim(resid.big.dor)[2], dim(resid.big.dor)[1])
+text(0, dim(resid.big.dor)[1]-10, "d", cex = 2)
+legend("bottomleft", "Dorsal view of b", bty = "n", inset = c(0.2, 0.05))
+
+## PC2 Residuals
+# 5) Mean to Small, residuals PC2, lateral view
+par(mar = c(0, 0, 0, 0))
+plot(c(0, dim(resP2.sm.lat)[2]), c(0, dim(resP2.sm.lat)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
+rasterImage(resP2.sm.lat, 0, 0, dim(resP2.sm.lat)[2], dim(resP2.sm.lat)[1])
+text(0, dim(resP2.sm.lat)[1]-10, "e", cex = 2)
+legend("topright", inset = c(0.3, 0), legend = "PC2 shape residual", bty = "n", cex = 1.2)
+legend("bottomleft", "Mean to PC2 hypothetical minimum", bty = "n", inset = c(0.07, 0.07))
+
+# 6) Mean to Big, residuals PC2, lateral view
+par(mar = c(0, 0, 0, 0))
+plot(c(0, dim(resP2.big.lat)[2]), c(0, dim(resP2.big.lat)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
+rasterImage(resP2.big.lat, 0, 0, dim(resP2.big.lat)[2], dim(resP2.big.lat)[1])
+text(0, dim(resP2.big.lat)[1]-10, "f", cex = 2)
+legend("bottomleft", "Mean to PC2 hypothetical maximum", bty = "n", inset = c(0.07, 0.07))
+
+# 7) Mean to Small, residuals PC2, dorsal view
+par(mar = c(0, 0, 0, 0))
+plot(c(0, dim(resP2.big.dor)[2]), c(0, dim(resP2.big.dor)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
+rasterImage(resP2.sm.dor, 0, 0, dim(resP2.big.dor)[2], dim(resP2.big.dor)[1])
+text(0, dim(resP2.big.dor)[1]-10, "g", cex = 2)
+legend("bottomleft", "Dorsal view of e", bty = "n", inset = c(0.2, 0.05))
+
+# 8) Mean to Big, residuals PC2, dorsal view
+par(mar = c(0, 0, 0, 0))
+plot(c(0, dim(resP2.big.dor)[2]), c(0, dim(resP2.big.dor)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
+rasterImage(resP2.big.dor, 0, 0, dim(resP2.big.dor)[2], dim(resP2.big.dor)[1])
+text(0, dim(resP2.big.dor)[1]-10, "h", cex = 2)
+legend("bottomleft", "Dorsal view of f", bty = "n", inset = c(0.2, 0.05))
+
+## PC2 Residuals -- without Notomys
+# 9) Mean to Small, residuals PC2, lateral view - without Notomys
+par(mar = c(0, 0, 0, 0))
+plot(c(0, dim(resid.sm.lat.n2)[2]), c(0, dim(resid.sm.lat.n2)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
+rasterImage(resid.sm.lat.n2, 0, 0, dim(resid.sm.lat.n2)[2], dim(resid.sm.lat.n2)[1])
+text(0, dim(resid.sm.lat.n2)[1]-10, "i", cex = 2)
+legend("topright", inset = c(0.12, 0), legend = expression(paste("PC2 residual (no ", italic("Notomys"), ")")), bty = "n", cex = 1.2)
+legend("bottomleft", "Mean to hypothetical minimum", bty = "n", inset = c(0.1, 0.07))
+
+# 10) Mean to Big, residuals PC2, lateral view - without Notomys
+par(mar = c(0, 0, 0, 0))
+plot(c(0, dim(resid.big.lat.n2)[2]), c(0, dim(resid.big.lat.n2)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
+rasterImage(resid.big.lat.n2, 0, 0, dim(resid.big.lat.n2)[2], dim(resid.big.lat.n2)[1])
+text(0, dim(resid.big.lat.n2)[1]-10, "j", cex = 2)
+legend("bottomleft", "Mean to hypothetical maximum", bty = "n", inset = c(0.1, 0.07))
+
+# 11) Mean to Small, residuals PC2, dorsal view - without Notomys
+par(mar = c(0, 0, 0, 0))
+plot(c(0, dim(resid.big.dor.n2)[2]), c(0, dim(resid.big.dor.n2)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
+rasterImage(resid.sm.dor.n2, 0, 0, dim(resid.big.dor.n2)[2], dim(resid.big.dor.n2)[1])
+text(0, dim(resid.big.dor.n2)[1]-10, "k", cex = 2)
+legend("bottomleft", "Dorsal view of i", bty = "n", inset = c(0.2, 0.05))
+
+# 12) Mean to Big, residuals PC2, dorsal view - without Notomys
+par(mar = c(0, 0, 0, 0))
+plot(c(0, dim(resid.big.dor.n2)[2]), c(0, dim(resid.big.dor.n2)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
+rasterImage(resid.big.dor.n2, 0, 0, dim(resid.big.dor.n2)[2], dim(resid.big.dor.n2)[1])
+text(0, dim(resid.big.dor.n2)[1]-10, "l", cex = 2)
+legend("bottomleft", "Dorsal view of j", bty = "n", inset = c(0.2, 0.05))
+
+# Make gradient legend
+legend_image <- as.raster(matrix(heat.colors(20), ncol = 1))
+rasterImage(legend_image, 443, 150, 465, 245)
+text(365, 235, "High variation", col = "dark grey", cex = 1)
+text(413, 165, "Low", col = "dark grey", cex = 1)
+
+dev.off()
+```
