@@ -30,6 +30,11 @@ library(vegan)  # for Mantel tests
 library(geomorph)
 library(data.table)
 library(magick)
+
+# This sets the wd to local
+library(rstudioapi) # Safely Access the RStudio API
+setwd(dirname(getActiveDocumentContext()$path))
+
 source("../Functions/utilities.R")  # custom functions
 load(file = "../Data/Processed/03-main-data.rda")
 load(file = "../Data/Processed/03-tree-data.rda")
@@ -87,7 +92,7 @@ for(i in 1:length(mod.levels)){
 
 ### Make image of 3D plot of the modules for Fig. 4A
 ```{r}
-open3d(windowRect = c(0, 0, 1200, 1200))
+open3d(windowRect = c(0, 0, 2400, 2400))
 for(i in 1:length(mod.levels)) {
         spheres3d(ref[mod.parts[[i]], 1], ref[mod.parts[[i]], 2], ref[mod.parts[[i]], 3], col = mod.colors[i], lit = TRUE, radius = 0.0015, asp = FALSE)
         #rgl.texts(ref[mod.parts[[i]], 1], ref[mod.parts[[i]], 2], ref[mod.parts[[i]], 3], mod.parts[[i]], offset = 100, color = c("black"))
@@ -102,16 +107,49 @@ rgl.snapshot("../Data/Processed/modules.png")
 system("mogrify ../Data/Processed/modules.png -trim ../Data/Processed/*.png")
 ```
 
+## Test integration with 5 modules for full shape dataset - PLS
+
+```{r}
+# Test with the phylogentic tree (and mean shapes)
+int.test.5.phy <- phylo.integration(mean.shapes, partition.gp = lm.modules[, 4], phy=aus.tree)
+
+
+# Make pairwise comparison table
+int.result.phy <- as.matrix(int.test.5.phy$r.pls.mat )  # results
+colnames(int.result.phy) <- unique(lm.modules[, 4])  # names from 1st instance
+rownames(int.result.phy) <- unique(lm.modules[, 4])  # ...in lm.module[, 4]
+alpha.key <- match(unique(lm.modules[, 4]), int.levels)  # alphabetize table
+int.result.phy <- int.result.phy[order(alpha.key), order(alpha.key)]  # alphabetize table
+```
+
+## Test integration with 5 modules for shape residual dataset -- with phylogeny
+As above but with residuals
+```{r}
+# Test with the phylogentic tree (and mean shapes)
+int.test.5.res <- phylo.integration(residuals, partition.gp = lm.modules[, 4], phy=aus.tree)
+
+# Make pairwise comparison table
+int.result.res <- as.matrix(int.test.5.res$r.pls.mat)  # results
+
+colnames(int.result.res) <- unique(lm.modules[, 4])  # names from 1st instance
+rownames(int.result.res) <- unique(lm.modules[, 4])  # ...in lm.module[, 4]
+int.result.res <- int.result.res[order(alpha.key), order(alpha.key)]
+
+# Save time consuming tests
+save(int.test.5.phy, int.test.5.res, int.result.phy, int.result.res, file = "../Data/Processed/06-integration.rda")
+```
+
+
 ## Test modularity with 5 modules for full shape dataset
 This test uses covariance ratio (CR) coefficients (Adams 2016) to quantify the degree of modularity between hypothesized modules/partitions. The observed CR is compared to the distribution of randomized CR's, found by randomizing the landmarks into partitions of identical sample sizes. Accounts for random changes due to evolution via Brownian motion (Felice and Adams 2014).
 ```{r}
 # Test with the phylogentic tree (and mean shapes)
-mod.test.5.phy <- phylo.modularity(mean.shapes, partition.gp = lm.modules[, 4], aus.tree)
+mod.test.5.phy <- phylo.modularity(mean.shapes, partition.gp = lm.modules[, 4], phy=aus.tree)
 
 # Make pairwise comparison table
-mod.result.phy <- as.matrix(mod.test.5.phy$CR.mat)  # results
-colnames(mod.result.phy) <- unique(lm.modules[, 4])  # names from 1st instance
-rownames(mod.result.phy) <- unique(lm.modules[, 4])  # ...in lm.module[, 4]
+mod.result.phy.mod <- as.matrix(mod.test.5.phy$CR.mat)  # results
+colnames(mod.result.phy.mod) <- unique(lm.modules[, 4])  # names from 1st instance
+rownames(mod.result.phy.mod) <- unique(lm.modules[, 4])  # ...in lm.module[, 4]
 alpha.key <- match(unique(lm.modules[, 4]), mod.levels)  # alphabetize table
 mod.result.phy <- mod.result.phy[order(alpha.key), order(alpha.key)]  # alphabetize table
 ```
@@ -120,10 +158,11 @@ mod.result.phy <- mod.result.phy[order(alpha.key), order(alpha.key)]  # alphabet
 As above but with residuals
 ```{r}
 # Test with the phylogentic tree (and mean shapes)
-mod.test.5.res <- phylo.modularity(residuals, partition.gp = lm.modules[, 4], aus.tree)
+mod.test.5.res <- phylo.modularity(residuals, partition.gp = lm.modules[, 4], phy=aus.tree)
 
 # Make pairwise comparison table
 mod.result.res <- as.matrix(mod.test.5.res$CR.mat)  # results
+
 colnames(mod.result.res) <- unique(lm.modules[, 4])  # names from 1st instance
 rownames(mod.result.res) <- unique(lm.modules[, 4])  # ...in lm.module[, 4]
 mod.result.res <- mod.result.res[order(alpha.key), order(alpha.key)]
@@ -132,6 +171,27 @@ mod.result.res <- mod.result.res[order(alpha.key), order(alpha.key)]
 save(mod.test.5.phy, mod.test.5.res, mod.result.phy, mod.result.res, file = "../Data/Processed/06-modularity.rda")
 ```
 
+
+
+
+Turn into a table (currently not displayed in the ms, which focuses just on overall CR). This is a really nifty way of combining upper and lower triangles
+```{r}
+# 
+# 
+# Modularity_matrix <- matrix(NA, nrow = nrow(mod.result.phy), ncol = nrow(mod.result.phy))
+#         
+# Modularity_matrix[upper.tri(Modularity_matrix)]<- mod.result.phy[upper.tri(mod.result.phy, diag=FALSE)]
+# 
+# Modularity_matrix[lower.tri(Modularity_matrix)]<- mod.result.res[lower.tri(mod.result.res, diag=FALSE)]
+#                     
+# rownames(Modularity_matrix)<- rownames(mod.result.phy)
+# colnames(Modularity_matrix)<- colnames(mod.result.phy)
+
+
+
+```
+
+
 ## Make and export Figure 4
 ```{r}
 # Load png back in
@@ -139,7 +199,7 @@ module.plot <- readPNG("../Data/Processed/modules.png")
 
 # Set up for export and for multiple panels
 pdf("../Data/Results/Figure4_Modularity.pdf")
-mat <- matrix(c(1, 1, 2, 3), 2, 2, byrow = TRUE)  # 3 plots, 2 row, 2 columns
+mat <- matrix(c(1, 1, 2, 3,4,5), 3, 2, byrow = TRUE)  # 3 plots, 2 row, 2 columns
 layout(mat, widths = rep.int(1, ncol(mat)), heights = rep.int(0.5, nrow(mat))) 
 
 # 1) Plot of modules
@@ -155,39 +215,78 @@ text(330, 260, "Orbital", bty = "n", col = darken(mod.colors[3]))
 text(585, 200, "Rostrum", bty = "n", col = darken(mod.colors[4], amount = 0.3))
 text(10, 220, "Vault", bty = "n", col = darken(mod.colors[5], amount = 0.35))
 
-# 2) Plot of observed and resampled CR coefficients (w/ phylo correction)
+# 2) Plot of observed and resampled pls coefficients (w/ phylo correction)
 par(mar = c(3.5, 3.5, 1.5, 0.5))
-hist(mod.test.5.phy$random.CR,
-     main = NULL,
+plot(density(int.test.5.phy$random.r),
+     main = "",
      xlab = "",
-     xlim = c(0.65, 1.1),
-     ylim = c(0, 450),
+     xlim = c(0, 1),
+     ylim = c(0, 5),
      ylab = "",
      cex.axis = 0.9,
      col = "black")
-# Labels for histogram
-title(xlab = "Covariance ratio (CR) coefficient", line = 2.4)
-title(ylab = "Frequency (out of 1000)", line = 2.35)
-arrows(x0 = mod.test.5.phy$CR, y0 = 105, y1 = 8, length = 0.15, lwd = 1.5, col = "darkred")
-text(mod.test.5.phy$CR - 0.0887, 120, paste("observed CR =", round(mod.test.5.phy$CR, 2)), cex = 0.9, col = "darkred")
+
+title(xlab = "Integration: r-pls coefficient", line = 2.4)
+title(ylab = "Density", line = 2.35)
+arrows(x0 = int.test.5.phy$r.pls, y0 = 1.5, y1 = 0, length = 0.15, lwd = 1.5, col = "darkred")
+text(int.test.5.phy$r.pls , 2.1, paste( "observed: ", round(int.test.5.phy$r.pls, 2)), cex = 0.9, col = "darkred")
 legend("topleft", "b", cex = 1.5, bty = "n", inset = -0.05)
 legend("topleft", "full shape", cex = 0.9, bty = "n", inset = c(0.06, 0))
 
-# 3) Plot of CR coefficients (w/ phylo correction) for shape residual dataset
+# 3) Plot of pls coefficients (w/ phylo correction) for shape residual dataset
 par(mar = c(3.5, 3.5, 1.5, 0.5))
-hist(mod.test.5.res$random.CR,
-     main = NULL,
+plot(density(int.test.5.res$random.r),
+     main = "",
      xlab = "",
-     xlim = c(0.65, 1.1),
-     ylim = c(0, 450),
+     xlim = c(0, 1),
+     ylim = c(0, 5),
      ylab = "",
      cex.axis = 0.9,
      col = "black")
 # Labels for histogram
-title(xlab = "CR coefficient", line = 2.4)
-#title(ylab = "Frequency (out of 1000)", line = 2.35)
-arrows(x0 = mod.test.5.res$CR, y0 = 105, y1 = 8, length = 0.15, lwd = 1.5, col = "darkred")
-text(mod.test.5.res$CR - 0.0884, 120, paste("observed CR =", round(mod.test.5.res$CR, 2)), cex = 0.9, col = "darkred")
+title(xlab = "Integration: r-pls coefficient", line = 2.4)
+
+arrows(x0 = int.test.5.res$r.pls, y0 = 1.5, y1 = 0, length = 0.15, lwd = 1.5, col = "darkred")
+text(int.test.5.res$r.pls , 2.1, paste("observed: ", round(int.test.5.res$r.pls, 2)), cex = 0.9, col = "darkred")
+legend("topleft", "c", cex = 1.5, bty = "n", inset = -0.05)
+legend("topleft", "shape residual", cex = 0.9, bty = "n", inset = c(0.07, 0))
+
+############Modularity
+
+#4 plot of observed and resampled CR coefficients (for full dataset/w phylocorrection)
+
+par(mar = c(3.5, 3.5, 1.5, 0.5))
+plot(density(mod.test.5.phy$random.CR),
+     main = "",
+     xlab = "",
+     xlim = c(0, 1),
+     ylim = c(0, 100),
+     ylab = "",
+     cex.axis = 0.9,
+     col = "black")
+
+title(xlab = "Modularity:CR coefficient", line = 2.4)
+title(ylab = "Density", line = 2.35)
+arrows(x0 = mod.test.5.phy$CR, y0 = 30, y1 = 0, length = 0.15, lwd = 1.5, col = "darkred")
+text(mod.test.5.phy$CR , 35, paste( "observed: ", round(mod.test.5.phy$CR, 2)), cex = 0.9, col = "darkred")
+legend("topleft", "b", cex = 1.5, bty = "n", inset = -0.05)
+legend("topleft", "full shape", cex = 0.9, bty = "n", inset = c(0.06, 0))
+
+# 5) Plot of pls coefficients (w/ phylo correction) for shape residual dataset
+par(mar = c(3.5, 3.5, 1.5, 0.5))
+plot(density(mod.test.5.res$random.CR),
+     main = "",
+     xlab = "",
+     xlim = c(0, 1),
+     ylim = c(0, 100),
+     ylab = "",
+     cex.axis = 0.9,
+     col = "black")
+# Labels for histogram
+title(xlab = "Modularity: CR coefficient", line = 2.4)
+
+arrows(x0 = mod.test.5.res$CR, y0 = 30, y1 = 0, length = 0.15, lwd = 1.5, col = "darkred")
+text(mod.test.5.res$CR , 35, paste("observed: ", round(mod.test.5.res$CR, 2)), cex = 0.9, col = "darkred")
 legend("topleft", "c", cex = 1.5, bty = "n", inset = -0.05)
 legend("topleft", "shape residual", cex = 0.9, bty = "n", inset = c(0.07, 0))
 
@@ -252,19 +351,42 @@ MantelModularity <- function(shapes, lm.modules) {
   return(mantel.results)
   }
 
-# Run on the full and shape residual datasets respectively
+# Run on the full and shape residual datasets respectively. This outputs a weird data table format that then needs to be turned into a matrix for upper/lower triangle extraction
 mantel.full <- MantelModularity(mean.shapes, lm.modules)
 mantel.res <- MantelModularity(residuals, lm.modules)
 
+#thsi screams at you but just because of the NAs. the values are fine.
+mantel.full <- apply(as.matrix.noquote(mantel.full[,2:6]),2,as.numeric)
+
+mantel.res <- apply(as.matrix.noquote(mantel.res[,2:6]),2,as.numeric)
+
 # Add landmark numbers; col #4 gives the Goswami module definitions
 n.num <- c(sum(lm.modules[, 4] == "basicran"), sum(lm.modules[, 4] == "molar"), sum(lm.modules[, 4] == "orbital"), sum(lm.modules[, 4] == "rostrum"), sum(lm.modules[, 4] == "vault"))
-mantel.full <- cbind(mantel.full, n.num)  # add to tables for export
-mantel.res <- cbind(mantel.res, n.num)
+#mantel.full <- cbind(mantel.full, n.num)  # add to tables for export
+#mantel.res <- cbind(mantel.res, n.num)
 
-# Export Table 1A and 1B
-write.table(mantel.full, "../Data/Results/Table1A_MantelTest_Full.csv", sep = ",", col.names = NA)
-write.table(mantel.res, "../Data/Results/Table1B_MantelTest_Res.csv", sep = ",", col.names = NA)
+
 ```
+
+Turn the above into a table . This is a really nifty way of combining upper and lower triangles
+```{r}
+
+Mantel_matrix <- matrix(NA, nrow = length(modules), ncol = length(modules))
+#         
+Mantel_matrix[upper.tri(Mantel_matrix)]<- mantel.full[upper.tri(mantel.full, diag=FALSE)]
+# Here we have to flip the second matrix by transposing (t(mantel.res)) because the values are originally on the upper diagonal 
+Mantel_matrix[lower.tri(Mantel_matrix)]<- t(mantel.res)[(lower.tri(t(mantel.res), diag=FALSE))]
+
+diag(Mantel_matrix)<- n.num
+                     
+ rownames(Mantel_matrix)<- modules
+ colnames(Mantel_matrix)<- modules
+
+write.csv(Mantel_matrix, file="../Data/Results/Mantel_results.csv")
+
+```
+
+
 
 ### Run global integration tests and make Supplementary Figure 3
 Test whether rodent skull is integrated as a whole
