@@ -25,6 +25,11 @@ library(stringr)
 library(stringi)
 library(data.table)
 library(geomorph)
+
+# This sets the wd to local
+library(rstudioapi) # Safely Access the RStudio API
+setwd(dirname(getActiveDocumentContext()$path))
+
 source("../Functions/utilities.R")  # custom functions
 load(file = "../Data/Processed/01-bilat-data-w-ERR.rda")
 ```

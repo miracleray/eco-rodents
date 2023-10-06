@@ -29,7 +29,6 @@ library(data.table)
 
 # This sets the wd to local
 library(rstudioapi) # Safely Access the RStudio API
-
 setwd(dirname(getActiveDocumentContext()$path))
 
 

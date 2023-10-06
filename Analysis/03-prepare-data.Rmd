@@ -21,6 +21,11 @@ library(data.table)
 library(colorspace)  # colors
 library(phylotate)  # phylogeny
 library(geiger)  # phylogeny
+
+# This sets the wd to local
+library(rstudioapi) # Safely Access the RStudio API
+setwd(dirname(getActiveDocumentContext()$path))
+
 source("../Functions/utilities.R")  # custom functions
 load(file = "../Data/Processed/02-no-error-data-sm.rda")  # small patch shape data w/o error
 ```
