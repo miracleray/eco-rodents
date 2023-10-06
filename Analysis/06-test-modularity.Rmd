@@ -118,7 +118,7 @@ int.test.5.phy <- phylo.integration(mean.shapes, partition.gp = lm.modules[, 4],
 int.result.phy <- as.matrix(int.test.5.phy$r.pls.mat )  # results
 colnames(int.result.phy) <- unique(lm.modules[, 4])  # names from 1st instance
 rownames(int.result.phy) <- unique(lm.modules[, 4])  # ...in lm.module[, 4]
-alpha.key <- match(unique(lm.modules[, 4]), int.levels)  # alphabetize table
+alpha.key <- match(unique(lm.modules[, 4]), mod.levels)  # alphabetize table
 int.result.phy <- int.result.phy[order(alpha.key), order(alpha.key)]  # alphabetize table
 ```
 
@@ -209,51 +209,18 @@ rasterImage(module.plot, 0, 0, dim(module.plot)[2], dim(module.plot)[1])
 # Labels for module plot
 legend("topleft", "a", cex = 1.5, bty = "n")
 legend("topleft", "module definitions (observed condition)", cex = 0.9, bty = "n", inset = c(0.05, 0.015))
-text(60, -3, "Basicranium", bty = "n", col = darken(mod.colors[1]))
-text(360, 20, "Molar", bty = "n", col = mod.colors[2])
-text(330, 260, "Orbital", bty = "n", col = darken(mod.colors[3]))
-text(585, 200, "Rostrum", bty = "n", col = darken(mod.colors[4], amount = 0.3))
-text(10, 220, "Vault", bty = "n", col = darken(mod.colors[5], amount = 0.35))
+text(1380, -3, "Basicranium", bty = "n", col = darken(mod.colors[1]))
+text(900, 200, "Molar", bty = "n", col = mod.colors[2])
+text(900, 580, "Orbital", bty = "n", col = darken(mod.colors[3]))
+text(260, 260, "Rostrum", bty = "n", col = darken(mod.colors[4], amount = 0.3))
+text(1550,400, "Vault", bty = "n", col = darken(mod.colors[5], amount = 0.35))
 
-# 2) Plot of observed and resampled pls coefficients (w/ phylo correction)
-par(mar = c(3.5, 3.5, 1.5, 0.5))
-plot(density(int.test.5.phy$random.r),
-     main = "",
-     xlab = "",
-     xlim = c(0, 1),
-     ylim = c(0, 5),
-     ylab = "",
-     cex.axis = 0.9,
-     col = "black")
 
-title(xlab = "Integration: r-pls coefficient", line = 2.4)
-title(ylab = "Density", line = 2.35)
-arrows(x0 = int.test.5.phy$r.pls, y0 = 1.5, y1 = 0, length = 0.15, lwd = 1.5, col = "darkred")
-text(int.test.5.phy$r.pls , 2.1, paste( "observed: ", round(int.test.5.phy$r.pls, 2)), cex = 0.9, col = "darkred")
-legend("topleft", "b", cex = 1.5, bty = "n", inset = -0.05)
-legend("topleft", "full shape", cex = 0.9, bty = "n", inset = c(0.06, 0))
 
-# 3) Plot of pls coefficients (w/ phylo correction) for shape residual dataset
-par(mar = c(3.5, 3.5, 1.5, 0.5))
-plot(density(int.test.5.res$random.r),
-     main = "",
-     xlab = "",
-     xlim = c(0, 1),
-     ylim = c(0, 5),
-     ylab = "",
-     cex.axis = 0.9,
-     col = "black")
-# Labels for histogram
-title(xlab = "Integration: r-pls coefficient", line = 2.4)
-
-arrows(x0 = int.test.5.res$r.pls, y0 = 1.5, y1 = 0, length = 0.15, lwd = 1.5, col = "darkred")
-text(int.test.5.res$r.pls , 2.1, paste("observed: ", round(int.test.5.res$r.pls, 2)), cex = 0.9, col = "darkred")
-legend("topleft", "c", cex = 1.5, bty = "n", inset = -0.05)
-legend("topleft", "shape residual", cex = 0.9, bty = "n", inset = c(0.07, 0))
 
 ############Modularity
 
-#4 plot of observed and resampled CR coefficients (for full dataset/w phylocorrection)
+#1 plot of observed and resampled CR coefficients (for full dataset/w phylocorrection)
 
 par(mar = c(3.5, 3.5, 1.5, 0.5))
 plot(density(mod.test.5.phy$random.CR),
@@ -265,14 +232,14 @@ plot(density(mod.test.5.phy$random.CR),
      cex.axis = 0.9,
      col = "black")
 
-title(xlab = "Modularity:CR coefficient", line = 2.4)
+title(xlab = "CR coefficient (low CR = high modularity)", line = 2.4)
 title(ylab = "Density", line = 2.35)
 arrows(x0 = mod.test.5.phy$CR, y0 = 30, y1 = 0, length = 0.15, lwd = 1.5, col = "darkred")
 text(mod.test.5.phy$CR , 35, paste( "observed: ", round(mod.test.5.phy$CR, 2)), cex = 0.9, col = "darkred")
 legend("topleft", "b", cex = 1.5, bty = "n", inset = -0.05)
 legend("topleft", "full shape", cex = 0.9, bty = "n", inset = c(0.06, 0))
 
-# 5) Plot of pls coefficients (w/ phylo correction) for shape residual dataset
+# 2) Plot of pls coefficients (w/ phylo correction) for shape residual dataset
 par(mar = c(3.5, 3.5, 1.5, 0.5))
 plot(density(mod.test.5.res$random.CR),
      main = "",
@@ -283,12 +250,50 @@ plot(density(mod.test.5.res$random.CR),
      cex.axis = 0.9,
      col = "black")
 # Labels for histogram
-title(xlab = "Modularity: CR coefficient", line = 2.4)
+title(xlab = "CR coefficient (low CR = high modularity)", line = 2.4)
 
 arrows(x0 = mod.test.5.res$CR, y0 = 30, y1 = 0, length = 0.15, lwd = 1.5, col = "darkred")
 text(mod.test.5.res$CR , 35, paste("observed: ", round(mod.test.5.res$CR, 2)), cex = 0.9, col = "darkred")
 legend("topleft", "c", cex = 1.5, bty = "n", inset = -0.05)
 legend("topleft", "shape residual", cex = 0.9, bty = "n", inset = c(0.07, 0))
+
+#Integration
+
+# 3) Plot of observed and resampled pls coefficients (w/ phylo correction)
+par(mar = c(3.5, 3.5, 1.5, 0.5))
+plot(density(int.test.5.phy$random.r),
+     main = "",
+     xlab = "",
+     xlim = c(0, 1),
+     ylim = c(0, 5),
+     ylab = "",
+     cex.axis = 0.9,
+     col = "black")
+title(xlab = "PLS coefficient (low PLS = low integration))", line = 2.4)
+title(ylab = "Density", line = 2.35)
+arrows(x0 = int.test.5.phy$r.pls, y0 = 1.5, y1 = 0, length = 0.15, lwd = 1.5, col = "darkred")
+text(int.test.5.phy$r.pls , 2.1, paste( "observed: ", round(int.test.5.phy$r.pls, 2)), cex = 0.9, col = "darkred")
+legend("topleft", "d", cex = 1.5, bty = "n", inset = -0.05)
+legend("topleft", "full shape", cex = 0.9, bty = "n", inset = c(0.06, 0))
+
+# 4) Plot of pls coefficients (w/ phylo correction) for shape residual dataset
+par(mar = c(3.5, 3.5, 1.5, 0.5))
+plot(density(int.test.5.res$random.r),
+     main = "",
+     xlab = "",
+     xlim = c(0, 1),
+     ylim = c(0, 5),
+     ylab = "",
+     cex.axis = 0.9,
+     col = "black")
+# Labels for histogram
+title(xlab = "PLS coefficient (low PLS = low integration)", line = 2.4)
+
+arrows(x0 = int.test.5.res$r.pls, y0 = 1.5, y1 = 0, length = 0.15, lwd = 1.5, col = "darkred")
+text(int.test.5.res$r.pls , 2.1, paste("observed: ", round(int.test.5.res$r.pls, 2)), cex = 0.9, col = "darkred")
+legend("topleft", "e", cex = 1.5, bty = "n", inset = -0.05)
+legend("topleft", "shape residual", cex = 0.9, bty = "n", inset = c(0.07, 0))
+
 
 dev.off()
 ```
@@ -355,7 +360,7 @@ MantelModularity <- function(shapes, lm.modules) {
 mantel.full <- MantelModularity(mean.shapes, lm.modules)
 mantel.res <- MantelModularity(residuals, lm.modules)
 
-#thsi screams at you but just because of the NAs. the values are fine.
+#this screams at you but just because of the NAs. the values are fine.
 mantel.full <- apply(as.matrix.noquote(mantel.full[,2:6]),2,as.numeric)
 
 mantel.res <- apply(as.matrix.noquote(mantel.res[,2:6]),2,as.numeric)
@@ -371,7 +376,7 @@ n.num <- c(sum(lm.modules[, 4] == "basicran"), sum(lm.modules[, 4] == "molar"), 
 Turn the above into a table . This is a really nifty way of combining upper and lower triangles
 ```{r}
 
-Mantel_matrix <- matrix(NA, nrow = length(modules), ncol = length(modules))
+Mantel_matrix <- matrix(NA, nrow = length(mod.levels), ncol = length(mod.levels))
 #         
 Mantel_matrix[upper.tri(Mantel_matrix)]<- mantel.full[upper.tri(mantel.full, diag=FALSE)]
 # Here we have to flip the second matrix by transposing (t(mantel.res)) because the values are originally on the upper diagonal 
@@ -379,8 +384,8 @@ Mantel_matrix[lower.tri(Mantel_matrix)]<- t(mantel.res)[(lower.tri(t(mantel.res)
 
 diag(Mantel_matrix)<- n.num
                      
- rownames(Mantel_matrix)<- modules
- colnames(Mantel_matrix)<- modules
+ rownames(Mantel_matrix)<- mod.levels
+ colnames(Mantel_matrix)<- mod.levels
 
 write.csv(Mantel_matrix, file="../Data/Results/Mantel_results.csv")
 

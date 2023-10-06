@@ -20,6 +20,11 @@ Creates bipanel Figure 5.
 library(geomorph)
 library(stringr)
 library(picante)  # needed for distance matrix
+
+# This sets the wd to local
+library(rstudioapi) # Safely Access the RStudio API
+setwd(dirname(getActiveDocumentContext()$path))
+
 source("../Functions/utilities.R")  # custom functions
 load(file = "../Data/Processed/03-main-data.rda")
 load(file = "../Data/Processed/03-tree-data.rda")
