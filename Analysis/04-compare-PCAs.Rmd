@@ -323,11 +323,11 @@ cor.pc2v3
 
 ### Correlation of full shape PC1 and residual PC2 to centroid size
 ```{r}
-cor.size <- cor(-mean.PCA$pc.scores[, 1], info.means$MeanCsize)
+cor.size <- cor(-mean.PCA$x[, 1], info.means$MeanCsize)
 cor.size
 
 # Correlation of PC2 to centroid size
-cor.pc2.size <- cor(res.PCA$pc.scores[, 2], info.means$MeanCsize)
+cor.pc2.size <- cor(res.PCA$x[, 2], info.means$MeanCsize)
 cor.pc2.size
 ```
 
@@ -336,13 +336,14 @@ cor.pc2.size
 Set up 3 datasets for screeplots
 ```{r}
 # Full shape
-full.PC.impt <- data.frame(PC = 1:length(mean.PCA$pc.summary$importance[2, ]), impt = mean.PCA$pc.summary$importance[2, ])
+full.PC.impt <- data.frame(PC = 1:(length(summary(mean.PCA)$PC.summary)), impt = unlist(summary(mean.PCA)[[1]][2,]))
 
 # Shape residual
-res.PC.impt <- data.frame(PC = 1:length(res.PCA$pc.summary$importance[2, ]), impt = res.PCA$pc.summary$importance[2, ])
+res.PC.impt <- data.frame(PC = 1:(length(summary(res.PCA)$PC.summary)), impt = unlist(summary(res.PCA)[[1]][2,]))
 
-# Shape residual without Notomys
-rnot.PC.impt <- data.frame(PC = 1:length(wrap.PCA.r.n$pc.summary$importance[2, ]), impt = wrap.PCA.r.n$pc.summary$importance[2, ])
+# Shape residual without Notomys wrap.PCA.r.n
+rnot.PC.impt <- data.frame(PC = 1:(length(summary(wrap.PCA.r.n)$PC.summary)), impt = unlist(summary(wrap.PCA.r.n)[[1]][2,]))
+
 ```
 
 ### Create supplementary figure 1
@@ -371,7 +372,7 @@ mtext(expression(paste("C) shape residual dataset without ", italic(Notomys))), 
 mtext("% of variance", 2, line = 2.5, cex = 0.83, col = "black")
 mtext("Principal component", 1, line = 1, cex = 0.83, col = "black")
 
-#dev.off()
+dev.off()
 ```
 
 ### Save intermediate data
