@@ -24,10 +24,10 @@ Produces shape residual data used in later analyses, stored in rda file 04.
 ### Load packages, functions, and data
 Tree, mean shape, and metadata for phylogenetic analyses come from the allometry rodents script 04. 
 ```{r message = FALSE}
-library(geomorph)
-library(vegan)  # for Mantel tests
-library(dplyr)
-library(colorspace)
+library(geomorph)   # CRAN v4.0.6
+library(vegan)      # CRAN v2.6-4  
+library(dplyr)      # CRAN v1.1.3
+library(colorspace) # CRAN v2.1-0
 
 # This sets the wd to local
 library(rstudioapi) # Safely Access the RStudio API

@@ -23,13 +23,13 @@ Makes Figure 4, Table 1, and Supplementary Figure 3
 
 ### Load packages, functions, and data from previous steps
 ```{r message = FALSE}
-library(png)  # needed to work with screenshots
-library(wesanderson)  # plot colors
-library(colorspace)  # darken colors
-library(vegan)  # for Mantel tests
-library(geomorph)
-library(data.table)
-library(magick)
+library(png)         # CRAN v0.1-8  
+library(wesanderson) # CRAN v0.3.6
+library(colorspace)  # CRAN v2.1-0  
+library(vegan)       # CRAN v2.6-4  
+library(geomorph)    # CRAN v4.0.6
+library(data.table)  # CRAN v1.14.8
+library(magick)      # CRAN v2.8.0
 
 # This sets the wd to local
 library(rstudioapi) # Safely Access the RStudio API

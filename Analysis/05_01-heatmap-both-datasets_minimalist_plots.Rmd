@@ -28,12 +28,12 @@ Produces multipanel Figure 3.
 ### Load packages and data
 Including installing libraries for landvR package, which creates the heatmaps.
 ```{r message = FALSE}
-library(geomorph)
-library(devtools)
+library(geomorph) # CRAN v4.0.6
+library(devtools) # CRAN v2.4.5
 if(!require(dispRity)) install.packages("dispRity")  
-if(!require(landvR)) install_github("TGuillerme/landvR")  # needed for heatmaps
-library(landvR)
-library(png)  # needed to work with screenshots
+if(!require(landvR)) install_github("TGuillerme/landvR")  
+library(landvR)   # [github::TGuillerme/landvR] v0.5.2
+library(png)      # CRAN v0.1-8 
 
 # This sets the wd to local
 library(rstudioapi) # Safely Access the RStudio API

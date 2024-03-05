@@ -21,11 +21,11 @@ Almost all upcoming analyses are done in the geometric morphometric R package, _
 Custom functions are defined in utilities.R for conciseness.
 ```{r message = FALSE}
 
-library(geomorph)
-library(dplyr)
-library(stringr)
-library(stringi)
-library(data.table)
+library(geomorph)   # CRAN v4.0.6
+library(dplyr)      # CRAN v1.1.3
+library(stringr)    # CRAN v1.5.0
+library(stringi)    # CRAN v1.7.12
+library(data.table) # CRAN v1.14.8
 
 # This sets the wd to local
 library(rstudioapi) # Safely Access the RStudio API

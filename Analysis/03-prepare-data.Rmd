@@ -15,12 +15,12 @@ These data will be needed for all subsequent analyses, tables, and figures. The 
 
 ### Load packages, functions, and data
 ```{r message = FALSE}
-library(geomorph)
-library(stringr)
-library(data.table)
-library(colorspace)  # colors
-library(phylotate)  # phylogeny
-library(geiger)  # phylogeny
+library(geomorph)   # CRAN v4.0.6
+library(stringr)    # CRAN v1.5.0
+library(data.table) # CRAN v1.14.8
+library(colorspace) # CRAN v2.1-0  
+library(phylotate)  # CRAN v1.3  
+library(geiger)     # CRAN v2.0.11  
 
 # This sets the wd to local
 library(rstudioapi) # Safely Access the RStudio API

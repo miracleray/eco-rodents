@@ -21,10 +21,10 @@ Third, we'll finalize the specimens to be included in future analyses.
 
 ### Load packages, functions, and data from previous steps
 ```{r message = FALSE}
-library(stringr)
-library(stringi)
-library(data.table)
-library(geomorph)
+library(stringr)    # CRAN v1.5.0
+library(stringi)    # CRAN v1.7.12
+library(data.table) # CRAN v1.14.8
+library(geomorph)   # CRAN v4.0.6
 
 # This sets the wd to local
 library(rstudioapi) # Safely Access the RStudio API

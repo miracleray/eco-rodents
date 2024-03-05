@@ -9,3 +9,6 @@
 *.pdf
 *.pdf
 Data/Results/SFigure1_Screeplots.pdf
+*.eps
+*.tiff
+*.pdf
