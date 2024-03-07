@@ -1,0 +1,11 @@
+,basicran molar,basicran orbital,basicran rostrum,basicran vault,molar orbital,molar rostrum,molar vault,orbital rostrum,orbital vault,rostrum vault
+basicran molar,0,0.56,0.416,0.083,0.759,0.891,0.242,0.487,0.083,0.145
+basicran orbital,0.583,0,0.835,0.206,0.357,0.457,0.484,0.913,0.206,0.366
+basicran rostrum,0.814,0.209,0,0.261,0.238,0.321,0.584,0.924,0.261,0.464
+basicran vault,1.732,1.265,1.125,0,0.043,0.06,0.618,0.238,0.999,0.633
+molar orbital,0.307,0.92,1.18,2.02,0,0.86,0.149,0.299,0.043,0.07
+molar rostrum,0.137,0.744,0.993,1.879,0.177,0,0.192,0.389,0.06,0.102
+molar vault,1.17,0.7,0.548,0.499,1.444,1.306,0,0.54,0.617,0.94
+orbital rostrum,0.695,0.109,0.096,1.179,1.039,0.861,0.613,0,0.238,0.423
+orbital vault,1.732,1.265,1.125,0.001,2.019,1.878,0.5,1.179,0,0.632
+rostrum vault,1.458,0.904,0.733,0.478,1.809,1.636,0.075,0.802,0.479,0

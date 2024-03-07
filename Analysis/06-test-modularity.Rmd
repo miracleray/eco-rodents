@@ -122,6 +122,177 @@ alpha.key <- match(unique(lm.modules[, 4]), mod.levels)  # alphabetize table
 int.result.phy <- int.result.phy[order(alpha.key), order(alpha.key)]  # alphabetize table
 ```
 
+#test integration between pairs of modules 
+
+```{r}
+basicran <- mean.shapes[which(lm.modules[, 4] == "basicran"), ,]
+molar <- mean.shapes[which(lm.modules[, 4] == "molar"), ,]
+orbital <- mean.shapes[which(lm.modules[, 4] == "orbital"), ,]
+rostrum <- mean.shapes[which(lm.modules[, 4] == "rostrum"), ,]
+vault <- mean.shapes[which(lm.modules[, 4] == "vault"), ,]
+
+module_list <- list( basicran=basicran, molar=molar, orbital=orbital, rostrum=rostrum, vault=vault)
+
+
+#Create all combinations of modules
+Combinations <- expand.grid(names(module_list), names(module_list))
+
+#add empty colums for values
+Combinations[,c("Rpls", "p")] <- NA
+
+
+for (i in 1:nrow(Combinations)){
+  
+temp <- phylo.integration(module_list[[which(names(module_list)==Combinations[i,1])]],
+                          module_list[[which(names(module_list)==Combinations[i,2])]],
+                          phy=aus.tree)
+
+Combinations$Rpls[i]<-temp$r.pls
+Combinations$p[i] <- temp$P.value
+
+}
+
+
+R_pls_matrix <- matrix(Combinations$Rpls, nrow=5, ncol=5, dimnames=list(names(module_list),names(module_list)))
+
+write.csv(R_pls_matrix, file="../Data/Results/R_pls.csv")
+
+#manual tests to make sure the matrix reflects reality - it does
+
+phylo.integration(basicran, molar, phy=aus.tree)
+phylo.integration(rostrum, molar, phy=aus.tree)
+phylo.integration(molar, rostrum, phy=aus.tree)
+
+#Now create a matrix that asks if the levels of integration are significantly different using compare.pls
+
+#Create all combinations of modules
+
+#create expand grid matrix but this time take out self-combinations - reduces it to 20 rows. I initially used this but it doubles up on combinations.
+#Combinations_compare <- expand.grid(names(module_list), names(module_list))
+
+#The following is better:
+
+Combinations_compare <- c( names(module_list), names(module_list) )
+Combinations_compare <- unique( Combinations_compare )
+Combinations_compare <- combn( Combinations_compare , 2 )
+#Combinations_compare <- paste(Combinations_compare[1,], Combinations_compare[2,])
+
+
+
+#make empty list to receive integration analyses objects and name appropriately
+phylo_integration_list <- vector("list",ncol(Combinations_compare))
+names(phylo_integration_list) <- c( paste(Combinations_compare[1,], Combinations_compare[2,]))
+
+
+for (i in 1:ncol(Combinations_compare)){
+  
+phylo_integration_list [[i]] <- phylo.integration(module_list[[which(names(module_list)==Combinations_compare[2,i])]],
+                          module_list[[which(names(module_list)==Combinations_compare[1,i])]],
+                          phy=aus.tree, iter=1000)
+
+}
+
+
+
+pls_comparison <- compare.pls(phylo_integration_list)
+
+pls_comparison_matrix_P <- matrix(round(pls_comparison$pairwise.P,3), 
+                                nrow=ncol(Combinations_compare), 
+                                ncol=ncol(Combinations_compare), 
+                                dimnames=list(rownames(pls_comparison$pairwise.P), colnames(pls_comparison$pairwise.P)))
+
+pls_comparison_matrix_Z <- matrix(round(pls_comparison$pairwise.z, 3), 
+                                         nrow=ncol(Combinations_compare), 
+                                         ncol=ncol(Combinations_compare),
+                                         dimnames=list(rownames(pls_comparison$pairwise.P), colnames(pls_comparison$pairwise.P)))
+
+
+#Here we just add the p-values as the upper triangle of the effect size table
+pls_comparison_matrix_Z[upper.tri(pls_comparison_matrix_Z)]<- pls_comparison_matrix_P[upper.tri(pls_comparison_matrix_P, diag=FALSE)]
+
+write.csv (pls_comparison_matrix_Z,file="../Data/Results/integration_strength_comparisons.csv")
+
+
+#manual checks
+rostrum_molar <- phylo.integration( rostrum, molar, phy = aus.tree)
+orbital_vault <- phylo.integration(orbital,vault, phy = aus.tree)
+vault_basicran <- phylo.integration( vault, basicran, phy = aus.tree)
+
+testcompare <- compare.pls( rostrum_molar, orbital_vault, vault_basicran)
+testcompare$pairwise.z
+testcompare$pairwise.P
+
+#effect sizes and p values differ depending on the order in which modules are input?
+test4 <- phylo.integration(module_list$molar, module_list$rostrum, phy = aus.tree)
+test5 <- phylo.integration(module_list$rostrum, module_list$molar, phy = aus.tree)
+
+compare.pls(test4,test5)
+
+#serious differences with rostrum and orbital
+
+test5 <- phylo.integration(module_list$rostrum, module_list$orbital, phy = aus.tree)
+test6 <- phylo.integration(module_list$orbital, module_list$rostrum, phy = aus.tree)
+
+compare.pls(test5,test6)
+
+
+```
+
+#there are differences in integratoin strength and p-value even in the help file
+
+```{r}
+
+
+ data(pupfish) # GPA previously performed
+  
+ group <- factor(paste(pupfish$Pop, pupfish$Sex, sep = "."))
+ levels(group)
+  
+ tail.LM <- c(1:3, 5:9, 18:38)
+ head.LM <- (1:56)[-tail.LM]
+
+ tail.coords <- pupfish$coords[tail.LM,,]
+ head.coords <- pupfish$coords[head.LM,,]
+ 
+ # Subset 3D array by group, returning a list of 3D arrays
+ tail.coords.gp <- coords.subset(tail.coords, group)
+ head.coords.gp <- coords.subset(head.coords, group)
+
+ integ.tests <- Map(function(x,y) integration.test(x, y, iter=10000, 
+ print.progress = FALSE), head.coords.gp, tail.coords.gp)
+# the map function performs the integration test on each 3D array in 
+# the lists provided
+
+ integ.tests$Marsh.F
+ integ.tests$Marsh.M
+ integ.tests$Sinkhole.F
+ integ.tests$Sinkhole.M
+
+ group.Z <- compare.pls(integ.tests)
+ summary(group.Z)
+ 
+
+ # Sexual dimorphism in morphological integration in one population
+ # but not the other
+
+ # can also list different PLS analyses, separately
+
+compare.pls(MF = integ.tests$Marsh.F, MM = integ.tests$Marsh.M)
+
+MF1 <- integration.test(head.coords.gp$Marsh.F, tail.coords.gp$Marsh.F, iter=10000)
+MF2 <- integration.test(tail.coords.gp$Marsh.F, head.coords.gp$Marsh.F, iter=10000)
+
+
+compare.pls(MF1 , MF2 )
+compare.pls(MF1 , MF1 )
+
+
+
+
+```
+
+
+
 ## Test integration with 5 modules for shape residual dataset -- with phylogeny
 As above but with residuals
 ```{r}

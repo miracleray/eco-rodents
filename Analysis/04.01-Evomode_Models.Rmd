@@ -59,8 +59,6 @@ EB_shapefit <- mvgls(array2d ~ 1 , aus.tree, data = two_d_array, model="EB" , me
 
 
 
-
-
 ```
 
 
