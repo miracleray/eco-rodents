@@ -6,7 +6,7 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE)
 knitr::opts_knit$set(root.dir = '../eco-rodents')
 ```
 
@@ -43,6 +43,22 @@ load(file = "../Data/Processed/03-tree-data.rda")
 load(file = "../Data/Processed/03-graphing-vectors.rda")
 ```
 
+#Phylogenetic signal of shape and size
+```{r}
+
+#the tests and below phytools tests needs names with the data so pulling them out just here
+Csizes_fit <- info.means$MeanCsize
+names(Csizes_fit) <- paste(info.means$Genus.y, "_", info.means$Species.y, sep="")
+
+#always check!!
+names(Csizes_fit) == aus.tree$tip.label
+dimnames(mean.shapes)[[3]]==aus.tree$tip.label
+
+physignal(mean.shapes, aus.tree )
+
+physignal(log(Csizes_fit), aus.tree )
+
+```
 #which model of evolution does shape follow? Using Julien Clavel's mvMorph package
 
 ```{r}
@@ -53,27 +69,176 @@ two_d_array <- list( array2d=two.d.array(mean.shapes))
 
 dimnames(two_d_array$array2d)[[1]] == aus.tree$tip.label
 
-BM_shapefit <- mvgls(array2d ~ 1 , aus.tree, data = two_d_array, model="BM" , method="PL-LOOCV")
-OU_shapefit <- mvgls(array2d ~ 1 , aus.tree, data = two_d_array, model="OU" , method="PL-LOOCV")
-EB_shapefit <- mvgls(array2d ~ 1 , aus.tree, data = two_d_array, model="EB" , method="PL-LOOCV")
 
+
+load(file="../Data/Processed/Shape_evo_modes")
+#Fitting different evolutionary models to the shape data and tabulating the GICs. The BM analysis takes 5 minutes, the other two take longer - looking at nearly 30 minutes of computing time!
+
+#BM_shapefit <- mvgls(array2d ~ 1 , aus.tree, data = two_d_array, model="BM" , method="PL-LOOCV")
+#OU_shapefit <- mvgls(array2d ~ 1 , aus.tree, data = two_d_array, model="OU" , method="PL-LOOCV")
+#EB_shapefit <- mvgls(array2d ~ 1 , aus.tree, data = two_d_array, model="EB" , method="PL-LOOCV")
+
+
+GIC_BM<- GIC(BM_shapefit)
+GIC_OU <- GIC(OU_shapefit)
+GIC_EB <- GIC(EB_shapefit)
+
+#Compute vector of GICs - this also takes a little, ~1 minute
+GICs=unlist(c(GIC(BM_shapefit)[2],GIC(OU_shapefit)[2],GIC(EB_shapefit)[2] ))
+
+names(GICs) <- c("BM", "OU", "EB" )
+  
+#compute relative probabilities betweeen 0 and 1 by comparing AICS according to Burnham and Anderson (2002)
+GICmin=GICs-min(GICs)
+  W=exp(-0.5*GICmin)/sum(exp(-0.5*GICmin))
+  
+  #OU is by far the preferred model
+  W 
+
+#or use the evidence ratio computed in the qprc package
+
+Evidence_ratios <- c(evidence(GICs[1], GICs[2]), evidence(GICs[1], GICs[3]), evidence(GICs[2], GICs[3]))
+
+names(Evidence_ratios)<- c("BM_OU", "BM_EB", "OU_EB")
+
+#" If large, first model is better. If small, second model is better. "
+#OU is also better here - infinitely better than EB by the looks of it!
+
+Evidence_ratios
+  
+save(BM_shapefit,OU_shapefit,EB_shapefit, file="../Data/Processed/Shape_evo_modes")
+
+#How strong is the OU process - is it OK to use BM for analyses? Using reasoning and workflow from Artuso et al. 2022:
+#For those modules following an OU process, we calculated the “rate of adaptation” parameter, α, and its associated “phylogenetic half-life” (t1/2), as given by the formula (Hansen 1997, 2014): t1/2 = ln2/α, assuming a tree height of about 11.5 million years (Myr), based on the crown age of Clade A (Gamisch et al. 2021; see also Fig. S1). Phylogenetic half-lives are usually interpreted as the average time it takes a species to evolve halfway from its ancestral state (here: module shape) toward the optimum (see also Artuso et al. 2021), thereby indicating the strength of the OU process acting on the species. When α is zero and/or t1/2 is larger relative to tree height, the OU model collapses to the BM model (Beaulieu et al. 2012; Cooper et al. 2016).
+
+#This is alpha (based on summary(OU_shapefit)) - it is 0.13
+alpha <- OU_shapefit$opt$par[2]
+
+#The deepest node is 37 but t1/2 is calculated as 5.28, so the OU model is not particularly BM-like 
+max(node.depth(aus.tree))
+
+log(2)/alpha
+
+#But with small sample sizes, Type I error rates are high and common likelihood tests such as AIC can be biased (cooper et al. 2016)
+
+
+#Does it make much of a difference to the coordinates if we adjust for OU vs BM evolution? 
+
+#trying to do what I would usually do if I ran pgls:
+resid_BM <- arrayspecs(BM_shapefit$residuals, dim(mean.shapes)[[1]], 3)
+#trying to do what I would usually do if I ran pgls:
+resid_OU <- arrayspecs(OU_shapefit$residuals, dim(mean.shapes)[[1]], 3)
+
+#The r-pls of these residuals is 1
+integration.test(resid_BM, resid_OU)
 
 
 ```
+Now fitting a model just for size, using Phytools
 
-
-
-
-### Extract shape residuals by removing allometric shape signal
 ```{r}
-# Use pgls of coords with size to get residuals
-allom.GDF <- geomorph.data.frame(coords = mean.shapes, Csize = info.means$MeanCsize)
-allometry.all <- procD.pgls(coords ~ Csize, aus.tree, data = allom.GDF)
+
+
+
+sizeBM<-fitContinuous(aus.tree,log(Csizes_fit))
+sizeOU<-fitContinuous(aus.tree,log(Csizes_fit),model="OU")
+#EB gives a warning message?
+sizeEB<-fitContinuous(aus.tree,log(Csizes_fit),model="EB")
+
+#Compute vector of GICs - this also takes a little, ~1 minute
+AICs=c(sizeBM$opt$aic,sizeOU$opt$aic,sizeEB$opt$aic )
+
+names(AICs) <- c("BM", "OU", "EB" )
+  
+#compute relative probabilities betweeen 0 and 1 by comparing AICS according to Burnham and Anderson (2002)
+AICmin=AICs-min(AICs)
+  W=exp(-0.5*AICmin)/sum(exp(-0.5*AICmin))
+  
+  #OU is by far the preferred model
+  W 
+
+remove(csizes_fit)
+
+```
+#allometry
+```{r}
+#a paranoid check - don't judge me, I have ADHD :-D
+names(Csizes_fit)==dimnames(two_d_array$array2d)[[1]]
+names(Csizes_fit)==aus.tree$tip.label
+
+load(file="../Data/Processed/Allom_evo_modes")
+
+#or re-compute, the below also takes ~30 minutes on my fasted computer
+
+#BM_allomfit <- mvgls(array2d ~ log(Csizes_fit), aus.tree, data = two_d_array, model="BM" , method="PL-LOOCV")
+#OU_allomfit <- mvgls(array2d ~ log(Csizes_fit), aus.tree, data = two_d_array, model="OU" , method="PL-LOOCV")
+#EB_allomfit <- mvgls(array2d ~ log(Csizes_fit), aus.tree, data = two_d_array, model="EB" , method="PL-LOOCV")
+#save(BM_allomfit,OU_allomfit,EB_allomfit, file="../Data/Processed/Allom_evo_modes")
+
+GIC_BM_allom<- GIC(BM_allomfit)
+GIC_OU <- GIC(OU_allomfit)
+GIC_EB <- GIC(EB_allomfit)
+
+#Compute vector of GICs - this also takes a little, ~1 minute
+GICs=unlist(c(GIC(BM_allomfit)[2],GIC(OU_allomfit)[2],GIC(EB_allomfit)[2] ))
+
+names(GICs) <- c("BM", "OU", "EB" )
+  
+#compute relative probabilities betweeen 0 and 1 by comparing AICS according to Burnham and Anderson (2002)
+
+GICmin=GICs-min(GICs)
+  W=exp(-0.5*GICmin)/sum(exp(-0.5*GICmin))
+
+#OU is also strongly preferred here.
+  W 
+
+#or use the evidence ratio computed in the qprc package
+
+Evidence_ratios <- c(evidence(GICs[1], GICs[2]), evidence(GICs[1], GICs[3]), evidence(GICs[2], GICs[3]))
+
+names(Evidence_ratios)<- c("BM_OU", "BM_EB", "OU_EB")
+
+#" If large, first model is better. If small, second model is better. "
+
+Evidence_ratios
+
+#Alpha  
+OU_allomfit$opt$par[2]
+
+```
+#extract shape residuals from OU model
+```{r}
+OU_allomfit$residuals
+
+#trying to do what I would usually do if I ran pgls:
+allom_resid_OU <- arrayspecs(OU_allomfit$residuals, dim(mean.shapes)[[1]], 3)
+
+#also compute residuals from a pgls (Brownian-based) model
+allom_GDF <- geomorph.data.frame(coords = mean.shapes, Csize = info.means$MeanCsize)
+allometry.all <- procD.pgls(coords ~ Csize, aus.tree, data = allom_GDF)
 
 # Turn the residuals into an appropriate array
 dimnames(mean.shapes)[[3]] <- info.means$FullName
-allom.resid <- arrayspecs(allometry.all$pgls.residuals, dim(mean.shapes)[[1]], 3)
+allom_resid_PGLS <- arrayspecs(allometry.all$pgls.residuals, dim(mean.shapes)[[1]], 3)
 
+#compare the two types of residuals
+#they match
+dimnames(allom_resid_PGLS)[[3]]==dimnames(allom_resid_OU)[[3]]
+
+head(allom.resid_PGLS)
+head(allom_resid_OU)
+
+
+#using the integration.test function which is essentially a 2BPLS - the residuals of the two models are nearly identical
+integration.test(allom_resid_PGLS,allom_resid_OU)
+
+```
+
+#After finding that the residuals of the OU and the residuals of the conventional pgls model are nearly identical (same with just the residuals of just modelling shape evolution under BM/OU), deciding to continue with just pgls-based analyses. It's unlikely that we will get substantial differences. 
+
+```{r}
+#The above code was implemented for revision of this paper. Here I'm just changing the name of the residual object so the rest of the code doesn't have to be fixed.
+allom.resid <- allom_resid_PGLS
 # Add the consensus shape (from the GPA) to the residuals if you want to understand the landmark variation in the residuals - needed for script 06
 gpa <- gpagen(mean.shapes)
 residuals <- allom.resid + array(gpa$consensus, dim(allom.resid))
@@ -101,8 +266,8 @@ not.Cs <- info.means$MeanCsize[not.index]
 # Set up for export and for multiple panels
 part.coords <- c(-0.117, 0.095)  # plotting parameters for A, C, D, E placement
 
-setEPS()
-postscript("../Data/Results/Figure1_PCAs_6plot.eps")
+#setEPS()
+#postscript("../Data/Results/Figure1_PCAs_6plot.eps")
 mat <- matrix(c(1:6), 3, 2, byrow = TRUE)  # 6 plots, 3 rows, 2 columns
 layout(mat, widths = rep(1, dim(mat)[2]), heights = rep(0.5, dim(mat)[1]))   
 
@@ -141,6 +306,8 @@ plot(x = log(info.means$MeanCsize),
 text(4.8, 0.006, "b", cex = 1.5)
 text(5.1, 0.0058, "evolutionary allometry")
 abline(lm(-evo.allo.rs$RegScore ~ log(info.means$MeanCsize)), col = "dark grey", lwd = 1)  # common evolutionary allometry line
+#adding a line of the lm model as well
+abline(lm(mean.shapes~log(info.means$MeanCsize)), col = "dark grey", lwd = 1)
 #text(x = log(info.means$MeanCsize), y = -evo.allo.rs$RegScore, labels = info.means$Genus)  # labels genera on plot points
 
 # C) FULL SHAPE PCA - genus colors
