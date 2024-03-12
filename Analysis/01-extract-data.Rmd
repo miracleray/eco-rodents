@@ -271,7 +271,9 @@ module_csizes <- module_list
 
 for (i in 1:length(module_gpas)){
   
-module_csizes[[i]] <- module_gpas[[i]]$Csize
+  names(module_gpas[[i]]$Csize) <- sub("_small", "",   names(module_gpas[[i]]$Csize))
+
+  module_csizes[[i]] <- module_gpas[[i]]$Csize
 
 }
 
@@ -287,7 +289,7 @@ module_pairs [[i]] <- FindPairs(sm.pt.names[mod.parts[[i]]])
 }
 
 
-#run bilateraly symmetry analyses of all modules with the module pairs. First just checking how the "ind" vector works in Ariel's code - it's the same as the dimnames. So I am using just the dimnames as the "ind" vector for the modules
+#run bilateral symmetry analyses of all modules with the module pairs. First just checking how the "ind" vector works in Ariel's code - it's the same as the dimnames. So I am using just the dimnames as the "ind" vector for the modules
 #as.character (sm.sp.info$All) == sub("_small", "",  as.character(dimnames(sm.Y$coords)[[3]]))
 
 
@@ -295,18 +297,26 @@ module_bilat <- module_list
 
 for (i in 1:length(module_gpas)){
   
-module_bilat [[i]] <- bilat.symmetry(module_gpas[[i]]$coords, ind = dimnames(module_gpas[[i]]$coords)[[3]], object.sym = TRUE, replicate = NULL, side = NULL, land.pairs = module_pairs[[i]])
+module_bilat [[i]] <- bilat.symmetry(module_gpas[[i]]$coords, ind = sub("_small", "", dimnames(module_gpas[[i]]$coords)[[3]]), object.sym = TRUE, replicate = NULL, side = NULL, land.pairs = module_pairs[[i]])
  
 }
 
 #Add Csizes to module_bilat 
+module_shape <- module_list
+#module_shape_content <- list(shape=NULL, csize=NULL)
 
-for (i in 1:length(module_gpas)){
-  
-module_bilat [[i]]$Csize <- module_csizes[[i]]
+for (i in 1:length(module_shape)){
+
+module_shape[[i]]$shape <- module_bilat[[i]]$symm.shape
+module_shape [[i]]$csize <- module_csizes[[i]]
  
 }
 
+#Make sure the order checks out - should be all the same as in the other full datasets
+
+dimnames (module_shape$basicran$shape)[[3]] == as.character (sm.sp.info$All)
+
+dimnames (module_shape$basicran$shape)[[3]] == names(module_shape$vault$csize)
 
 ```
 
@@ -315,6 +325,6 @@ module_bilat [[i]]$Csize <- module_csizes[[i]]
 ### Save intermediate data
 Now that we have extracted the 2 patch protocol datasets and the specimen metadata, we are ready for the next analysis step: 02-calculate-user-error.Rmd. Here we save the R objects we will need for later steps so this script does not have to be run again.
 ```{r}
-save(big.bY.shape, big.sp.info, sm.bY.shape, sm.sp.info, rep.spec, big.pt.names, sm.pt.names, module_bilat, file = "../Data/Processed/01-bilat-data-w-ERR.rda")
+save(big.bY.shape, big.sp.info, sm.bY.shape, sm.sp.info, rep.spec, big.pt.names, sm.pt.names, module_bilat,module_list, file = "../Data/Processed/01-bilat-data-w-ERR.rda")
 save(B, S, big.pt.names, sm.pt.names, big.sp.info, sm.sp.info, rep.spec, file = "../Data/Processed/01-data-for-appendix.rda")
 ```
