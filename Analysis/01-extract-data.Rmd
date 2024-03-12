@@ -26,7 +26,7 @@ library(dplyr)      # CRAN v1.1.3
 library(stringr)    # CRAN v1.5.0
 library(stringi)    # CRAN v1.7.12
 library(data.table) # CRAN v1.14.8
-
+library(wesanderson)
 # This sets the wd to local
 library(rstudioapi) # Safely Access the RStudio API
 setwd(dirname(getActiveDocumentContext()$path))
@@ -158,6 +158,89 @@ Because we already slid our curve and patch semi-landmarks in Viewbox, we pass t
 big.Y <- gpagen(B, Proj = TRUE, ProcD = TRUE)
 sm.Y <- gpagen(S, Proj = TRUE, ProcD = TRUE)
 ```
+#run separate GPAs for each module - using the small patch protocol on which this paper is based
+
+```{r}
+lm.modules <- read.csv("../Data/Processed/Landmark_modules.csv", sep = ",", header = TRUE)
+
+basicran <- S[which(lm.modules[, 4] == "basicran"), ,]
+molar <- S[which(lm.modules[, 4] == "molar"), ,]
+orbital <- S[which(lm.modules[, 4] == "orbital"), ,]
+rostrum <- S[which(lm.modules[, 4] == "rostrum"), ,]
+vault <- S[which(lm.modules[, 4] == "vault"), ,]
+
+#check these are correct
+#Pick a random specimen just for plotting
+ref <- S[,,1]
+mod.levels<- sort(unique(lm.modules[, 4]))  # 5 (of 6) modules from Goswami
+
+# Define nice colors for modules
+mod.colors <- c(wes_palette("GrandBudapest1")[2:4], wes_palette("GrandBudapest2")[1:2])
+
+# Subset the landmarks according to the modules
+mod.parts <- list()
+for(i in 1:length(mod.levels)){
+  mod.parts[[i]] <- which(lm.modules[, 4] == mod.levels[[i]])
+}
+
+
+#open3d(windowRect = c(0, 0, 2400, 2400))
+open3d()
+for(i in 1:length(mod.levels)) {
+        spheres3d(ref[mod.parts[[i]], 1], ref[mod.parts[[i]], 2], ref[mod.parts[[i]], 3], col = mod.colors[i], lit = TRUE, radius = 0.15, asp = FALSE)
+        #rgl.texts(ref[mod.parts[[i]], 1], ref[mod.parts[[i]], 2], ref[mod.parts[[i]], 3], mod.parts[[i]], offset = 100, color = c("black"))
+}
+
+
+#now run separate GPAs for each module
+
+modules <- list( basicran=basicran, molar=molar, orbital=orbital, rostrum=rostrum, vault=vault)
+#list for gpas, overwriting the raw data list
+module_gpas <- modules
+
+for (i in 1:length(module_gpas)){
+  
+module_gpas[[i]] <- gpagen(modules[[i]],Proj = TRUE, ProcD = TRUE)
+
+}
+
+#pull out centroid sizes for later allometry analyses
+
+module_csizes <- list (basicran=NULL, molar=NULL, orbital=NULL, rostrum=NULL, vault=NULL)
+
+for (i in 1:length(module_gpas)){
+  
+module_csizes[[i]] <- module_gpas[[i]]$Csize
+
+}
+
+
+#Get unique names for bilateral symmetry analyses
+
+module_pairs <- list (basicran=NULL, molar=NULL, orbital=NULL, rostrum=NULL, vault=NULL)
+
+for (i in 1:length(module_gpas)){
+  
+module_pairs [[i]] <- FindPairs(sm.pt.names[mod.parts[[i]]])
+ 
+}
+
+
+#run bilateraly symmetry analyses of all modules with the module pairs:
+
+module_bilat <- list (basicran=NULL, molar=NULL, orbital=NULL, rostrum=NULL, vault=NULL)
+
+for (i in 1:length(module_gpas)){
+  
+module_bilat [[i]] <- bilat.symmetry(module_gpas$coords, ind = big.sp.info$All, object.sym = TRUE, replicate = NULL, side = NULL, land.pairs = big.land.pairs)
+ 
+}
+
+
+#Just checking how the "ind" vector works - it's the same as the dimnames.
+as.character (sm.sp.info$All) == sub("_small", "",  as.character(dimnames(sm.Y$coords)[[3]]))
+
+```
 
 ### Add centroid size to metadata
 Simply join the centroid size given by `gpagen()` to the metadata table for each dataset. These data will be used later to quantify allometry.
@@ -192,6 +275,8 @@ WARNING: the `bilat.symmetry()` function will change the order of specimens in t
 ```{r}
 # Perform bilateral procrustes alignment on each patch protocol
 big.biY <- bilat.symmetry(big.Y$coords, ind = big.sp.info$All, object.sym = TRUE, replicate = NULL, side = NULL, land.pairs = big.land.pairs)
+
+big.Y$coords
 
 # Extract symmetric component of shape data
 big.bY.shape <- big.biY$symm.shape  # analogous to Y$coords, where Y is the output of gpagen()

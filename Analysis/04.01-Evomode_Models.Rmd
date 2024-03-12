@@ -31,6 +31,7 @@ library(colorspace)
 library(phytools) 
 library(geiger)      
 library(mvMORPH)  
+library(qpcR)
 
 
 # This sets the wd to local
@@ -77,7 +78,7 @@ load(file="../Data/Processed/Shape_evo_modes")
 #BM_shapefit <- mvgls(array2d ~ 1 , aus.tree, data = two_d_array, model="BM" , method="PL-LOOCV")
 #OU_shapefit <- mvgls(array2d ~ 1 , aus.tree, data = two_d_array, model="OU" , method="PL-LOOCV")
 #EB_shapefit <- mvgls(array2d ~ 1 , aus.tree, data = two_d_array, model="EB" , method="PL-LOOCV")
-
+#save(BM_shapefit,OU_shapefit,EB_shapefit, file="../Data/Processed/Shape_evo_modes")
 
 GIC_BM<- GIC(BM_shapefit)
 GIC_OU <- GIC(OU_shapefit)
@@ -106,7 +107,7 @@ names(Evidence_ratios)<- c("BM_OU", "BM_EB", "OU_EB")
 
 Evidence_ratios
   
-save(BM_shapefit,OU_shapefit,EB_shapefit, file="../Data/Processed/Shape_evo_modes")
+
 
 #How strong is the OU process - is it OK to use BM for analyses? Using reasoning and workflow from Artuso et al. 2022:
 #For those modules following an OU process, we calculated the “rate of adaptation” parameter, α, and its associated “phylogenetic half-life” (t1/2), as given by the formula (Hansen 1997, 2014): t1/2 = ln2/α, assuming a tree height of about 11.5 million years (Myr), based on the crown age of Clade A (Gamisch et al. 2021; see also Fig. S1). Phylogenetic half-lives are usually interpreted as the average time it takes a species to evolve halfway from its ancestral state (here: module shape) toward the optimum (see also Artuso et al. 2021), thereby indicating the strength of the OU process acting on the species. When α is zero and/or t1/2 is larger relative to tree height, the OU model collapses to the BM model (Beaulieu et al. 2012; Cooper et al. 2016).
@@ -157,7 +158,6 @@ AICmin=AICs-min(AICs)
   #OU is by far the preferred model
   W 
 
-remove(csizes_fit)
 
 ```
 #allometry
@@ -170,10 +170,10 @@ load(file="../Data/Processed/Allom_evo_modes")
 
 #or re-compute, the below also takes ~30 minutes on my fasted computer
 
-#BM_allomfit <- mvgls(array2d ~ log(Csizes_fit), aus.tree, data = two_d_array, model="BM" , method="PL-LOOCV")
-#OU_allomfit <- mvgls(array2d ~ log(Csizes_fit), aus.tree, data = two_d_array, model="OU" , method="PL-LOOCV")
-#EB_allomfit <- mvgls(array2d ~ log(Csizes_fit), aus.tree, data = two_d_array, model="EB" , method="PL-LOOCV")
-#save(BM_allomfit,OU_allomfit,EB_allomfit, file="../Data/Processed/Allom_evo_modes")
+# BM_allomfit <- mvgls(array2d ~ log(Csizes_fit), aus.tree, data = two_d_array, model="BM" , method="PL-LOOCV")
+# OU_allomfit <- mvgls(array2d ~ log(Csizes_fit), aus.tree, data = two_d_array, model="OU" , method="PL-LOOCV")
+# EB_allomfit <- mvgls(array2d ~ log(Csizes_fit), aus.tree, data = two_d_array, model="EB" , method="PL-LOOCV")
+# save(BM_allomfit,OU_allomfit,EB_allomfit, file="../Data/Processed/Allom_evo_modes")
 
 GIC_BM_allom<- GIC(BM_allomfit)
 GIC_OU <- GIC(OU_allomfit)
@@ -215,7 +215,7 @@ allom_resid_OU <- arrayspecs(OU_allomfit$residuals, dim(mean.shapes)[[1]], 3)
 
 #also compute residuals from a pgls (Brownian-based) model
 allom_GDF <- geomorph.data.frame(coords = mean.shapes, Csize = info.means$MeanCsize)
-allometry.all <- procD.pgls(coords ~ Csize, aus.tree, data = allom_GDF)
+allometry.all <- procD.pgls(coords ~ log(Csize), aus.tree, data = allom_GDF)
 
 # Turn the residuals into an appropriate array
 dimnames(mean.shapes)[[3]] <- info.means$FullName
@@ -235,6 +235,75 @@ integration.test(allom_resid_PGLS,allom_resid_OU)
 ```
 
 #After finding that the residuals of the OU and the residuals of the conventional pgls model are nearly identical (same with just the residuals of just modelling shape evolution under BM/OU), deciding to continue with just pgls-based analyses. It's unlikely that we will get substantial differences. 
+
+#Now we want to know if allometry affects all modules equally. For this, make separate gpas first: GPA of all specimens and then create mean shapes.
+
+```{r}
+
+basicran <- mean.shapes[which(lm.modules[, 4] == "basicran"), ,]
+molar <- mean.shapes[which(lm.modules[, 4] == "molar"), ,]
+orbital <- mean.shapes[which(lm.modules[, 4] == "orbital"), ,]
+rostrum <- mean.shapes[which(lm.modules[, 4] == "rostrum"), ,]
+vault <- mean.shapes[which(lm.modules[, 4] == "vault"), ,]
+
+GPA_list <- list( basicran=basicran, molar=molar, orbital=orbital, rostrum=rostrum, vault=vault)
+
+
+#Create all combinations of modules
+Combinations <- expand.grid(names(module_list), names(module_list))
+
+#add empty colums for values
+Combinations[,c("Allometry", "p")] <- NA
+
+
+for (i in 1:nrow(Combinations)){
+  
+temp <- procD.pgls(module_list[[which(names(module_list)==Combinations[i,1])]] ~ log(CSIZE FROM GPA)
+                          phy=aus.tree)
+
+Combinations$Rpls[i]<-temp$r.pls
+Combinations$p[i] <- temp$P.value
+
+}
+
+
+R_pls_matrix <- matrix(Combinations$Rpls, nrow=5, ncol=5, dimnames=list(names(module_list),names(module_list)))
+
+write.csv(R_pls_matrix, file="../Data/Results/Module_allometry.csv")
+
+#manual tests to make sure the matrix reflects reality - it does
+
+phylo.integration(basicran, molar, phy=aus.tree)
+phylo.integration(rostrum, molar, phy=aus.tree)
+phylo.integration(molar, rostrum, phy=aus.tree)
+
+#Now create a matrix that asks if the levels of integration are significantly different using compare.pls
+
+#Create all combinations of modules
+
+#create expand grid matrix but this time take out self-combinations - reduces it to 20 rows. I initially used this but it doubles up on combinations.
+#Combinations_compare <- expand.grid(names(module_list), names(module_list))
+
+#The following is better:
+
+Combinations_compare <- c( names(module_list), names(module_list) )
+Combinations_compare <- unique( Combinations_compare )
+Combinations_compare <- combn( Combinations_compare , 2 )
+#Combinations_compare <- paste(Combinations_compare[1,], Combinations_compare[2,])
+
+
+
+
+
+
+
+
+
+```
+
+
+
+
 
 ```{r}
 #The above code was implemented for revision of this paper. Here I'm just changing the name of the residual object so the rest of the code doesn't have to be fixed.
