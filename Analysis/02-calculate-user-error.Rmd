@@ -6,7 +6,7 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE)
 knitr::opts_knit$set(root.dir = '../eco-rodents')
 ```
 
@@ -49,6 +49,15 @@ sm.sp.info <- sm.sp.info[-c(rat.out, uro.out), ]  # metadata
 big.sp.info <- big.sp.info[-c(rat.out, uro.out), ]
 sm.bY.shape <- sm.bY.shape[, , -c(rat.out, uro.out)]  # shape data
 big.bY.shape <- big.bY.shape[, , -c(rat.out, uro.out)]
+
+#now for the modules
+
+for (i in 1:length(module_list)){
+  
+  module_bilat[[i]]<-module_bilat[[i]]$coor [-c(rat.out, uro.out), ]
+  
+}
+
 ```
 
 ## 2) Calculate intra-observer error
