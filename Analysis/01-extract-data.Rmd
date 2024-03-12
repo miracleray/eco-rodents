@@ -158,89 +158,7 @@ Because we already slid our curve and patch semi-landmarks in Viewbox, we pass t
 big.Y <- gpagen(B, Proj = TRUE, ProcD = TRUE)
 sm.Y <- gpagen(S, Proj = TRUE, ProcD = TRUE)
 ```
-#run separate GPAs for each module - using the small patch protocol on which this paper is based
 
-```{r}
-lm.modules <- read.csv("../Data/Processed/Landmark_modules.csv", sep = ",", header = TRUE)
-
-basicran <- S[which(lm.modules[, 4] == "basicran"), ,]
-molar <- S[which(lm.modules[, 4] == "molar"), ,]
-orbital <- S[which(lm.modules[, 4] == "orbital"), ,]
-rostrum <- S[which(lm.modules[, 4] == "rostrum"), ,]
-vault <- S[which(lm.modules[, 4] == "vault"), ,]
-
-#check these are correct
-#Pick a random specimen just for plotting
-ref <- S[,,1]
-mod.levels<- sort(unique(lm.modules[, 4]))  # 5 (of 6) modules from Goswami
-
-# Define nice colors for modules
-mod.colors <- c(wes_palette("GrandBudapest1")[2:4], wes_palette("GrandBudapest2")[1:2])
-
-# Subset the landmarks according to the modules
-mod.parts <- list()
-for(i in 1:length(mod.levels)){
-  mod.parts[[i]] <- which(lm.modules[, 4] == mod.levels[[i]])
-}
-
-
-#open3d(windowRect = c(0, 0, 2400, 2400))
-open3d()
-for(i in 1:length(mod.levels)) {
-        spheres3d(ref[mod.parts[[i]], 1], ref[mod.parts[[i]], 2], ref[mod.parts[[i]], 3], col = mod.colors[i], lit = TRUE, radius = 0.15, asp = FALSE)
-        #rgl.texts(ref[mod.parts[[i]], 1], ref[mod.parts[[i]], 2], ref[mod.parts[[i]], 3], mod.parts[[i]], offset = 100, color = c("black"))
-}
-
-
-#now run separate GPAs for each module
-
-modules <- list( basicran=basicran, molar=molar, orbital=orbital, rostrum=rostrum, vault=vault)
-#list for gpas, overwriting the raw data list
-module_gpas <- modules
-
-for (i in 1:length(module_gpas)){
-  
-module_gpas[[i]] <- gpagen(modules[[i]],Proj = TRUE, ProcD = TRUE)
-
-}
-
-#pull out centroid sizes for later allometry analyses
-
-module_csizes <- list (basicran=NULL, molar=NULL, orbital=NULL, rostrum=NULL, vault=NULL)
-
-for (i in 1:length(module_gpas)){
-  
-module_csizes[[i]] <- module_gpas[[i]]$Csize
-
-}
-
-
-#Get unique names for bilateral symmetry analyses
-
-module_pairs <- list (basicran=NULL, molar=NULL, orbital=NULL, rostrum=NULL, vault=NULL)
-
-for (i in 1:length(module_gpas)){
-  
-module_pairs [[i]] <- FindPairs(sm.pt.names[mod.parts[[i]]])
- 
-}
-
-
-#run bilateraly symmetry analyses of all modules with the module pairs:
-
-module_bilat <- list (basicran=NULL, molar=NULL, orbital=NULL, rostrum=NULL, vault=NULL)
-
-for (i in 1:length(module_gpas)){
-  
-module_bilat [[i]] <- bilat.symmetry(module_gpas$coords, ind = big.sp.info$All, object.sym = TRUE, replicate = NULL, side = NULL, land.pairs = big.land.pairs)
- 
-}
-
-
-#Just checking how the "ind" vector works - it's the same as the dimnames.
-as.character (sm.sp.info$All) == sub("_small", "",  as.character(dimnames(sm.Y$coords)[[3]]))
-
-```
 
 ### Add centroid size to metadata
 Simply join the centroid size given by `gpagen()` to the metadata table for each dataset. These data will be used later to quantify allometry.
@@ -294,9 +212,109 @@ summary(sm.biY) # small patch protocol
 ```
 Interestingly, we observe that the big patch protocol has elevated asymmetry relative to the small patch protocol (side Rsq = .11 vs .04, respectively). We suspect this is because it was impossible to get a perfectly mirror-image-matched large patch on the dorsal surface of the skull in Viewbox. Perhaps this asymmetry, hard-coded into the patch protocol, contributed to an increase in asymmetry measured compared to the small patch protocol. The small patch protocol had fewer patch points and it was easier to make mirror-image small patches.
 
+
+
+#run separate GPAs for each module - using the small patch protocol on which this paper is based
+
+```{r}
+lm.modules <- read.csv("../Data/Processed/Landmark_modules.csv", sep = ",", header = TRUE)
+
+basicran <- S[which(lm.modules[, 4] == "basicran"), ,]
+molar <- S[which(lm.modules[, 4] == "molar"), ,]
+orbital <- S[which(lm.modules[, 4] == "orbital"), ,]
+rostrum <- S[which(lm.modules[, 4] == "rostrum"), ,]
+vault <- S[which(lm.modules[, 4] == "vault"), ,]
+
+#And a vector that is repeatedly called to make sure the order is always the same
+module_list<- list(basicran=NULL, molar=NULL, orbital=NULL, rostrum=NULL, vault=NULL)
+
+#check these are correct
+#Pick a random specimen just for plotting
+ref <- S[,,1]
+mod.levels<- sort(unique(lm.modules[, 4]))  # 5 (of 6) modules from Goswami
+
+# Define nice colors for modules
+mod.colors <- c(wes_palette("GrandBudapest1")[2:4], wes_palette("GrandBudapest2")[1:2])
+
+# Subset the landmarks according to the modules
+mod.parts <- list()
+for(i in 1:length(mod.levels)){
+  mod.parts[[i]] <- which(lm.modules[, 4] == mod.levels[[i]])
+}
+
+
+#open3d(windowRect = c(0, 0, 2400, 2400))
+open3d()
+for(i in 1:length(mod.levels)) {
+        spheres3d(ref[mod.parts[[i]], 1], ref[mod.parts[[i]], 2], ref[mod.parts[[i]], 3], col = mod.colors[i], lit = TRUE, radius = 0.15, asp = FALSE)
+        #rgl.texts(ref[mod.parts[[i]], 1], ref[mod.parts[[i]], 2], ref[mod.parts[[i]], 3], mod.parts[[i]], offset = 100, color = c("black"))
+}
+
+
+#now run separate GPAs for each module, make sure they are the same order
+
+modules <- list( basicran=basicran, molar=molar, orbital=orbital, rostrum=rostrum, vault=vault)
+names(modules)== names(module_list)
+
+#list for gpas, overwriting the raw data list
+module_gpas <- module_list
+
+for (i in 1:length(module_gpas)){
+  
+module_gpas[[i]] <- gpagen(modules[[i]],Proj = TRUE, ProcD = TRUE)
+
+}
+
+#pull out centroid sizes for later allometry analyses
+
+module_csizes <- module_list
+
+for (i in 1:length(module_gpas)){
+  
+module_csizes[[i]] <- module_gpas[[i]]$Csize
+
+}
+
+
+#Get unique names for bilateral symmetry analyses, using Ariel's find.pairs function
+
+module_pairs <- module_list
+
+for (i in 1:length(module_gpas)){
+  
+module_pairs [[i]] <- FindPairs(sm.pt.names[mod.parts[[i]]])
+ 
+}
+
+
+#run bilateraly symmetry analyses of all modules with the module pairs. First just checking how the "ind" vector works in Ariel's code - it's the same as the dimnames. So I am using just the dimnames as the "ind" vector for the modules
+#as.character (sm.sp.info$All) == sub("_small", "",  as.character(dimnames(sm.Y$coords)[[3]]))
+
+
+module_bilat <- module_list
+
+for (i in 1:length(module_gpas)){
+  
+module_bilat [[i]] <- bilat.symmetry(module_gpas[[i]]$coords, ind = dimnames(module_gpas[[i]]$coords)[[3]], object.sym = TRUE, replicate = NULL, side = NULL, land.pairs = module_pairs[[i]])
+ 
+}
+
+#Add Csizes to module_bilat 
+
+for (i in 1:length(module_gpas)){
+  
+module_bilat [[i]]$Csize <- module_csizes[[i]]
+ 
+}
+
+
+```
+
+
+
 ### Save intermediate data
 Now that we have extracted the 2 patch protocol datasets and the specimen metadata, we are ready for the next analysis step: 02-calculate-user-error.Rmd. Here we save the R objects we will need for later steps so this script does not have to be run again.
 ```{r}
-save(big.bY.shape, big.sp.info, sm.bY.shape, sm.sp.info, rep.spec, big.pt.names, sm.pt.names, file = "../Data/Processed/01-bilat-data-w-ERR.rda")
+save(big.bY.shape, big.sp.info, sm.bY.shape, sm.sp.info, rep.spec, big.pt.names, sm.pt.names, module_bilat, file = "../Data/Processed/01-bilat-data-w-ERR.rda")
 save(B, S, big.pt.names, sm.pt.names, big.sp.info, sm.sp.info, rep.spec, file = "../Data/Processed/01-data-for-appendix.rda")
 ```

@@ -225,7 +225,7 @@ allom_resid_PGLS <- arrayspecs(allometry.all$pgls.residuals, dim(mean.shapes)[[1
 #they match
 dimnames(allom_resid_PGLS)[[3]]==dimnames(allom_resid_OU)[[3]]
 
-head(allom.resid_PGLS)
+head(allom_resid_PGLS)
 head(allom_resid_OU)
 
 
@@ -234,7 +234,7 @@ integration.test(allom_resid_PGLS,allom_resid_OU)
 
 ```
 
-#After finding that the residuals of the OU and the residuals of the conventional pgls model are nearly identical (same with just the residuals of just modelling shape evolution under BM/OU), deciding to continue with just pgls-based analyses. It's unlikely that we will get substantial differences. 
+#After finding that the residuals of the OU and the residuals of the conventional pgls model correlate at r-PLS=1 (same with just the residuals of just modelling shape evolution under BM/OU), deciding to continue with just pgls-based analyses. It's unlikely that we will get substantial differences. 
 
 #Now we want to know if allometry affects all modules equally. For this, make separate gpas first: GPA of all specimens and then create mean shapes.
 
