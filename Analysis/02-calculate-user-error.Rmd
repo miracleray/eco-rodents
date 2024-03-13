@@ -54,8 +54,8 @@ big.bY.shape <- big.bY.shape[, , -c(rat.out, uro.out)]
 
 for (i in 1:length(module_list)){
   
-  module_bilat[[i]]<-module_bilat[[i]]$coor [-c(rat.out, uro.out), ]
-  
+  module_shape[[i]]$shape<-module_shape[[i]]$shape[,,-c(rat.out, uro.out) ]
+  module_shape[[i]]$csize <- module_shape[[i]]$csize[-c(rat.out, uro.out)]
 }
 
 ```
@@ -72,6 +72,18 @@ big.info <- big.sp.info[main, ]
 
 sm.shape <- sm.bY.shape[, , main]  # small patch
 sm.info <- sm.sp.info[main, ]
+
+
+#now for the modules
+
+for (i in 1:length(module_list)){
+  
+  module_shape[[i]]$shape<-module_shape[[i]]$shape[,,main ]
+  module_shape[[i]]$csize <- module_shape[[i]]$csize[main]
+}
+
+
+
 ```
 
 ### Create error measurement datasets for each protocol 
@@ -100,6 +112,6 @@ RepAbility(sm.err.shape, sm.err.info$CatNum, n.Rep = 2)
 ### Save intermediate data 
 Main datasets for both protocols without replicates.
 ```{r}
-save(sm.shape, sm.info, sm.pt.names, file = "../Data/Processed/02-no-error-data-sm.rda")
+save(sm.shape, sm.info, sm.pt.names, module_shape, module_list, file = "../Data/Processed/02-no-error-data-sm.rda")
 save(big.shape, big.info, big.pt.names, file = "../Data/Processed/02-no-error-data-big.rda")
 ```

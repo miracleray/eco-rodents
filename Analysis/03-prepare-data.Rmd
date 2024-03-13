@@ -6,7 +6,7 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE)
 knitr::opts_knit$set(root.dir = '../eco-rodents')
 ```
 
@@ -55,13 +55,32 @@ info$Endemic <- "Old"
 info$Endemic[which(info$Clade == "Rattini")] <- "New"
 info$Endemic[which(info$Clade == "invRattini")] <- "Inv"
 info$Endemic[which(info$Clade ==  "Mus")] <- "Inv"
+
+
 ```
 
 ## Prepare shape dataset dimnames for phylogenetic analyses
 Rename shape dataset dimnames to only "Genus_species". This is so we can re-order the shape data to match the tree later on. (We can still reference the CatNum in the metadata.)
 ```{r}
 shape <- sm.shape
+#make sure this is the same as modules so the re-name works for the modules as well
+dimnames(shape)[[3]] == dimnames(module_shape$molar$shape)[[3]]
+
+
 dimnames(shape)[[3]] <- as.list(paste(info$FullName))
+
+for (i in length(module_list)){
+  
+  dimnames(module_shape[[i]]$shape)[[3]] <- as.list(paste(info$FullName))
+  names(module_shape[[i]]$csize) <- as.list(paste(info$FullName))
+  
+  
+}
+
+#Check check
+dimnames(shape)[[3]] == dimnames(module_shape[[i]]$shape)[[3]]
+
+
 ```
 
 ### Handle *Mastacomys*
@@ -140,6 +159,33 @@ for (i in 1:length(full.names)) {
 }
 
 mean.shapes <- arrayspecs(mean.shapes.2D, 325, 3)  # convert to 3D array with 325 landmarks and 3 for 3D landmarks in this study
+
+
+
+#Now same thing but a nested loop for the modules
+mean_module_shapes_2D <- NULL
+Mean_module_shapes <- module_list
+
+for (i in 1:length(module_list)){
+  
+  for (j in 1:length(full.names)) {  
+    
+        is.taxa <- which(info$FullName == full.names[j])
+        shape.for.mean.2D <- module_shape[[i]]$shape[, , is.taxa]
+        mean_module_shapes_2D <- rbind(mean_module_shapes_2D, mshape(shape.for.mean.2D))  # output cols must = 3 for 3D
+      }
+  
+  #Here I'm soft coding the numbers of landmarks (hard-coded in Ariel's code above)
+  Mean_module_shapes[[i]] <- arrayspecs(mean_module_shapes_2D, length(module_shape[[i]]$shape[,,1][,1]), 3)  # convert to 3D array with relevant 3D landmarks in the module
+  #need to reset this, otherwise it adds up in the j loop
+  mean_module_shapes_2D <- NULL
+  }
+
+
+
+
+
+
 ```
 
 Create metadata and put mean shape and metadata in alphabetical order.
