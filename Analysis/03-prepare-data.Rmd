@@ -181,11 +181,44 @@ for (i in 1:length(module_list)){
   mean_module_shapes_2D <- NULL
   }
 
+```
+
+#some checks - the r-pls values of the separately gpa'ed modules and the equivalent partition in the whole-shape gpa should be very high
+
+```{r}
+
+# lm.modules <- read.csv("../Data/Processed/Landmark_modules.csv", sep = ",", header = TRUE)
+# mean_full_gpa_partitions <- list( basicran = mean.shapes[which(lm.modules[, 4] == "basicran"), ,], molar = mean.shapes[which(lm.modules[, 4] == "molar"), ,], orbital = mean.shapes[which(lm.modules[, 4] == "orbital"), ,], rostrum = mean.shapes[which(lm.modules[, 4] == "rostrum"), ,], vault = mean.shapes[which(lm.modules[, 4] == "vault"), ,])
+# 
+# names(mean_full_gpa_partitions) == names(Mean_module_shapes)
+# 
+# for (i in 1: length(names(Mean_module_shapes)) ){
+#   
+#   
+#  print( integration.test(mean_full_gpa_partitions[[i]], Mean_module_shapes[[i]])$r.pls)
+# 
+# }
 
 
+```
 
+#also check that the configurations make shape sense
+```{r}
 
+open3d()
+mfrow3d(2,3, sharedMouse = TRUE)
 
+cols=c("red", "blue", "purple", "orange", "pink")
+
+for (i in 1: length(names(Mean_module_shapes)) ){
+  
+spheres3d(Mean_module_shapes[[i]][,,2], col= cols[i], radius=0.01 )
+texts3d(0,0,0.1, texts = names(Mean_module_shapes)[i])
+  
+  next3d()
+  
+}
+  
 ```
 
 Create metadata and put mean shape and metadata in alphabetical order.
@@ -193,6 +226,16 @@ Create metadata and put mean shape and metadata in alphabetical order.
 # Alphabetical order for mean shape
 dimnames(mean.shapes)[[3]] <- full.names  # Genus_species format
 mean.shapes <- mean.shapes[, , sort(dimnames(mean.shapes)[[3]])]  # ABC order
+
+
+#For modules
+
+for (i in 1: length(names(Mean_module_shapes)) ){
+  
+dimnames(Mean_module_shapes[[i]])[[3]] <- full.names
+Mean_module_shapes[[i]] <- Mean_module_shapes[[i]][, , sort(dimnames(Mean_module_shapes[[i]])[[3]])]  # ABC order
+
+}
 
 # Alphabetical order for mean shape metadata
 info.means <- info[!duplicated(info$Taxa), ]  # make metadata
@@ -207,6 +250,36 @@ We need to update the centoid size column for info.means to contain the *mean* c
 # Calculate mean centroid size from original Csize data and store in info.means
 cs.means <- aggregate(info[, which(colnames(info) == "Csize")], list(Taxa = info$FullName), mean)  # aggregate also alphabetizes it
 info.means$MeanCsize <- cs.means[, 2]  # store CS in dataframe
+
+#for modules. This aggregates the csizes that stayed associated with each module above (in the module_shape object). Note that the aggregate function spits out a taxon name column and the actual size values, hance [,2] above and $x below
+
+mean_modules_shapesize <- module_list
+
+for (i in 1: length(names(Mean_module_shapes)) ){
+  
+mean_modules_shapesize[[i]]$shape <- Mean_module_shapes[[i]]
+mean_modules_shapesize[[i]]$csize <- aggregate(module_shape[[i]]$csize, list(Taxa=info$FullName), mean)[,2]
+names(mean_modules_shapesize[[i]]$csize) <- aggregate(module_shape[[i]]$csize, list(Taxa=info$FullName), mean)[,1]
+}
+
+#check check
+names(mean_modules_shapesize$molar$csize) == dimnames(mean_modules_shapesize$basicran$shape)[[3]]
+
+#Checksto make sure the csizes all match up with the full data, just a correlation.
+
+for (i in 1: length(names(Mean_module_shapes)) ){
+  
+
+print(cor(mean_modules_shapesize[[i]]$csize, info.means$MeanCsize))
+
+}
+
+#also - are the largest species really the  largest and the smallest the smallest? Yes :-)
+
+names(which(mean_modules_shapesize$vault$csize==max(mean_modules_shapesize$vault$csize))) == info.means$FullName[ which(info.means$MeanCsize==max(info.means$MeanCsize))]
+
+names(which(mean_modules_shapesize$basicran$csize==min(mean_modules_shapesize$basicran$csize)))==info.means$FullName[ which(info.means$MeanCsize==min(info.means$MeanCsize))]
+
 ```
 
 ### Names, colors, and points in alphabetical order
@@ -218,6 +291,10 @@ names(col.unique.spp)[which(names(col.unique.spp) == "Pse_fus")] <- "Mas_fus"
 alpha.col <- col.unique.spp[order(names(col.unique.spp))]  # colors
 alpha.pch <- pch.unique.spp[order(names(col.unique.spp))]  # points
 alpha.names <- dimnames(mean.shapes)[[3]]  # names
+
+#these alpha names are also useable for the modules:
+dimnames(mean.shapes)[[3]] == dimnames(mean_modules_shapesize$basicran$shape)[[3]]
+
 ```
 
 ## 2) Prepare phylogenetic tree
@@ -253,7 +330,7 @@ relabel.tree$tip.label[P.lor] <- paste("Pogonomys_mollipilosus")
 ```
 
 **Correct Rattus**
-R. lutreolus and R. leucopus were switched relative to Rowe et al 2011 and other recent phylogenies. Likely due to a simple labling error in phylogenetic preparation. Here we correct it. 
+R. lutreolus and R. leucopus were switched relative to Rowe et al 2011 and other recent phylogenies. Likely due to a simple labelling error in phylogenetic preparation. Here we correct it. 
 ```{r}
 R.lut <- which(str_detect(relabel.tree$tip.label, "Rattus_lutreolus"))
 R.leu <- which(str_detect(relabel.tree$tip.label, "Rattus_leucopus"))
@@ -274,13 +351,57 @@ Next, subset and re-order the metadata and shape datasets to match the order of 
 ```{r}
 # Subset datasets
 to.remove <- name.check(aus.tree, aus.tree$tip.label, dimnames(mean.shapes)[[3]])
+
+#this namecheck should be identical to the species in the module dataset adn the "to remove" object should work for both - and it is
+name.check(aus.tree, aus.tree$tip.label, dimnames(mean_modules_shapesize$molar$shape)[[3]])$data_not_tree == name.check(aus.tree, aus.tree$tip.label, dimnames(mean.shapes)[[3]])$data_not_tree
+
 info.means.tree <- info.means[!is.element(info.means$FullName, to.remove$data_not_tree), ]  # metadata
 mean.shapes.tree <- mean.shapes[, , !is.element(info.means$FullName, to.remove$data_not_tree)]  # shape data
+
+#for the modules:
+module_sizeshape_tree <- module_list
+
+for (i in 1:length(module_list)){
+
+module_sizeshape_tree[[i]]$shape <- mean_modules_shapesize[[i]]$shape[, , !is.element(info.means$FullName, to.remove$data_not_tree)]  # shape data    
+module_sizeshape_tree[[i]]$csize <- mean_modules_shapesize[[i]]$csize[!is.element(info.means$FullName, to.remove$data_not_tree)]  # csize
+
+}
 
 # Re-order datasets to match tree tip order
 tree.order <- match(aus.tree$tip.label, info.means.tree$FullName)
 info.means <- info.means.tree[tree.order, ]  # metadata
 mean.shapes <- mean.shapes.tree[, , tree.order]  # shape data
+
+#for the modules. Again, the csize is just a vector here 
+
+for (i in 1:length(module_list)){
+
+module_sizeshape_tree[[i]]$shape <- mean_modules_shapesize[[i]]$shape[, , tree.order] # shape data    
+module_sizeshape_tree[[i]]$csize <- mean_modules_shapesize[[i]]$csize[tree.order] #csize 
+
+}
+
+#again, this should all check out in terms of largest and smallest specimen. To they are all sorted in the same way.
+
+names(which(module_sizeshape_tree$vault$csize==max(module_sizeshape_tree$vault$csize))) == info.means$FullName[ which(info.means$MeanCsize==max(info.means$MeanCsize))]
+
+names(which(module_sizeshape_tree$molar$csize==min(module_sizeshape_tree$molar$csize)))==info.means$FullName[ which(info.means$MeanCsize==min(info.means$MeanCsize))]
+
+#Match with phylogeny still
+names(module_sizeshape_tree$orbital$csize) == aus.tree$tip.label
+  
+#Names and csizes are also still correctly associated between module and full dataset
+
+for (i in 1: length(names(Mean_module_shapes)) ){
+  
+print(cor(module_sizeshape_tree[[i]]$csize, info.means$MeanCsize))
+
+}
+
+#There have been a lot of intermediate datasets I don't want saved, so I am here re-naming the final processed dataset into something to take into analyses
+mean_modules <- module_sizeshape_tree
+
 ```
 
 ### Save intermediate data
@@ -292,5 +413,5 @@ save(info, shape, file = "../Data/Processed/03-main-data.rda")
 save(genera.phylo, col.phylo, col.gen, col.unique.spp, sp.col.gen, phylo.names, pch.spp, col.unique.spp, pch.unique.spp, alpha.names, alpha.col, alpha.pch, file = "../Data/Processed/03-graphing-vectors.rda")
 
 # Data for phylogenetic analyses, including the tree as well as metadata and shape coordinates for mean specimens
-save(info.means, mean.shapes, aus.tree, file = "../Data/Processed/03-tree-data.rda")
+save(info.means, mean.shapes, mean_modules, aus.tree, file = "../Data/Processed/03-tree-data.rda")
 ```
