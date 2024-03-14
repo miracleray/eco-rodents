@@ -160,6 +160,7 @@ AICmin=AICs-min(AICs)
 
 
 ```
+
 #allometry
 ```{r}
 #a paranoid check - don't judge me, I have ADHD :-D
@@ -206,6 +207,7 @@ Evidence_ratios
 OU_allomfit$opt$par[2]
 
 ```
+
 #extract shape residuals from OU model
 ```{r}
 OU_allomfit$residuals
@@ -234,69 +236,51 @@ integration.test(allom_resid_PGLS,allom_resid_OU)
 
 ```
 
-#After finding that the residuals of the OU and the residuals of the conventional pgls model correlate at r-PLS=1 (same with just the residuals of just modelling shape evolution under BM/OU), deciding to continue with just pgls-based analyses. It's unlikely that we will get substantial differences. 
-
-#Now we want to know if allometry affects all modules equally. For this, make separate gpas first: GPA of all specimens and then create mean shapes.
+#just while building the code and I hope I won't for get to take this out- saving progress here.
 
 ```{r}
 
-basicran <- mean.shapes[which(lm.modules[, 4] == "basicran"), ,]
-molar <- mean.shapes[which(lm.modules[, 4] == "molar"), ,]
-orbital <- mean.shapes[which(lm.modules[, 4] == "orbital"), ,]
-rostrum <- mean.shapes[which(lm.modules[, 4] == "rostrum"), ,]
-vault <- mean.shapes[which(lm.modules[, 4] == "vault"), ,]
+save.image(file="../Data/Processed/temp_evomode_allometry_workspace.rda")
 
-GPA_list <- list( basicran=basicran, molar=molar, orbital=orbital, rostrum=rostrum, vault=vault)
+```
 
 
-#Create all combinations of modules
-Combinations <- expand.grid(names(module_list), names(module_list))
+#After finding that the residuals of the OU and the residuals of the conventional pgls model correlate at r-PLS=1 (same with just the residuals of just modelling shape evolution under BM/OU), deciding to continue with just pgls-based analyses. It's unlikely that we will get substantial differences. 
+
+#Now we want to know if allometry affects all modules equally. 
+
+```{r}
+
+load(file="../Data/Processed/temp_evomode_allometry_workspace.rda" )
 
 #add empty colums for values
-Combinations[,c("Allometry", "p")] <- NA
+Allometry <- matrix(ncol=7, nrow=length(names(mean_modules)), dimnames=list(c(names(mean_modules)), c("Df", "SS","MS" ,"Rsq", "F", "Z","P")) )
 
 
-for (i in 1:nrow(Combinations)){
+for (i in 1:length(mean_modules)){
   
-temp <- procD.pgls(module_list[[which(names(module_list)==Combinations[i,1])]] ~ log(CSIZE FROM GPA)
-                          phy=aus.tree)
+temp <- procD.pgls( mean_modules[[i]]$shape ~ log(mean_modules[[i]]$csize), phy=aus.tree)
 
-Combinations$Rpls[i]<-temp$r.pls
-Combinations$p[i] <- temp$P.value
+Allometry[i, 1:7] <- unlist( temp$aov.table[1,])
 
 }
 
 
-R_pls_matrix <- matrix(Combinations$Rpls, nrow=5, ncol=5, dimnames=list(names(module_list),names(module_list)))
+write.csv(Allometry, file="../Data/Results/Module_allometry.csv")
 
-write.csv(R_pls_matrix, file="../Data/Results/Module_allometry.csv")
+#it is also worth checking whether this pattern holds up if we use the overall csize of the skull, since the datasets are all aligned.
 
-#manual tests to make sure the matrix reflects reality - it does
-
-phylo.integration(basicran, molar, phy=aus.tree)
-phylo.integration(rostrum, molar, phy=aus.tree)
-phylo.integration(molar, rostrum, phy=aus.tree)
-
-#Now create a matrix that asks if the levels of integration are significantly different using compare.pls
-
-#Create all combinations of modules
-
-#create expand grid matrix but this time take out self-combinations - reduces it to 20 rows. I initially used this but it doubles up on combinations.
-#Combinations_compare <- expand.grid(names(module_list), names(module_list))
-
-#The following is better:
-
-Combinations_compare <- c( names(module_list), names(module_list) )
-Combinations_compare <- unique( Combinations_compare )
-Combinations_compare <- combn( Combinations_compare , 2 )
-#Combinations_compare <- paste(Combinations_compare[1,], Combinations_compare[2,])
+#add empty colums for values
+Allometry_fullcsize <- matrix(ncol=7, nrow=length(names(mean_modules)), dimnames=list(c(names(mean_modules)), c("Df", "SS","MS" ,"Rsq", "F", "Z","P")) )
 
 
+for (i in 1:length(mean_modules)){
+  
+temp <- procD.pgls( mean_modules[[i]]$shape ~ log(info.means$MeanCsize), phy=aus.tree)
 
+Allometry_fullcsize[i, 1:7] <- unlist( temp$aov.table[1,])
 
-
-
-
+}
 
 
 ```
@@ -318,10 +302,19 @@ residuals <- allom.resid + array(gpa$consensus, dim(allom.resid))
 # Run Procrustes ANOVA with interaction
 pgls.gdf <- geomorph.data.frame(coords = mean.shapes, size = info.means$MeanCsize, clade = info.means$Clade)
 
-fit.pgls <- procD.pgls(coords ~ log(size) * clade, aus.tree, iter = 500, data = pgls.gdf, print.progress = FALSE)
+#pgls as per previous paper
+fit_pgls_allo_evo <- procD.pgls(coords ~ log(size)*clade , aus.tree, iter = 500, data = pgls.gdf, print.progress = FALSE)
+
+#plain gls
+fit_lm_allo <- procD.lm(coords ~ log(size) , iter = 500, data = pgls.gdf, print.progress = FALSE)
+
 
 # Find Reg Score values for plotting purposes
-evo.allo.rs <- plotAllometry(fit.pgls, size = info.means$MeanCsize, method = "RegScore")
+evo_allo_rs <- plotAllometry(fit_pgls_allo_evo, size = info.means$MeanCsize, method = "RegScore")
+
+# Also find Reg Score values for lm for plotting purposes
+allo_rs <- plotAllometry(fit_lm_allo, size = info.means$MeanCsize, method = "RegScore")
+
 ```
 
 ### Export Figure 1 to pdf
@@ -335,8 +328,8 @@ not.Cs <- info.means$MeanCsize[not.index]
 # Set up for export and for multiple panels
 part.coords <- c(-0.117, 0.095)  # plotting parameters for A, C, D, E placement
 
-#setEPS()
-#postscript("../Data/Results/Figure1_PCAs_6plot.eps")
+setEPS()
+postscript("../Data/Results/Figure1_PCAs_6plot.eps")
 mat <- matrix(c(1:6), 3, 2, byrow = TRUE)  # 6 plots, 3 rows, 2 columns
 layout(mat, widths = rep(1, dim(mat)[2]), heights = rep(0.5, dim(mat)[1]))   
 
@@ -374,9 +367,7 @@ plot(x = log(info.means$MeanCsize),
      bty = "n")
 text(4.8, 0.006, "b", cex = 1.5)
 text(5.1, 0.0058, "evolutionary allometry")
-abline(lm(-evo.allo.rs$RegScore ~ log(info.means$MeanCsize)), col = "dark grey", lwd = 1)  # common evolutionary allometry line
-#adding a line of the lm model as well
-abline(lm(mean.shapes~log(info.means$MeanCsize)), col = "dark grey", lwd = 1)
+abline(lm(-evo_allo_rs$RegScore ~ log(info.means$MeanCsize)), col = "dark grey", lwd = 1)  # common evolutionary allometry line
 #text(x = log(info.means$MeanCsize), y = -evo.allo.rs$RegScore, labels = info.means$Genus)  # labels genera on plot points
 
 # C) FULL SHAPE PCA - genus colors
@@ -451,6 +442,54 @@ text(-0.053, 0.092, "shape residual (ecology)")
 
 dev.off()
 ```
+
+#two-panel additional supplementary figure to compare allometry with and without phylogenetic correction
+
+```{r}
+setEPS()
+postscript("../Data/Results/Supp_X_allometries.eps")
+
+par(mfrow=c(2,1))
+
+#evolutionary
+par(mar = c(4, 4, 1, 1))
+plot(x = log(info.means$MeanCsize),
+     y = -evo.allo.rs$RegScore,
+     xlim = c(4.75, 6),
+     col = col.diet.means, 
+     pch = pch.gld.means, 
+     bg = col.diet.means,
+     main = " ",
+     xlab = "Log centroid size", 
+     ylab = "Shape  (Reg Score)",
+     bty = "n")
+text(4.8, 0.001, "A", cex = 1.5)
+text(5.05, 0.001, "evolutionary allometry")
+abline(lm(-evo_allo_rs$RegScore ~ log(info.means$MeanCsize)), col = "dark grey", lwd = 1)  # common evolutionary allometry line
+
+
+#lm
+par(mar = c(4, 4, 1, 1))
+plot(x = log(info.means$MeanCsize),
+     y = allo_rs$RegScore,
+     xlim = c(4.75, 6),
+     col = col.diet.means, 
+     pch = pch.gld.means, 
+     bg = col.diet.means,
+     main = " ",
+     xlab = "Log centroid size", 
+     ylab = "Shape  (Reg Score)",
+     bty = "n")
+text(4.8, 0.1, "B", cex = 1.5)
+text(5.2, 0.1, "allometry in non-phylogenetic linear model")
+abline(lm(allo_rs$RegScore ~ log(info.means$MeanCsize)), col = "dark grey", lwd = 1)  # common evolutionary allometry line
+
+dev.off()
+
+
+```
+
+
 
 ## 2) Compare the full shape and shape residual datasets
 Mantel tests to compare full shape morphospace to the shape residual morphospace
