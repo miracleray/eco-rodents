@@ -56,13 +56,13 @@ dimnames(two_d_array$array2d)[[1]] == aus.tree$tip.label
 
 
 
-load(file="../Data/Processed/Shape_evo_modes")
+#load(file="../Data/Processed/Shape_evo_modes")
 #Fitting different evolutionary models to the shape data and tabulating the GICs. The BM analysis takes 5 minutes, the other two take longer - looking at nearly 30 minutes of computing time!
 
-#BM_shapefit <- mvgls(array2d ~ 1 , aus.tree, data = two_d_array, model="BM" , method="PL-LOOCV")
-#OU_shapefit <- mvgls(array2d ~ 1 , aus.tree, data = two_d_array, model="OU" , method="PL-LOOCV")
-#EB_shapefit <- mvgls(array2d ~ 1 , aus.tree, data = two_d_array, model="EB" , method="PL-LOOCV")
-#save(BM_shapefit,OU_shapefit,EB_shapefit, file="../Data/Processed/Shape_evo_modes")
+BM_shapefit <- mvgls(array2d ~ 1 , aus.tree, data = two_d_array, model="BM" , method="PL-LOOCV")
+OU_shapefit <- mvgls(array2d ~ 1 , aus.tree, data = two_d_array, model="OU" , method="PL-LOOCV")
+EB_shapefit <- mvgls(array2d ~ 1 , aus.tree, data = two_d_array, model="EB" , method="PL-LOOCV")
+save(BM_shapefit,OU_shapefit,EB_shapefit, file="../Data/Processed/Shape_evo_modes")
 
 GIC_BM<- GIC(BM_shapefit)
 GIC_OU <- GIC(OU_shapefit)
@@ -163,14 +163,14 @@ AICmin=AICs-min(AICs)
 names(Csizes_fit)==dimnames(two_d_array$array2d)[[1]]
 names(Csizes_fit)==aus.tree$tip.label
 
-load(file="../Data/Processed/Allom_evo_modes")
+#load(file="../Data/Processed/Allom_evo_modes")
 
 #or re-compute, the below also takes ~30 minutes on my fasted computer
 
-# BM_allomfit <- mvgls(array2d ~ log(Csizes_fit), aus.tree, data = two_d_array, model="BM" , method="PL-LOOCV")
-# OU_allomfit <- mvgls(array2d ~ log(Csizes_fit), aus.tree, data = two_d_array, model="OU" , method="PL-LOOCV")
-# EB_allomfit <- mvgls(array2d ~ log(Csizes_fit), aus.tree, data = two_d_array, model="EB" , method="PL-LOOCV")
-# save(BM_allomfit,OU_allomfit,EB_allomfit, file="../Data/Processed/Allom_evo_modes")
+BM_allomfit <- mvgls(array2d ~ log(Csizes_fit), aus.tree, data = two_d_array, model="BM" , method="PL-LOOCV")
+OU_allomfit <- mvgls(array2d ~ log(Csizes_fit), aus.tree, data = two_d_array, model="OU" , method="PL-LOOCV")
+EB_allomfit <- mvgls(array2d ~ log(Csizes_fit), aus.tree, data = two_d_array, model="EB" , method="PL-LOOCV")
+save(BM_allomfit,OU_allomfit,EB_allomfit, file="../Data/Processed/Allom_evo_modes")
 
 GIC_BM_allom<- GIC(BM_allomfit)
 GIC_OU <- GIC(OU_allomfit)
