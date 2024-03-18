@@ -24,15 +24,10 @@ Produces shape residual data used in later analyses, stored in rda file 04.
 ### Load packages, functions, and data
 Tree, mean shape, and metadata for phylogenetic analyses come from the allometry rodents script 04. 
 ```{r message = FALSE}
-library(geomorph)   
-library(vegan)      
-library(dplyr)      
-library(colorspace) 
-library(phytools) 
-library(geiger)      
-library(mvMORPH)  
-library(qpcR)
-
+library(geomorph)   # CRAN v4.0.6
+library(vegan)      # CRAN v2.6-4  
+library(dplyr)      # CRAN v1.1.3
+library(colorspace) # CRAN v2.1-0
 
 # This sets the wd to local
 library(rstudioapi) # Safely Access the RStudio API
@@ -42,75 +37,98 @@ source("../Functions/utilities.R")  # custom functions
 load(file = "../Data/Processed/03-main-data.rda")
 load(file = "../Data/Processed/03-tree-data.rda")
 load(file = "../Data/Processed/03-graphing-vectors.rda")
-load(file="../Data/Processed/allometry_residuals.rda")
-
+#This only contains the residuals of a pgls testing for allometry, see file 04 for why we are happy with BM models here.
+load(file = "../Data/Processed/allometry_residuals.rda")
 ```
 
-#Phylogenetic signal of shape and size
+# 1) Export Figure 1
+Create complex, multipanel plot of PCAs from different datasets
+
+## A) PCA of mean shapes in full shape dataset (with allometry)
+```{r}
+mean.PCA <- gm.prcomp(mean.shapes)
+
+# Make axis labels
+PCs.allo <- mean.PCA$pc.summary$importance
+PCx.per.allo <- round(PCs.allo[2, 1] * 100, digits = 1)  # % with 1 decimal
+PCx.lab.allo <- paste("PC1", " (", PCx.per.allo, "%)", sep = "")
+PCy.per.allo <- round(PCs.allo[2, 2] * 100, digits = 1)
+PCy.lab.allo <- paste("PC2", " (", PCy.per.allo, "%)", sep = "")
+```
+
+## B-D) PCAs of shape residual dataset (WITHOUT allometry)
+All other PCA plots in figure use this dataset
+
+
+### Make PCA of shape residuals
+Color and legend by species
+```{r}
+# PCA in part B and D
+res.PCA <- gm.prcomp(residuals)
+
+# Make axis labels
+PCs <- res.PCA$pc.summary$importance
+PCx.per <- round(PCs[2, 1] * 100, digits = 1)  # % with 1 decimal
+PCx.lab <- paste("PC1", " (", PCx.per, "%)", sep = "")
+PCy.per <- round(PCs[2, 2] * 100, digits = 1)
+PCy.lab <- paste("PC2", " (", PCy.per, "%)", sep = "")
+```
+
+### C) Plot colors by diet and point shapes by locomotion
+```{r}
+# Set up palette for 5 diet types
+warm <- sequential_hcl(5, "LaJolla")  
+col.carn <- warm[4]  # meat colored red
+col.frug <- warm[3]  # fruit colored orange
+col.gran <- warm[2]  # grain colored gold
+col.foli <- sequential_hcl(5, "Greens 3")[2]  # green grass color for folivores
+col.omni <- sequential_hcl(5, "Grays")[3]  # gray for anything goes omnivores
+
+# Define color palette for diets of mean specimens
+col.diet.5 <- c(col.carn, col.frug, col.gran, col.foli, col.omni)
+col.diet.means <- PlotByGroup(info.means, "Feeding", col.diet.5)
+
+# Points for 4 locomotion types: Aquatic (circle), Arboreal (triangle), Terrestrial (square), hopping (diamond)
+pch.gld.4 <- c(16, 24, 23, 22)
+pch.gld.means <- PlotByGroup(info.means, "Guild", pch.gld.4)
+
+# Genera legend 
+genera.phylo.full <- c("Mus", "Rattus", "Pogonomys", "Xeromys", "Hydromys", "Notomys", "Pseudomys", "Zyzomys", "Leggadina", "Uromys", "Melomys", "Leporillus", "Mesembriomys", "Conilurus")
+```
+
+### D) Plot PCA of shape residuals without Notomys
+The bipedal hopping locomotion of Notomys could be driving a signal not found in the remaining dataset. To test, we take these 4 species out. 
 ```{r}
 
+#check check
+dimnames(residuals)[[3]]==info.means$FullName
+# Remove Notomys species from dataset
+index.not <- which(info.means$Genus == "Not")
+residuals.no <- residuals[, , -index.not]
+info.means.no <- info.means[-index.not, ]
 
-physignal(mean.shapes, aus.tree )
+# PCA
+wrap.PCA.r.n <- gm.prcomp(residuals.no)
+alpha.col.no <- alpha.col[-index.not]
+alpha.pch.no <- alpha.pch[-index.not]
 
-physignal(log(info.means$MeanCsize), aus.tree )
-
+# Calulate % of PC
+PCs.n <- wrap.PCA.r.n$pc.summary$importance
+PCx.per.n <- round(PCs.n[2, 1] * 100, digits = 1)  # % with 1 decimal
+PCx.lab.n <- paste("PC1", " (", PCx.per.n, "%)", sep = "")
+PCy.per.n <- round(PCs.n[2, 2] * 100, digits = 1)
+PCy.lab.n <- paste("PC2", " (", PCy.per.n, "%)", sep = "")
 ```
-
-#Now we want to know if allometry affects all modules equally. 
-
-```{r}
-
-#add empty colums for values
-Allometry <- matrix(ncol=7, nrow=length(names(mean_modules)), dimnames=list(c(names(mean_modules)), c("Df", "SS","MS" ,"Rsq", "F", "Z","P")) )
-
-
-for (i in 1:length(mean_modules)){
-  
-temp <- procD.pgls( mean_modules[[i]]$shape ~ log(mean_modules[[i]]$csize), phy=aus.tree)
-
-Allometry[i, 1:7] <- unlist( temp$aov.table[1,])
-
-}
-
-
-write.csv(Allometry, file="../Data/Results/Module_allometry.csv")
-
-#it is also worth checking whether this pattern holds up if we use the overall csize of the skull, since the datasets are all aligned.
-
-#add empty colums for values
-Allometry_fullcsize <- matrix(ncol=7, nrow=length(names(mean_modules)), dimnames=list(c(names(mean_modules)), c("Df", "SS","MS" ,"Rsq", "F", "Z","P")) )
-
-
-for (i in 1:length(mean_modules)){
-  
-temp <- procD.pgls( mean_modules[[i]]$shape ~ log(info.means$MeanCsize), phy=aus.tree)
-
-Allometry_fullcsize[i, 1:7] <- unlist( temp$aov.table[1,])
-
-}
-
-
-```
-
 
 ### Prepare evolutionary allometry information (from AmNat paper) for Fig 1
 ```{r}
 # Run Procrustes ANOVA with interaction
 pgls.gdf <- geomorph.data.frame(coords = mean.shapes, size = info.means$MeanCsize, clade = info.means$Clade)
 
-#pgls as per previous paper
-fit_pgls_allo_evo <- procD.pgls(coords ~ log(size) , aus.tree, iter = 500, data = pgls.gdf, print.progress = FALSE)
-
-#plain gls
-fit_lm_allo <- procD.lm(coords ~ log(size) , iter = 500, data = pgls.gdf, print.progress = FALSE)
-
+fit.pgls <- procD.pgls(coords ~ log(size) * clade, aus.tree, iter = 500, data = pgls.gdf, print.progress = FALSE)
 
 # Find Reg Score values for plotting purposes
-evo_allo_rs <- plotAllometry(fit_pgls_allo_evo, size = info.means$MeanCsize, method = "RegScore")
-
-# Also find Reg Score values for lm for plotting purposes
-allo_rs <- plotAllometry(fit_lm_allo, size = info.means$MeanCsize, method = "RegScore")
-
+evo.allo.rs <- plotAllometry(fit.pgls, size = info.means$MeanCsize, method = "RegScore")
 ```
 
 ### Export Figure 1 to pdf
@@ -118,7 +136,7 @@ Finally, we compare the full shape PCA to the shape residuals PCAs. All PCAs are
 ```{r}
 # Set up Notomys abline
 not.index <- which(info.means$Genus.y == "Notomys")
-not.Reg <- evo_allo_rs$RegScore[not.index]
+not.Reg <- evo.allo.rs$RegScore[not.index]
 not.Cs <- info.means$MeanCsize[not.index]
 
 # Set up for export and for multiple panels
@@ -163,7 +181,7 @@ plot(x = log(info.means$MeanCsize),
      bty = "n")
 text(4.8, 0.006, "b", cex = 1.5)
 text(5.1, 0.0058, "evolutionary allometry")
-abline(lm(evo_allo_rs$RegScore ~ log(info.means$MeanCsize)), col = "dark grey", lwd = 1)  # common evolutionary allometry line
+abline(lm(-evo.allo.rs$RegScore ~ log(info.means$MeanCsize)), col = "dark grey", lwd = 1)  # common evolutionary allometry line
 #text(x = log(info.means$MeanCsize), y = -evo.allo.rs$RegScore, labels = info.means$Genus)  # labels genera on plot points
 
 # C) FULL SHAPE PCA - genus colors
@@ -239,54 +257,6 @@ text(-0.053, 0.092, "shape residual (ecology)")
 #dev.off()
 ```
 
-#two-panel additional supplementary figure to compare allometry with and without phylogenetic correction
-
-```{r}
-setEPS()
-postscript("../Data/Results/Supp_X_allometries.eps")
-
-par(mfrow=c(2,1))
-
-#evolutionary
-par(mar = c(4, 4, 1, 1))
-plot(x = log(info.means$MeanCsize),
-     y = -evo.allo.rs$RegScore,
-     xlim = c(4.75, 6),
-     col = col.diet.means, 
-     pch = pch.gld.means, 
-     bg = col.diet.means,
-     main = " ",
-     xlab = "Log centroid size", 
-     ylab = "Shape  (Reg Score)",
-     bty = "n")
-text(4.8, 0.001, "A", cex = 1.5)
-text(5.05, 0.001, "evolutionary allometry")
-abline(lm(-evo_allo_rs$RegScore ~ log(info.means$MeanCsize)), col = "dark grey", lwd = 1)  # common evolutionary allometry line
-
-
-#lm
-par(mar = c(4, 4, 1, 1))
-plot(x = log(info.means$MeanCsize),
-     y = allo_rs$RegScore,
-     xlim = c(4.75, 6),
-     col = col.diet.means, 
-     pch = pch.gld.means, 
-     bg = col.diet.means,
-     main = " ",
-     xlab = "Log centroid size", 
-     ylab = "Shape  (Reg Score)",
-     bty = "n")
-text(4.8, 0.1, "B", cex = 1.5)
-text(5.2, 0.1, "allometry in non-phylogenetic linear model")
-abline(lm(allo_rs$RegScore ~ log(info.means$MeanCsize)), col = "dark grey", lwd = 1)  # common evolutionary allometry line
-
-dev.off()
-
-
-```
-
-
-
 ## 2) Compare the full shape and shape residual datasets
 Mantel tests to compare full shape morphospace to the shape residual morphospace
 ```{r}
@@ -316,7 +286,7 @@ man.pc13$statistic
 man.pc13$signif
 ```
 
-### Comparison of morphospaces without allometric PC1
+### Comaparison of morphospaces without allometric PC1
 ```{r}
 # Make distance matrices
 d.full.wo1 <- dist(mean.PCA$x[, 2:dim(mean.PCA$x)[2]])
@@ -339,6 +309,16 @@ cor.pc2
 
 cor.pc2v3 <- cor(mean.PCA$x[, 3], res.PCA$x[, 2])
 cor.pc2v3
+```
+
+### Correlation of full shape PC1 and residual PC2 to centroid size
+```{r}
+cor.size <- cor(-mean.PCA$x[, 1], info.means$MeanCsize)
+cor.size
+
+# Correlation of PC2 to centroid size
+cor.pc2.size <- cor(res.PCA$x[, 2], info.means$MeanCsize)
+cor.pc2.size
 ```
 
 
@@ -387,5 +367,5 @@ dev.off()
 
 ### Save intermediate data
 ```{r}
-save(mean.PCA, res.PCA, file = "../Data/Processed/04-PCAs.rda")
+save(mean.PCA, res.PCA, file = "../Data/Processed/04-PCA_data.rda")
 ```

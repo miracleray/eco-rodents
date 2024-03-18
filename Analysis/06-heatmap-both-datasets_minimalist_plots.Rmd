@@ -41,7 +41,7 @@ setwd(dirname(getActiveDocumentContext()$path))
 
 load(file = "../Data/Processed/03-main-data.rda")
 load(file = "../Data/Processed/03-tree-data.rda")
-load(file = "../Data/Processed/04-residual-data.rda")
+load(file = "../Data/Processed/04-PCA_data.rda")
 ```
 
 ## 1) Create heatmap figures

@@ -39,10 +39,10 @@ source("../Functions/utilities.R")  # custom functions
 load(file = "../Data/Processed/03-main-data.rda")
 load(file = "../Data/Processed/03-tree-data.rda")
 load(file = "../Data/Processed/03-graphing-vectors.rda")
-load(file = "../Data/Processed/04-residual-data.rda")
+load(file = "../Data/Processed/allometry_residuals.rda")
 
 # Can load in time consuming modularity tests after first run:
-load(file = "../Data/Processed/06-modularity.rda")
+#load(file = "../Data/Processed/06-modularity.rda")
 ```
 
 ## Choose the modules
@@ -107,7 +107,7 @@ rgl.snapshot("../Data/Processed/modules.png")
 system("mogrify ../Data/Processed/modules.png -trim ../Data/Processed/*.png")
 ```
 
-## Test integration with 5 modules for full shape dataset - PLS
+## Test INTEGRATION with 5 modules for full shape dataset - PLS
 
 ```{r}
 # Test with the phylogentic tree (and mean shapes)
@@ -122,7 +122,7 @@ alpha.key <- match(unique(lm.modules[, 4]), mod.levels)  # alphabetize table
 int.result.phy <- int.result.phy[order(alpha.key), order(alpha.key)]  # alphabetize table
 ```
 
-#test integration between pairs of modules 
+#test INTEGRATION between pairs of modules 
 
 ```{r}
 basicran <- mean.shapes[which(lm.modules[, 4] == "basicran"), ,]
@@ -154,6 +154,11 @@ Combinations$p[i] <- temp$P.value
 
 
 R_pls_matrix <- matrix(Combinations$Rpls, nrow=5, ncol=5, dimnames=list(names(module_list),names(module_list)))
+
+#adding p values to the r_pls matrix
+R_p_matrix <- matrix(Combinations$p, nrow=5, ncol=5, dimnames=list(names(module_list),names(module_list)))
+#upper triangle
+R_pls_matrix[upper.tri(R_pls_matrix)]<- R_p_matrix[upper.tri(R_p_matrix, diag=FALSE)]
 
 write.csv(R_pls_matrix, file="../Data/Results/R_pls.csv")
 
@@ -238,7 +243,7 @@ compare.pls(test5,test6)
 
 ```
 
-#there are differences in integratoin strength and p-value even in the help file
+#there are differences in integration strength and p-value even in the help file
 
 ```{r}
 
@@ -292,8 +297,7 @@ compare.pls(MF1 , MF1 )
 ```
 
 
-
-## Test integration with 5 modules for shape residual dataset -- with phylogeny
+## Test INTEGRATION with 5 modules for shape RESIDUAL dataset -- with phylogeny
 As above but with residuals
 ```{r}
 # Test with the phylogentic tree (and mean shapes)
@@ -311,21 +315,143 @@ save(int.test.5.phy, int.test.5.res, int.result.phy, int.result.res, file = "../
 ```
 
 
-## Test modularity with 5 modules for full shape dataset
+#test INTEGRATION between pairs of modules based on RESIDUALS
+
+```{r}
+basicran_res <- residuals[which(lm.modules[, 4] == "basicran"), ,]
+molar_res <- residuals[which(lm.modules[, 4] == "molar"), ,]
+orbital_res <- residuals[which(lm.modules[, 4] == "orbital"), ,]
+rostrum_res <- residuals[which(lm.modules[, 4] == "rostrum"), ,]
+vault_res <- residuals[which(lm.modules[, 4] == "vault"), ,]
+
+module_list_res <- list( basicran_res=basicran_res, molar_res=molar_res, orbital_res=orbital_res, rostrum_res=rostrum_res, vault_res=vault_res)
+
+
+#Create all combinations of modules
+Combinations <- expand.grid(names(module_list_res), names(module_list_res))
+
+#add empty colums for values
+Combinations[,c("Rpls", "p")] <- NA
+
+#Note that the order in which modues are tested matters slightly, which can give results just around the 0.05 mark. See above for some examples.The triangle I'm outputting just uses one set of combinations. 
+
+for (i in 1:nrow(Combinations)){
+  
+temp <- phylo.integration(module_list_res[[which(names(module_list_res)==Combinations[i,1])]],
+                          module_list_res[[which(names(module_list_res)==Combinations[i,2])]],
+                          phy=aus.tree)
+
+Combinations$Rpls[i]<-temp$r.pls
+Combinations$p[i] <- temp$P.value
+
+}
+
+
+R_pls_matrix_res <- matrix(Combinations$Rpls, nrow=5, ncol=5, dimnames=list(names(module_list_res),names(module_list_res)))
+R_p_matrix_res <- matrix(Combinations$p, nrow=5, ncol=5, dimnames=list(names(module_list_res),names(module_list_res)))
+
+#upper triangle
+R_pls_matrix_res[upper.tri(R_pls_matrix_res)]<- R_p_matrix_res[upper.tri(R_p_matrix_res, diag=FALSE)]
+
+
+write.csv(R_pls_matrix_res, file="../Data/Results/R_pls_residuals.csv")
+
+#manual tests to make sure the matrix reflects reality - it does
+
+phylo.integration(basicran_res, molar_res, phy=aus.tree)
+phylo.integration(rostrum_res, molar_res, phy=aus.tree)
+phylo.integration(molar_res, rostrum_res, phy=aus.tree)
+
+#Now create a matrix that asks if the levels of integration are significantly different using compare.pls
+
+#Create all combinations of modules
+
+#create expand grid matrix but this time take out self-combinations - reduces it to 20 rows. I initially used this but it doubles up on combinations.
+#Combinations_compare <- expand.grid(names(module_list_res), names(module_list_res))
+
+#The following is better:
+
+Combinations_compare <- c( names(module_list_res), names(module_list_res) )
+Combinations_compare <- unique( Combinations_compare )
+Combinations_compare <- combn( Combinations_compare , 2 )
+#Combinations_compare <- paste(Combinations_compare[1,], Combinations_compare[2,])
+
+
+
+#make empty list to receive integration analyses objects and name appropriately
+phylo_integration_list <- vector("list",ncol(Combinations_compare))
+names(phylo_integration_list) <- c( paste(Combinations_compare[1,], Combinations_compare[2,]))
+
+
+for (i in 1:ncol(Combinations_compare)){
+  
+phylo_integration_list [[i]] <- phylo.integration(module_list_res[[which(names(module_list_res)==Combinations_compare[2,i])]],
+                          module_list_res[[which(names(module_list_res)==Combinations_compare[1,i])]],
+                          phy=aus.tree, iter=1000)
+
+}
+
+
+
+pls_comparison_res <- compare.pls(phylo_integration_list)
+
+pls_comparison_matrix_P_res <- matrix(round(pls_comparison_res$pairwise.P,3), 
+                                nrow=ncol(Combinations_compare), 
+                                ncol=ncol(Combinations_compare), 
+                                dimnames=list(rownames(pls_comparison_res$pairwise.P), colnames(pls_comparison_res$pairwise.P)))
+
+pls_comparison_matrix_Z_res <- matrix(round(pls_comparison$pairwise.z, 3), 
+                                         nrow=ncol(Combinations_compare), 
+                                         ncol=ncol(Combinations_compare),
+                                         dimnames=list(rownames(pls_comparison_res$pairwise.P), colnames(pls_comparison_res$pairwise.P)))
+
+
+#Here we just add the p-values as the upper triangle of the effect size table
+pls_comparison_matrix_Z_res[upper.tri(pls_comparison_matrix_Z_res)]<- pls_comparison_matrix_P_res[upper.tri(pls_comparison_matrix_P_res, diag=FALSE)]
+
+write.csv (pls_comparison_matrix_Z,file="../Data/Results/integration_strength_comparisons_residuals.csv")
+
+
+#manual checks
+rostrum_molar <- phylo.integration( rostrum_res, molar_res, phy = aus.tree)
+orbital_vault <- phylo.integration(orbital_res,vault_res, phy = aus.tree)
+vault_basicran <- phylo.integration( vault_res, basicran_res, phy = aus.tree)
+
+testcompare <- compare.pls( rostrum_molar, orbital_vault, vault_basicran)
+testcompare$pairwise.z
+testcompare$pairwise.P
+
+#effect sizes and p values differ depending on the order in which modules are input?
+test4 <- phylo.integration(module_list_res$molar_res, module_list_res$rostrum_res, phy = aus.tree)
+test5 <- phylo.integration(module_list_res$rostrum_res, module_list_res$molar_res, phy = aus.tree)
+
+compare.pls(test4,test5)
+
+#serious differences with rostrum and orbital
+
+test5 <- phylo.integration(module_list_res$rostrum_res, module_list_res$orbital_res, phy = aus.tree)
+test6 <- phylo.integration(module_list_res$orbital_res, module_list_res$rostrum_res, phy = aus.tree)
+
+compare.pls(test5,test6)
+
+
+```
+
+## Test MODULARITY with 5 modules for full shape dataset
 This test uses covariance ratio (CR) coefficients (Adams 2016) to quantify the degree of modularity between hypothesized modules/partitions. The observed CR is compared to the distribution of randomized CR's, found by randomizing the landmarks into partitions of identical sample sizes. Accounts for random changes due to evolution via Brownian motion (Felice and Adams 2014).
 ```{r}
 # Test with the phylogentic tree (and mean shapes)
 mod.test.5.phy <- phylo.modularity(mean.shapes, partition.gp = lm.modules[, 4], phy=aus.tree)
 
 # Make pairwise comparison table
-mod.result.phy.mod <- as.matrix(mod.test.5.phy$CR.mat)  # results
-colnames(mod.result.phy.mod) <- unique(lm.modules[, 4])  # names from 1st instance
-rownames(mod.result.phy.mod) <- unique(lm.modules[, 4])  # ...in lm.module[, 4]
+mod.result.phy <- as.matrix(mod.test.5.phy$CR.mat)  # results
+colnames(mod.result.phy) <- unique(lm.modules[, 4])  # names from 1st instance
+rownames(mod.result.phy) <- unique(lm.modules[, 4])  # ...in lm.module[, 4]
 alpha.key <- match(unique(lm.modules[, 4]), mod.levels)  # alphabetize table
-mod.result.phy <- mod.result.phy[order(alpha.key), order(alpha.key)]  # alphabetize table
+mod.result.phy <- mod.result.phy.mod[order(alpha.key), order(alpha.key)]  # alphabetize table
 ```
 
-## Test modularity with 5 modules for shape residual dataset -- with phylogeny
+## Test MODULARITY with 5 modules for shape residual dataset -- with phylogeny
 As above but with residuals
 ```{r}
 # Test with the phylogentic tree (and mean shapes)
@@ -343,20 +469,18 @@ save(mod.test.5.phy, mod.test.5.res, mod.result.phy, mod.result.res, file = "../
 ```
 
 
-
-
-Turn into a table (currently not displayed in the ms, which focuses just on overall CR). This is a really nifty way of combining upper and lower triangles
+#Unlike phylo.integration, phylo.modularity provides a pairwise table
 ```{r}
-# 
-# 
-# Modularity_matrix <- matrix(NA, nrow = nrow(mod.result.phy), ncol = nrow(mod.result.phy))
-#         
-# Modularity_matrix[upper.tri(Modularity_matrix)]<- mod.result.phy[upper.tri(mod.result.phy, diag=FALSE)]
-# 
-# Modularity_matrix[lower.tri(Modularity_matrix)]<- mod.result.res[lower.tri(mod.result.res, diag=FALSE)]
-#                     
-# rownames(Modularity_matrix)<- rownames(mod.result.phy)
-# colnames(Modularity_matrix)<- colnames(mod.result.phy)
+
+
+Modularity_matrix <- matrix(NA, nrow = nrow(mod.result.phy), ncol = nrow(mod.result.phy))
+
+Modularity_matrix[upper.tri(Modularity_matrix)]<- mod.result.phy[upper.tri(mod.result.phy, diag=FALSE)]
+
+Modularity_matrix[lower.tri(Modularity_matrix)]<- mod.result.res[lower.tri(mod.result.res, diag=FALSE)]
+
+rownames(Modularity_matrix)<- rownames(mod.result.phy)
+colnames(Modularity_matrix)<- colnames(mod.result.phy)
 
 
 
@@ -369,7 +493,7 @@ Turn into a table (currently not displayed in the ms, which focuses just on over
 module.plot <- readPNG("../Data/Processed/modules.png")
 
 # Set up for export and for multiple panels
-pdf("../Data/Results/Figure4_Modularity.pdf")
+#pdf("../Data/Results/Figure4_Modularity.pdf")
 mat <- matrix(c(1, 1, 2, 3,4,5), 3, 2, byrow = TRUE)  # 3 plots, 2 row, 2 columns
 layout(mat, widths = rep.int(1, ncol(mat)), heights = rep.int(0.5, nrow(mat))) 
 
@@ -466,7 +590,7 @@ legend("topleft", "e", cex = 1.5, bty = "n", inset = -0.05)
 legend("topleft", "shape residual", cex = 0.9, bty = "n", inset = c(0.07, 0))
 
 
-dev.off()
+#dev.off()
 ```
 
 ## Mantel Test to see if PCs of modules are equivalent
@@ -531,15 +655,15 @@ MantelModularity <- function(shapes, lm.modules) {
 mantel.full <- MantelModularity(mean.shapes, lm.modules)
 mantel.res <- MantelModularity(residuals, lm.modules)
 
-#this screams at you but just because of the NAs. the values are fine.
+#this screams at you but just because of the NAs. the values are fine. Annoyingly, it also cancels the running of the whole chunk!
 mantel.full <- apply(as.matrix.noquote(mantel.full[,2:6]),2,as.numeric)
 
 mantel.res <- apply(as.matrix.noquote(mantel.res[,2:6]),2,as.numeric)
 
 # Add landmark numbers; col #4 gives the Goswami module definitions
 n.num <- c(sum(lm.modules[, 4] == "basicran"), sum(lm.modules[, 4] == "molar"), sum(lm.modules[, 4] == "orbital"), sum(lm.modules[, 4] == "rostrum"), sum(lm.modules[, 4] == "vault"))
-#mantel.full <- cbind(mantel.full, n.num)  # add to tables for export
-#mantel.res <- cbind(mantel.res, n.num)
+mantel.full <- cbind(mantel.full, n.num)  # add to tables for export
+mantel.res <- cbind(mantel.res, n.num)
 
 
 ```
