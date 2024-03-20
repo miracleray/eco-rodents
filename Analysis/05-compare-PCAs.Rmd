@@ -139,6 +139,12 @@ not.index <- which(info.means$Genus.y == "Notomys")
 not.Reg <- evo.allo.rs$RegScore[not.index]
 not.Cs <- info.means$MeanCsize[not.index]
 
+#Set up PCA summaries to extract importance
+summary_meanPCA<- round( summary(mean.PCA)$PC.summary[2,],3)*100
+summary_meanPCA_res <- round(summary(res.PCA)$PC.summary[2,],3)*100
+summary_MeanPCA_res_noNoto <- round(summary(wrap.PCA.r.n)$PC.summary[2,],3)*100
+
+
 # Set up for export and for multiple panels
 part.coords <- c(-0.117, 0.095)  # plotting parameters for A, C, D, E placement
 
@@ -151,8 +157,8 @@ layout(mat, widths = rep(1, dim(mat)[2]), heights = rep(0.5, dim(mat)[1]))
 par(mar = c(4.5, 4.5, 2, 1))
 plot(x = -mean.PCA$x[, 1],  # Flip for consistency
                  y = mean.PCA$x[, 2],  
-                 xlab = "PC1 (52.3%)", 
-                 ylab = "PC2 (14.5%)",
+                 xlab = paste("PC1 (",summary_meanPCA[1],"%)", sep=""), 
+                 ylab = paste("PC2 (",summary_meanPCA[2],"%)", sep=""), 
                  xlim = c(-0.12, 0.12),
                  ylim = c(-0.1, 0.1),
                  col = col.diet.means, 
@@ -188,8 +194,8 @@ abline(lm(-evo.allo.rs$RegScore ~ log(info.means$MeanCsize)), col = "dark grey",
 par(mar = c(4.5, 4.5, 2, 1))
 plot(x = -mean.PCA$x[, 1],  # flip for consistency
                  y = mean.PCA$x[, 2],  
-                 xlab = "PC1 (52.3%)", 
-                 ylab = "PC2 (14.5%)",
+                 xlab = paste("PC1 (",summary_meanPCA[1],"%)", sep=""), 
+                 ylab = paste("PC2 (",summary_meanPCA[2],"%)", sep=""), 
                  xlim = c(-0.12, 0.12),
                  ylim = c(-0.1, 0.1),
                  col = alpha.col,
@@ -207,8 +213,8 @@ legend("bottomleft", legend = genera.phylo.full, col = col.phylo, pch = 16, cex 
 par(mar = c(4.5, 4.5, 2, 1))
 plot(x = res.PCA$x[, 1],  # no flip for consistency
                  y = -res.PCA$x[, 2],  
-                 xlab = "PC1 (26.8%)", 
-                 ylab = "PC2 (18.6%)",
+                 xlab = paste("PC1 (",summary_meanPCA_res[1],"%)", sep=""), 
+                 ylab = paste("PC2 (",summary_meanPCA_res[2],"%)", sep=""), 
                  xlim = c(-0.12, 0.12),
                  ylim = c(-0.1, 0.1),
                  col = alpha.col,
@@ -224,8 +230,8 @@ text(-0.035, 0.092, "shape residual dataset (genera)")
 par(mar = c(4.5, 4.5, 2, 1))
 plot(x = wrap.PCA.r.n$x[, 1],  
                  y = wrap.PCA.r.n$x[, 2],  # no flip for consistency
-                 xlab = "PC1 (30.1%)", 
-                 ylab = "PC1 (16.7%)",
+                xlab = paste("PC1 (",summary_MeanPCA_res_noNoto[1],"%)", sep=""), 
+                 ylab = paste("PC2 (",summary_MeanPCA_res_noNoto[2],"%)", sep=""),
                  xlim = c(-0.12, 0.12),
                  ylim = c(-0.1, 0.1),
                  col = alpha.col.no, 
@@ -241,8 +247,8 @@ text(-0.034, 0.092, expression(paste("shape residual without ", italic("Notomys"
 par(mar = c(4.5, 4.5, 2, 1))
 plot(x = res.PCA$x[, 1],  # no flip for consistency
                  y = -res.PCA$x[, 2],  
-                 xlab = "PC1 (26.8%)", 
-                 ylab = "PC1 (18.6%)",
+                 xlab = paste("PC1 (",summary_meanPCA_res[1],"%)", sep=""), 
+                 ylab = paste("PC2 (",summary_meanPCA_res[2],"%)", sep=""), 
                  xlim = c(-0.12, 0.12),
                  ylim = c(-0.1, 0.1),
                  col = col.diet.means, 
