@@ -73,7 +73,7 @@ GICs=unlist(c(GIC(BM_shapefit)[2],GIC(OU_shapefit)[2],GIC(EB_shapefit)[2] ))
 
 names(GICs) <- c("BM", "OU", "EB" )
   
-#compute relative probabilities betweeen 0 and 1 by comparing AICS according to Burnham and Anderson (2002)
+#compute relative probabilities betweeen 0 and 1 by comparing GICS according to Burnham and Anderson (2002)
 GICmin=GICs-min(GICs)
   W=exp(-0.5*GICmin)/sum(exp(-0.5*GICmin))
   

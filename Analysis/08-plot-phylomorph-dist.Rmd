@@ -29,7 +29,7 @@ source("../Functions/utilities.R")  # custom functions
 load(file = "../Data/Processed/03-main-data.rda")
 load(file = "../Data/Processed/03-tree-data.rda")
 load(file = "../Data/Processed/03-graphing-vectors.rda")
-load(file = "../Data/Processed/04-residual-data.rda")
+load(file = "../Data/Processed/allometry_residuals.rda")
 ```
 
 ## Analyze phylogenetic and morphological distance matrices
@@ -95,12 +95,13 @@ master.table <- merge(phylo.table, morph.table[, 3:4], by = "pair")
 ## Repeat Phylo/Morph distance plot using shape residuals
 ```{r}
 # Morphological distance matrix for residuals
-mean.gpa.res <- gpagen(residuals, ProcD = TRUE)
+#mean.gpa.res <- gpagen(residuals, ProcD = TRUE)
+mean.gpa.res <- residuals
 
 #again here separately creating the distance matrix
 #morph.matrix.res <- as.matrix(mean.gpa.res$procD)
 
-morph.matrix.res <- dist(two.d.array(mean.gpa.res$coords), method="euclidean")
+morph.matrix.res <- dist(two.d.array(mean.gpa.res), method="euclidean")
 
 morph.matrix.res <- as.matrix(morph.matrix.res)
 
@@ -141,8 +142,8 @@ master.table$col.spp2 <- PlotByGroup(master.table, "spp2", alpha.col.spp2)
 genera.phylo.full <- c("Mus", "Rattus", "Pogonomys", "Xeromys", "Hydromys", "Notomys", "Pseudomys", "Zyzomys", "Leggadina", "Uromys", "Melomys", "Leporillus", "Mesembriomys", "Conilurus")
 
 # Set up multi-panel figure for export
-setEPS()
-postscript("../Data/Results/Figure5_PhyloMorph_Dist.eps")
+#setEPS()
+#postscript("../Data/Results/Figure5_PhyloMorph_Dist.eps")
 mat <- matrix(c(1, 2), 2, 1, byrow = TRUE)  # 2 rows, 1 column
 layout(mat, widths = rep.int(1, ncol(mat)), heights = rep.int(1, nrow(mat))) 
 
@@ -161,5 +162,5 @@ text(0.25, 0.197, "b", cex = 1.5)
 legend("topleft", legend = "shape residual", inset = c(0.004, 0.01), bty = "n")
 legend(4, 0.21, legend = genera.phylo.full, text.font = 3, col = col.phylo, pch = 16, cex = 0.65, pt.cex = 0.7, ncol = 5, x.intersp = 0.8, text.width = 1.2, bty = "n", inset = c(0.12, 0))
 
-dev.off()
+#dev.off()
 ```
