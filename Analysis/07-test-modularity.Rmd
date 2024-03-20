@@ -448,7 +448,7 @@ mod.result.phy <- as.matrix(mod.test.5.phy$CR.mat)  # results
 colnames(mod.result.phy) <- unique(lm.modules[, 4])  # names from 1st instance
 rownames(mod.result.phy) <- unique(lm.modules[, 4])  # ...in lm.module[, 4]
 alpha.key <- match(unique(lm.modules[, 4]), mod.levels)  # alphabetize table
-mod.result.phy <- mod.result.phy.mod[order(alpha.key), order(alpha.key)]  # alphabetize table
+mod.result.phy <- mod.result.phy[order(alpha.key), order(alpha.key)]  # alphabetize table
 ```
 
 ## Test MODULARITY with 5 modules for shape residual dataset -- with phylogeny
