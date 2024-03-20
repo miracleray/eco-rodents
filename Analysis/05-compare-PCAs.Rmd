@@ -148,8 +148,8 @@ summary_MeanPCA_res_noNoto <- round(summary(wrap.PCA.r.n)$PC.summary[2,],3)*100
 # Set up for export and for multiple panels
 part.coords <- c(-0.117, 0.095)  # plotting parameters for A, C, D, E placement
 
-#setEPS()
-#postscript("../Data/Results/Figure1_PCAs_6plot.eps")
+setEPS()
+postscript("../Data/Results/Figure1_PCAs_6plot.eps")
 mat <- matrix(c(1:6), 3, 2, byrow = TRUE)  # 6 plots, 3 rows, 2 columns
 layout(mat, widths = rep(1, dim(mat)[2]), heights = rep(0.5, dim(mat)[1]))   
 
@@ -260,7 +260,7 @@ plot(x = res.PCA$x[, 1],  # no flip for consistency
 text(part.coords[1], part.coords[2], "f", cex = 1.5)
 text(-0.053, 0.092, "shape residual (ecology)")
 
-#dev.off()
+dev.off()
 ```
 
 ## 2) Compare the full shape and shape residual datasets

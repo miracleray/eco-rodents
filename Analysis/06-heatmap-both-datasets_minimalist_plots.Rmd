@@ -266,7 +266,7 @@ max.dist.n2 <- apply(max.coords.n2, 1, function(x) dist(matrix(x, nrow = 2, byro
 ```{r}
 # Lateral view of mean to smallest
 open3d(windowRect = c(0, 0, 2400,2400))
-procrustes.var.plot(res.PC2.min.h.n2, res.PC2.max.h.n2, col = heat.colors, col.val = min.dist.n2)
+procrustes.var.plot(res.PC2.max.h.n2, res.PC2.min.h.n2, col = heat.colors, col.val = min.dist.n2)
 view3d(phi = 90)
 rgl.snapshot("../Data/Processed/Heatmaps/NO2_max-min_lat.png")
 
