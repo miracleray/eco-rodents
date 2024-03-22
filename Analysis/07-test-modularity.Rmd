@@ -6,7 +6,7 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE)
 knitr::opts_knit$set(root.dir = '../eco-rodents')
 ```
 
@@ -138,7 +138,7 @@ module_list <- list( basicran=basicran, molar=molar, orbital=orbital, rostrum=ro
 
 
 Combinations <- c( names(module_list), names(module_list) )
-Combinations <- unique( Combinations )
+Combinations <- unique(Combinations)
 Combinations <- combn( Combinations , 2 )
 
 
@@ -433,6 +433,7 @@ phylo_integration_list [[i]] <- phylo.integration(module_list_res[[which(names(m
 
 }
 
+pls_comparison_res <- compare.pls(phylo_integration_list)
 
 #then pull out results for just a matrix to present
 pls_comparison_matrix_P_res <- matrix(round(pls_comparison_res$pairwise.P,3), 

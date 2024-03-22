@@ -1,0 +1,11 @@
+"","Z full","Z residual","Z difference","p"
+"basicran x molar",3.34,2.25,0.86,0.388
+"basicran x orbital",4.16,4.1,0.63,0.526
+"basicran x rostrum",4.29,2.98,1.88,0.06
+"basicran x vault",3.93,4.89,2.11,0.035
+"molar x orbital",3.09,1.44,1.23,0.217
+"molar x rostrum",3.81,4.24,0.45,0.654
+"molar x vault",3.69,2.74,2.1,0.036
+"orbital x rostrum",4.45,3.43,1.37,0.17
+"orbital x vault",4.1,4.22,2.41,0.016
+"rostrum x vault",4.94,3.19,2.48,0.013
