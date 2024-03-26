@@ -107,22 +107,49 @@ rgl.snapshot("../Data/Processed/modules.png")
 system("mogrify ../Data/Processed/modules.png -trim ../Data/Processed/*.png")
 ```
 
-## Test INTEGRATION with 5 modules for full shape dataset - PLS
+## Test INTEGRATION with 5 modules for full and residual shape dataset - PLS
 
 ```{r}
+
+load(file = "../Data/Processed/06-integration.rda")
+
+
 # Test with the phylogentic tree (and mean shapes)
-int.test.5.phy <- phylo.integration(mean.shapes, partition.gp = lm.modules[, 4], phy=aus.tree)
+# int.test.5.phy <- phylo.integration(mean.shapes, partition.gp = lm.modules[, 4], phy=aus.tree)
+# int.test.5.res <- phylo.integration(residuals, partition.gp = lm.modules[, 4], phy=aus.tree)
+# # Save time consuming tests
+# save(int.test.5.phy, int.test.5.res, file = "../Data/Processed/06-integration.rda")
+
+R_pls_matrix <- matrix( nrow=length(mean_modules), ncol=length(mean_modules))
+rownames(R_pls_matrix) <- names(mean_modules)
+colnames(R_pls_matrix) <- names(mean_modules)
+
+R_pls_matrix[lower.tri(R_pls_matrix)] <- round((int.test.5.phy$pairwise.P.values), 3)
+#for some reason, the upper.tri does not order the p values correctly. So below is an interim step that fils the upper triangle with appropriate p values.
+R_pls_matrix <- t(R_pls_matrix)
+
+R_pls_matrix[lower.tri(R_pls_matrix)] <- round(int.test.5.phy$r.pls.mat, 2)
+
+# now for RESIDUALS
+
+R_pls_matrix_res <- matrix( nrow=length(mean_modules), ncol=length(mean_modules))
+rownames(R_pls_matrix_res) <- names(mean_modules)
+colnames(R_pls_matrix_res) <- names(mean_modules)
+
+R_pls_matrix_res[lower.tri(R_pls_matrix_res)] <- round((int.test.5.res$pairwise.P.values), 3)
+#for some reason, the upper.tri does not order the p values correctly. So below is an interim step that fils the upper triangle with appropriate p values.
+R_pls_matrix_res <- t(R_pls_matrix_res)
+
+R_pls_matrix_res[lower.tri(R_pls_matrix_res)] <- round(int.test.5.res$r.pls.mat, 2)
+
+Integration_results <- cbind(R_pls_matrix, c(rep(NA,5)),R_pls_matrix_res)
 
 
-# Make pairwise comparison table
-int.result.phy <- as.matrix(int.test.5.phy$r.pls.mat )  # results
-colnames(int.result.phy) <- unique(lm.modules[, 4])  # names from 1st instance
-rownames(int.result.phy) <- unique(lm.modules[, 4])  # ...in lm.module[, 4]
-alpha.key <- match(unique(lm.modules[, 4]), mod.levels)  # alphabetize table
-int.result.phy <- int.result.phy[order(alpha.key), order(alpha.key)]  # alphabetize table
+write.csv(Integration_results, file="../Data/Results/Integration_pls_results.csv")
+
 ```
 
-#test INTEGRATION between pairs of modules 
+#test INTEGRATION between pairs of modules; this repeats the full-shape integration analysis, which contains the pairwise values, but is needed to get the analysis objects to also compare integration strengths
 
 ```{r}
 basicran <- mean.shapes[which(lm.modules[, 4] == "basicran"), ,]
@@ -133,9 +160,7 @@ vault <- mean.shapes[which(lm.modules[, 4] == "vault"), ,]
 
 module_list <- list( basicran=basicran, molar=molar, orbital=orbital, rostrum=rostrum, vault=vault)
 
-
 #setting up the combinations to be analysed
-
 
 Combinations <- c( names(module_list), names(module_list) )
 Combinations <- unique(Combinations)
@@ -176,31 +201,21 @@ names(integration_analyses) <- paste(Combinations[1,], Combinations[2,], sep=" x
 #Now fix up table
 R_pls_matrix <- matrix( nrow=length(module_list), ncol=length(module_list))
 
+
+R_pls_matrix[lower.tri(R_pls_matrix)] <- round(Combination_matrix$p, 3)
+#necessary because I can't figure out how to fill the upper triangle properly, so transposing lower triangle instead
+R_pls_matrix <- t(R_pls_matrix)
 R_pls_matrix[lower.tri(R_pls_matrix)] <- round(Combination_matrix$Rpls, 2)
-R_pls_matrix[upper.tri(R_pls_matrix)] <- round(Combination_matrix$p, 3)
+
 rownames(R_pls_matrix) <- names(module_list)
 colnames(R_pls_matrix) <- names(module_list)
 
 
-write.csv(R_pls_matrix, file="../Data/Results/R_pls.csv")
-
-#manual tests to make sure the matrix reflects reality - it does
-
-# phylo.integration(basicran, molar, phy=aus.tree) 
-# integration_analyses$`basicran X molar`
-# phylo.integration(rostrum, molar, phy=aus.tree)
-# integration_analyses$`rostrum X molar`
-# phylo.integration(molar, rostrum, phy=aus.tree)
-# integration_analyses$`molar X rostrum`
-
-#Now create a matrix that asks if the levels of integration are significantly different using compare.pls
+#note that the R-pls values should be the same as the overall integration output
+#R_pls_matrix
+#Integration_results; R_pls_matrix
 
 #Create all combinations of modules
-
-#create expand grid matrix but this time take out self-combinations - reduces it to 20 rows. I initially used this but it doubles up on combinations.
-#Combinations_compare <- expand.grid(names(module_list), names(module_list))
-
-#The following is better:
 
 Combinations_compare <- c( names(module_list), names(module_list) )
 Combinations_compare <- unique( Combinations_compare )
@@ -222,16 +237,17 @@ phylo_integration_list [[i]] <- phylo.integration(module_list[[which(names(modul
 
 }
 
-
+#After all this, we now just run a simple compare.pls line to compare integration strengths!
 
 pls_comparison <- compare.pls(phylo_integration_list)
+
 
 pls_comparison_matrix_P <- matrix(round(pls_comparison$pairwise.P,3), 
                                 nrow=ncol(Combinations_compare), 
                                 ncol=ncol(Combinations_compare), 
                                 dimnames=list(rownames(pls_comparison$pairwise.P), colnames(pls_comparison$pairwise.P)))
 
-pls_comparison_matrix_Z <- matrix(round(pls_comparison$pairwise.z, 3), 
+pls_comparison_matrix_Z <- matrix(round(pls_comparison$pairwise.z, 2), 
                                          nrow=ncol(Combinations_compare), 
                                          ncol=ncol(Combinations_compare),
                                          dimnames=list(rownames(pls_comparison$pairwise.P), colnames(pls_comparison$pairwise.P)))
@@ -244,104 +260,44 @@ write.csv (pls_comparison_matrix_Z,file="../Data/Results/integration_strength_co
 
 
 #manual checks
-rostrum_molar <- phylo.integration( rostrum, molar, phy = aus.tree)
-orbital_vault <- phylo.integration(orbital,vault, phy = aus.tree)
-vault_basicran <- phylo.integration( vault, basicran, phy = aus.tree)
-
-testcompare <- compare.pls( rostrum_molar, orbital_vault, vault_basicran)
-testcompare$pairwise.z
-testcompare$pairwise.P
-
-#effect sizes and p values differ depending on the order in which modules are input?
-test4 <- phylo.integration(module_list$molar, module_list$rostrum, phy = aus.tree)
-test5 <- phylo.integration(module_list$rostrum, module_list$molar, phy = aus.tree)
-
-compare.pls(test4,test5)
-
-#serious differences with rostrum and orbital
-
-test5 <- phylo.integration(module_list$rostrum, module_list$orbital, phy = aus.tree)
-test6 <- phylo.integration(module_list$orbital, module_list$rostrum, phy = aus.tree)
-
-compare.pls(test5,test6)
-
-
-```
-
-#there are differences in integration strength and p-value even in the help file
-
-```{r}
-
-
-#  data(pupfish) # GPA previously performed
-#   
-#  group <- factor(paste(pupfish$Pop, pupfish$Sex, sep = "."))
-#  levels(group)
-#   
-#  tail.LM <- c(1:3, 5:9, 18:38)
-#  head.LM <- (1:56)[-tail.LM]
+# rostrum_molar <- phylo.integration( rostrum, molar, phy = aus.tree)
+# orbital_vault <- phylo.integration(orbital,vault, phy = aus.tree)
+# vault_basicran <- phylo.integration( vault, basicran, phy = aus.tree)
 # 
-#  tail.coords <- pupfish$coords[tail.LM,,]
-#  head.coords <- pupfish$coords[head.LM,,]
-#  
-#  # Subset 3D array by group, returning a list of 3D arrays
-#  tail.coords.gp <- coords.subset(tail.coords, group)
-#  head.coords.gp <- coords.subset(head.coords, group)
+# testcompare <- compare.pls( rostrum_molar, orbital_vault, vault_basicran)
+# testcompare$pairwise.z
+# testcompare$pairwise.P
 # 
-#  integ.tests <- Map(function(x,y) integration.test(x, y, iter=10000, 
-#  print.progress = FALSE), head.coords.gp, tail.coords.gp)
-# # the map function performs the integration test on each 3D array in 
-# # the lists provided
+# #effect sizes and p values differ depending on the order in which modules are input?
+# test4 <- phylo.integration(module_list$molar, module_list$rostrum, phy = aus.tree)
+# test5 <- phylo.integration(module_list$rostrum, module_list$molar, phy = aus.tree)
 # 
-#  integ.tests$Marsh.F
-#  integ.tests$Marsh.M
-#  integ.tests$Sinkhole.F
-#  integ.tests$Sinkhole.M
+# compare.pls(test4,test5)
 # 
-#  group.Z <- compare.pls(integ.tests)
-#  summary(group.Z)
-#  
+# #serious differences with rostrum and orbital
 # 
-#  # Sexual dimorphism in morphological integration in one population
-#  # but not the other
+# test5 <- phylo.integration(module_list$rostrum, module_list$orbital, phy = aus.tree)
+# test6 <- phylo.integration(module_list$orbital, module_list$rostrum, phy = aus.tree)
 # 
-#  # can also list different PLS analyses, separately
+# compare.pls(test5,test6)
 # 
-# compare.pls(MF = integ.tests$Marsh.F, MM = integ.tests$Marsh.M)
-# 
-# MF1 <- integration.test(head.coords.gp$Marsh.F, tail.coords.gp$Marsh.F, iter=10000)
-# MF2 <- integration.test(tail.coords.gp$Marsh.F, head.coords.gp$Marsh.F, iter=10000)
-# 
-# 
-# compare.pls(MF1 , MF2 )
-# compare.pls(MF1 , MF1 )
-# 
-
-
 
 ```
 
 
-## Test INTEGRATION with 5 modules for shape RESIDUAL dataset -- with phylogeny
-As above but with residuals
+#Test INTEGRATION strengths between full and residual datasets
+
 ```{r}
-# Test with the phylogentic tree (and mean shapes)
-int.test.5.res <- phylo.integration(residuals, partition.gp = lm.modules[, 4], phy=aus.tree)
 
-# Make pairwise comparison table
-int.result.res <- as.matrix(int.test.5.res$r.pls.mat)  # results
+full_vs_res_int_strengths <- compare.pls( int.test.5.phy,int.test.5.res)
 
-colnames(int.result.res) <- unique(lm.modules[, 4])  # names from 1st instance
-rownames(int.result.res) <- unique(lm.modules[, 4])  # ...in lm.module[, 4]
-int.result.res <- int.result.res[order(alpha.key), order(alpha.key)]
-
-# Save time consuming tests
-save(int.test.5.phy, int.test.5.res, int.result.phy, int.result.res, file = "../Data/Processed/06-integration.rda")
 ```
 
-#test INTEGRATION between pairs of modules based on RESIDUALS
+
+#test RESIDUALS INTEGRATION between pairs of modules; 
 
 ```{r}
+
 basicran_res <- residuals[which(lm.modules[, 4] == "basicran"), ,]
 molar_res <- residuals[which(lm.modules[, 4] == "molar"), ,]
 orbital_res <- residuals[which(lm.modules[, 4] == "orbital"), ,]
@@ -384,6 +340,7 @@ Combination_matrix$p [i] <- temp$P.value
 
 }
 
+
 #give integration analyses objects the appropriate names
 
 names(integration_analyses_res) <- paste(Combinations[1,], Combinations[2,], sep=" x ")
@@ -391,13 +348,19 @@ names(integration_analyses_res) <- paste(Combinations[1,], Combinations[2,], sep
 #Now fix up table
 R_pls_matrix_res <- matrix( nrow=length(module_list), ncol=length(module_list))
 
+R_pls_matrix_res[lower.tri(R_pls_matrix_res)] <- round(Combination_matrix$p, 3)
+#again, somehow the order is wrong with the upper tri and I don't know how to fix it
+R_pls_matrix_res <- t(R_pls_matrix_res)
 R_pls_matrix_res[lower.tri(R_pls_matrix_res)] <- round(Combination_matrix$Rpls, 2)
-R_pls_matrix_res[upper.tri(R_pls_matrix_res)] <- round(Combination_matrix$p, 3)
+
 rownames(R_pls_matrix_res) <- names(module_list_res)
 colnames(R_pls_matrix_res) <- names(module_list_res)
 
 
-write.csv(R_pls_matrix_res, file="../Data/Results/R_pls_residuals.csv")
+#note that the R-pls values should be the same as the overall integration output for residuals
+Integration_results; R_pls_matrix_res
+
+
 
 #manual tests to make sure the matrix reflects reality - it does
 
@@ -408,11 +371,6 @@ phylo.integration(molar_res, rostrum_res, phy=aus.tree)
 #Now create a matrix that asks if the levels of integration are significantly different using compare.pls
 
 #Create all combinations of modules
-
-#create expand grid matrix but this time take out self-combinations - reduces it to 20 rows. I initially used this but it doubles up on combinations.
-#Combinations_compare <- expand.grid(names(module_list_res), names(module_list_res))
-
-#The following is better:
 
 Combinations_compare <- c( names(module_list_res), names(module_list_res) )
 Combinations_compare <- unique( Combinations_compare )
@@ -452,41 +410,10 @@ pls_comparison_matrix_Z_res[upper.tri(pls_comparison_matrix_Z_res)]<- pls_compar
 
 write.csv (pls_comparison_matrix_Z,file="../Data/Results/integration_strength_comparisons_residuals.csv")
 
-
-#manual checks
-rostrum_molar <- phylo.integration( rostrum_res, molar_res, phy = aus.tree)
-orbital_vault <- phylo.integration(orbital_res,vault_res, phy = aus.tree)
-vault_basicran <- phylo.integration( vault_res, basicran_res, phy = aus.tree)
-
-testcompare <- compare.pls( rostrum_molar, orbital_vault, vault_basicran)
-testcompare$pairwise.z
-testcompare$pairwise.P
-
-#effect sizes and p values differ depending on the order in which modules are input?
-test4 <- phylo.integration(module_list_res$molar_res, module_list_res$rostrum_res, phy = aus.tree)
-test5 <- phylo.integration(module_list_res$rostrum_res, module_list_res$molar_res, phy = aus.tree)
-
-compare.pls(test4,test5)
-
-#serious differences with rostrum and orbital
-
-test5 <- phylo.integration(module_list_res$rostrum_res, module_list_res$orbital_res, phy = aus.tree)
-test6 <- phylo.integration(module_list_res$orbital_res, module_list_res$rostrum_res, phy = aus.tree)
-
-compare.pls(test5,test6)
-
-
 ```
 
-#Test INTEGRATION strengths between full and residual datasets
-
-```{r}
 
 
-full_vs_res_int_strengths <- compare.pls(int.test.5.res, int.test.5.phy)
-
-
-```
 #test strength of INTEGRATION between full and residual partitions
 
 ```{r}
@@ -525,7 +452,7 @@ integration_strength_comparison_table_full_vs_res [,4]  <- round (integration_st
 
 write.csv(integration_strength_comparison_table_full_vs_res, file = "../Data/Results/integration_strength_comparison_table_full_vs_res.csv")
 
-#and because it is a lot of coding to get to this point, and a lot of potential for human error, here are two manual checks. 
+#and because it is a lot of coding to get to this point, and a lot of potential for human error, here are  manual checks. 
 
 # rostrum_molar <- phylo.integration( molar, rostrum, phy = aus.tree)
 # orbital_vault <- phylo.integration(orbital,vault, phy = aus.tree)
@@ -542,20 +469,18 @@ write.csv(integration_strength_comparison_table_full_vs_res, file = "../Data/Res
 ```
 
 
-
-
-
-
-
-
-
-
-
 ## Test MODULARITY with 5 modules for full shape dataset
-This test uses covariance ratio (CR) coefficients (Adams 2016) to quantify the degree of modularity between hypothesized modules/partitions. The observed CR is compared to the distribution of randomized CR's, found by randomizing the landmarks into partitions of identical sample sizes. Accounts for random changes due to evolution via Brownian motion (Felice and Adams 2014).
+This test uses covariance ratio (CR) coefficients (Adams 2016) to quantify the degree of modularity between hypothesized modules/partitions. The observed CR is compared to the distribution of randomized CR's, found by randomizing the landmarks into partitions of identical sample sizes. Accounts for random changes due to evolution via Brownian motion (Felice and Adams 2014). Modularity investigations only ask if significant modular structure is present given a specific hypothesis of modularity. Thus, unlike integraiton analyses, the CR values themselves are not tested statistically.
 ```{r}
+#save time by pre-loaded file
+load(file = "../Data/Processed/06-modularity.rda")
+
 # Test with the phylogentic tree (and mean shapes)
-mod.test.5.phy <- phylo.modularity(mean.shapes, partition.gp = lm.modules[, 4], phy=aus.tree)
+# mod.test.5.phy <- phylo.modularity(mean.shapes, partition.gp = lm.modules[, 4], phy=aus.tree)
+# mod.test.5.res <- phylo.modularity(residuals, partition.gp = lm.modules[, 4], phy=aus.tree)
+# Save time consuming tests
+# save(mod.test.5.phy, mod.test.5.res,  file = "../Data/Processed/06-modularity.rda")
+
 
 # Make pairwise comparison table
 mod.result.phy <- as.matrix(mod.test.5.phy$CR.mat)  # results
@@ -563,29 +488,16 @@ colnames(mod.result.phy) <- unique(lm.modules[, 4])  # names from 1st instance
 rownames(mod.result.phy) <- unique(lm.modules[, 4])  # ...in lm.module[, 4]
 alpha.key <- match(unique(lm.modules[, 4]), mod.levels)  # alphabetize table
 mod.result.phy <- mod.result.phy[order(alpha.key), order(alpha.key)]  # alphabetize table
-```
 
-## Test MODULARITY with 5 modules for shape residual dataset -- with phylogeny
-As above but with residuals
-```{r}
-# Test with the phylogentic tree (and mean shapes)
-mod.test.5.res <- phylo.modularity(residuals, partition.gp = lm.modules[, 4], phy=aus.tree)
 
-# Make pairwise comparison table
+# # Make pairwise comparison table for RESIDUALS
 mod.result.res <- as.matrix(mod.test.5.res$CR.mat)  # results
 
 colnames(mod.result.res) <- unique(lm.modules[, 4])  # names from 1st instance
 rownames(mod.result.res) <- unique(lm.modules[, 4])  # ...in lm.module[, 4]
 mod.result.res <- mod.result.res[order(alpha.key), order(alpha.key)]
 
-# Save time consuming tests
-save(mod.test.5.phy, mod.test.5.res, mod.result.phy, mod.result.res, file = "../Data/Processed/06-modularity.rda")
-```
-
-
-#Unlike phylo.integration, phylo.modularity provides a pairwise table. Here, upper is full data and lower is residuals
-```{r}
-
+#phylo.modularity provides a pairwise table. Here, upper is full data and lower is residuals
 
 Modularity_matrix <- matrix(NA, nrow = nrow(mod.result.phy), ncol = nrow(mod.result.phy))
 
