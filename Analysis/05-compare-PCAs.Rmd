@@ -158,7 +158,7 @@ ylims <- c(-0.09, 0.06)
 #setEPS()
 #postscript("../Data/Results/Figure1_PCAs_4plot.eps")
 
-#pdf(file="../Data/Results/PCA_4_panel.pdf", height= 10, width = 10)
+pdf(file="../Data/Results/PCA_4_panel.pdf", height= 7.15, width = 8.64 )
 mat <- matrix(c(1:4), 2, 2, byrow = TRUE)  # 4 plots, 2 rows, 2 columns
 layout(mat, widths = rep(1, dim(mat)[2]), heights = rep(0.5, dim(mat)[1]))   
 
@@ -281,8 +281,7 @@ plot(x = wrap.PCA.r.n$x[, 1],
 text(part.coords[1], part.coords[2], "d", cex = 1.5)
 text(title_coords[1],title_coords[2], expression(paste("shape residual without ", italic("Notomys"))))
 
-
-#dev.off()
+dev.off()
 ```
 
 ## 3) Export skreeplots for PC importance scores for 3 separate datasets

@@ -58,6 +58,9 @@ big.index <- which(info.means$MeanCsize == max(info.means$MeanCsize))
 # Designate mean shapes for individual species with indices
 smallest.mean <- mean.shapes[, , sm.index]
 biggest.mean <- mean.shapes[, , big.index]
+#which species is that?
+dimnames(mean.shapes)[[3]][ big.index]
+
 
 # Measure spherical coordinates differences from the smallest to the biggest mean. This results in a list of just 1 (diff.mean[[1]])
 diff.mean_smallest_largest <- coordinates.difference(coordinates = biggest.mean, reference = smallest.mean, type = "spherical")
@@ -309,8 +312,8 @@ par(mar = c(0, 0, 0, 0) )  # sets the margins
 plot(c(0, dim(Fitted_allometry)[2]), c(0, dim(Fitted_allometry)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
 rasterImage(Fitted_allometry, 0, 0, dim(Fitted_allometry)[2], dim(Fitted_allometry)[1])
 text(0, dim(Fitted_allometry)[1]-10, "a", cex=cex_letters)
-legend("topright", inset = c(0.28, 0), legend = "Fitted Allometry", bty = "n", cex = cex_legends)
-legend("bottomleft", legend = expression(paste(italic("P. delicatulus "), "to largest fitted shape")), bty = "n", inset = c(0.03, 0.07), cex = cex_legends)
+legend("topleft", inset = c(0.28, 0), legend = "Allometric prediction", bty = "n", cex = cex_legends)
+legend("bottom", legend = "small to large", bty = "n", inset = c(0.03, 0.07), cex = cex_legends)
 
 
 ## Individuals
@@ -319,8 +322,8 @@ par(mar = c(0, 0, 0, 0))  # sets the margins
 plot(c(0, dim(Smalles_largest_mshape)[2]), c(0, dim(Smalles_largest_mshape)[1]), type = "n", axes = FALSE, xlab = "", ylab = "", asp = TRUE) 
 rasterImage(Smalles_largest_mshape, 0, 0, dim(Smalles_largest_mshape)[2], dim(Smalles_largest_mshape)[1])
 text(0, dim(Smalles_largest_mshape)[1]-10, "b", cex=cex_letters)
-legend("topleft", inset = c(.02, 0), legend = "    Smallest/largest species", bty = "n", cex = cex_legends)
-legend("bottomleft", legend = expression(paste(italic("P. delicatulus"), " to largest species")), bty = "n", inset = c(0.1, 0.07), cex = cex_legends)
+legend("top", inset = c(0, 0), legend = "    Smallest/largest species", bty = "n", cex = cex_legends)
+legend("bottom", legend = expression(paste(italic("P. delicatulus"), " to ", italic("U. caudimaculatus"))), bty = "n", inset = c(0.1, 0.07), cex = cex_legends)
 
 
 ## PC1 

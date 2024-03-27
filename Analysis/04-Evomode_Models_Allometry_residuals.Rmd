@@ -47,6 +47,8 @@ load(file = "../Data/Processed/03-graphing-vectors.rda")
 #which model of evolution does shape follow? Using Julien Clavel's mvMorph package
 
 ```{r}
+load(file="../Data/Processed/Shape_evo_modes.rda")
+#Fitting different evolutionary models to the shape data and tabulating the GICs. The BM analysis takes 5 minutes, the other two take longer - looking at nearly 30 minutes of computing time!
 
 two_d_array <- list( array2d=two.d.array(mean.shapes))
 
@@ -56,29 +58,31 @@ dimnames(two_d_array$array2d)[[1]] == aus.tree$tip.label
 
 
 
-#load(file="../Data/Processed/Shape_evo_modes")
-#Fitting different evolutionary models to the shape data and tabulating the GICs. The BM analysis takes 5 minutes, the other two take longer - looking at nearly 30 minutes of computing time!
 
-BM_shapefit <- mvgls(array2d ~ 1 , aus.tree, data = two_d_array, model="BM" , method="PL-LOOCV")
-OU_shapefit <- mvgls(array2d ~ 1 , aus.tree, data = two_d_array, model="OU" , method="PL-LOOCV")
-EB_shapefit <- mvgls(array2d ~ 1 , aus.tree, data = two_d_array, model="EB" , method="PL-LOOCV")
-save(BM_shapefit,OU_shapefit,EB_shapefit, file="../Data/Processed/Shape_evo_modes.rda")
+
+# BM_shapefit <- mvgls(array2d ~ 1 , aus.tree, data = two_d_array, model="BM" , method="PL-LOOCV")
+# OU_shapefit <- mvgls(array2d ~ 1 , aus.tree, data = two_d_array, model="OU" , method="PL-LOOCV")
+# EB_shapefit <- mvgls(array2d ~ 1 , aus.tree, data = two_d_array, model="EB" , method="PL-LOOCV")
+# save(BM_shapefit,OU_shapefit,EB_shapefit, file="../Data/Processed/Shape_evo_modes.rda")
 
 GIC_BM<- GIC(BM_shapefit)
 GIC_OU <- GIC(OU_shapefit)
 GIC_EB <- GIC(EB_shapefit)
 
 #Compute vector of GICs - this also takes a little, ~1 minute
-GICs=unlist(c(GIC(BM_shapefit)[2],GIC(OU_shapefit)[2],GIC(EB_shapefit)[2] ))
+GICs=unlist(c(GIC_BM[2], GIC_OU[2], GIC_EB[2]))
+
+#for tabulating later
+GIC_shape <- unlist(c(GIC_BM[2], GIC_OU[2], GIC_EB[2]))
 
 names(GICs) <- c("BM", "OU", "EB" )
   
 #compute relative probabilities betweeen 0 and 1 by comparing GICS according to Burnham and Anderson (2002)
 GICmin=GICs-min(GICs)
-  W=exp(-0.5*GICmin)/sum(exp(-0.5*GICmin))
+  W_shape=exp(-0.5*GICmin)/sum(exp(-0.5*GICmin))
   
   #OU is by far the preferred model
-  W 
+  W_shape 
 
 #or use the evidence ratio computed in the qprc package
 
@@ -137,7 +141,7 @@ Now fitting a model just for size, using Phytools
 
 
 
-sizeBM<-fitContinuous(aus.tree,log(Csizes_fit))
+sizeBM<-fitContinuous(aus.tree,log(Csizes_fit), model="BM")
 sizeOU<-fitContinuous(aus.tree,log(Csizes_fit),model="OU")
 #EB gives a warning message?
 sizeEB<-fitContinuous(aus.tree,log(Csizes_fit),model="EB")
@@ -149,45 +153,50 @@ names(AICs) <- c("BM", "OU", "EB" )
   
 #compute relative probabilities betweeen 0 and 1 by comparing AICS according to Burnham and Anderson (2002)
 AICmin=AICs-min(AICs)
-  W=exp(-0.5*AICmin)/sum(exp(-0.5*AICmin))
+  W_size =exp(-0.5*AICmin)/sum(exp(-0.5*AICmin))
   
-  #OU is by far the preferred model
-  W 
+  #Size is BM 
+  W_size 
 
 
 ```
 
 #allometry
 ```{r}
+load(file="../Data/Processed/Allom_evo_modes.rda")
+
 #a paranoid check - don't judge me, I have ADHD :-D
 names(Csizes_fit)==dimnames(two_d_array$array2d)[[1]]
 names(Csizes_fit)==aus.tree$tip.label
 
-#load(file="../Data/Processed/Allom_evo_modes")
+
 
 #or re-compute, the below also takes ~30 minutes on my fasted computer
 
-BM_allomfit <- mvgls(array2d ~ log(Csizes_fit), aus.tree, data = two_d_array, model="BM" , method="PL-LOOCV")
-OU_allomfit <- mvgls(array2d ~ log(Csizes_fit), aus.tree, data = two_d_array, model="OU" , method="PL-LOOCV")
-EB_allomfit <- mvgls(array2d ~ log(Csizes_fit), aus.tree, data = two_d_array, model="EB" , method="PL-LOOCV")
-save(BM_allomfit,OU_allomfit,EB_allomfit, file="../Data/Processed/Allom_evo_modes.rda")
+# BM_allomfit <- mvgls(array2d ~ log(Csizes_fit), aus.tree, data = two_d_array, model="BM" , method="PL-LOOCV")
+# OU_allomfit <- mvgls(array2d ~ log(Csizes_fit), aus.tree, data = two_d_array, model="OU" , method="PL-LOOCV")
+# EB_allomfit <- mvgls(array2d ~ log(Csizes_fit), aus.tree, data = two_d_array, model="EB" , method="PL-LOOCV")
+# save(BM_allomfit,OU_allomfit,EB_allomfit, file="../Data/Processed/Allom_evo_modes.rda")
 
-GIC_BM_allom<- GIC(BM_allomfit)
+GIC_BM<- GIC(BM_allomfit)
 GIC_OU <- GIC(OU_allomfit)
 GIC_EB <- GIC(EB_allomfit)
 
 #Compute vector of GICs - this also takes a little, ~1 minute
-GICs=unlist(c(GIC(BM_allomfit)[2],GIC(OU_allomfit)[2],GIC(EB_allomfit)[2] ))
+GICs=unlist(c(GIC_BM[2], GIC_OU[2], GIC_EB[2]))
+#for tabling later
+GIC_size <- unlist(c(GIC_BM[2], GIC_OU[2], GIC_EB[2]))
+
 
 names(GICs) <- c("BM", "OU", "EB" )
   
 #compute relative probabilities betweeen 0 and 1 by comparing AICS according to Burnham and Anderson (2002)
 
 GICmin=GICs-min(GICs)
-  W=exp(-0.5*GICmin)/sum(exp(-0.5*GICmin))
+  W_allom=exp(-0.5*GICmin)/sum(exp(-0.5*GICmin))
 
 #OU is also strongly preferred here.
-  W 
+  W_allom 
 
 #or use the evidence ratio computed in the qprc package
 
@@ -202,7 +211,30 @@ Evidence_ratios
 #Alpha  
 OU_allomfit$opt$par[2]
 
+
 ```
+
+#make a table summarising evolutionary modes. Just make sure to re-run the whole code from the top to not mix up the GIC and W values
+
+```{r}
+#Save a table of evo modes
+
+Evo_mode_table <- matrix(ncol=3, nrow=6)
+colnames(Evo_mode_table) <- c("BM", "OU", "EB")
+rownames(Evo_mode_table) <- c("Shape GIC", "Shape W", "log(Centroid size) AIC", "log(Centroid size) W", "Shape~log(Csize) GIC", "Shape~Loc(Csize) W")
+
+Evo_mode_table[c(1,2),] <- rbind(GIC_shape, W_shape)
+Evo_mode_table[c(3,4),] <- rbind(AICs, W_size)
+Evo_mode_table[c(5,6),] <- rbind(GIC_size, W_allom)
+
+Evo_mode_table <- round (Evo_mode_table, 3)
+
+#rounding is hopeless, has to be done manually
+
+write.csv(Evo_mode_table, file="../Data/Results/Evo_mode_table.csv")
+
+```
+
 
 #extract shape residuals from OU model
 ```{r}

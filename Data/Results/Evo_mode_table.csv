@@ -1,0 +1,7 @@
+,BM,OU,EB
+Shape GIC,-446170.164,-447701.437,-446166.736
+Shape W,0,1,0
+log(Centroid size) AIC,-4.802,-2.875,-2.802
+log(Centroid size) W,0.572,0.218,0.21
+Shape~log(Csize) GIC,-433056.403,-434259.539,-433054.374
+Shape~Loc(Csize) W,0,1,0
