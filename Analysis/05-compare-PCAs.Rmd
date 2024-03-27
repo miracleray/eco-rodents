@@ -150,10 +150,15 @@ summary_MeanPCA_res_noNoto <- round(summary(wrap.PCA.r.n)$PC.summary[2,],3)*100
 
 
 # Set up for export and for multiple panels
-part.coords <- c(-0.125, 0.093)  # plotting parameters for A, C, D, E placement
+part.coords <- c(-0.1, 0.06)  # plotting parameters for A, C, D, E placement
+title_coords <- c(-0.02, 0.06)
+xlims <- c(-0.10, 0.115)
+ylims <- c(-0.09, 0.06)
 
-setEPS()
-postscript("../Data/Results/Figure1_PCAs_4plot.eps")
+#setEPS()
+#postscript("../Data/Results/Figure1_PCAs_4plot.eps")
+
+#pdf(file="../Data/Results/PCA_4_panel.pdf", height= 10, width = 10)
 mat <- matrix(c(1:4), 2, 2, byrow = TRUE)  # 4 plots, 2 rows, 2 columns
 layout(mat, widths = rep(1, dim(mat)[2]), heights = rep(0.5, dim(mat)[1]))   
 
@@ -163,8 +168,8 @@ plot(x = -mean.PCA$x[, 1],  # Flip for consistency
                  y = mean.PCA$x[, 2],  
                  xlab = paste("PC1 (",summary_meanPCA[1],"%)", sep=""), 
                  ylab = paste("PC2 (",summary_meanPCA[2],"%)", sep=""), 
-                 xlim = c(-0.12, 0.12),
-                 ylim = c(-0.1, 0.1),
+                 xlim = xlims,
+                 ylim = ylims,
                  col = col.diet.means, 
                  pch = pch.gld.means, 
                  bg = col.diet.means,
@@ -174,10 +179,9 @@ plot(x = -mean.PCA$x[, 1],  # Flip for consistency
                  asp=TRUE)
 
 text(part.coords[1], part.coords[2], "a", cex = 1.5)
-text(-0.045, 0.092, "full shape dataset (ecology)")
-text(-0.078, 0.075, expression(paste("Marcy ", italic("et al. "), "2020")), cex = 0.8)
+text(title_coords[1],title_coords[2], "full shape dataset (ecology)")
+text(-0.05, 0.05, expression(paste("Marcy ", italic("et al. "), "2020")), cex = 0.8)
 
-legend(-0.131, 0.067, legend = c("Arboreal", "Hopping", "Terrestrial", "Semiaquatic", "", "Carnivore", "Frugivore", "Granivore", "Folivore", "Omnivore"), col = c(rep("black", 4), "white", col.diet.5), border = NULL, pch = c(24:21, rep(16, 6)), cex = 0.8, bty = "n")
 
 # B) Evolutionary Allometry plot - diet & locomotion legend
 par(mar = c(4, 4, 1, 1))
@@ -190,13 +194,16 @@ plot(x = log(info.means$MeanCsize),
      main = " ",
      xlab = "Log centroid size", 
      ylab = "Shape  (Reg Score)",
-     bty = "n",
+     bty = "o",
      cex.axis = 1.1,
      cex.lab = 1.3)
 
 text(4.8, 0.0014, "b", cex = 1.5)
 text(5.1, 0.00139, "evolutionary allometry")
 abline(lm(-evo.allo.rs$RegScore ~ log(info.means$MeanCsize)), col = "dark grey", lwd = 1)  # common evolutionary allometry line
+
+
+
 #text(x = log(info.means$MeanCsize), y = -evo.allo.rs$RegScore, labels = info.means$Genus)  # labels genera on plot points
 
 # # C) FULL SHAPE PCA - genus colors
@@ -205,8 +212,8 @@ abline(lm(-evo.allo.rs$RegScore ~ log(info.means$MeanCsize)), col = "dark grey",
 #                  y = mean.PCA$x[, 2],  
 #                  xlab = paste("PC1 (",summary_meanPCA[1],"%)", sep=""), 
 #                  ylab = paste("PC2 (",summary_meanPCA[2],"%)", sep=""), 
-#                  xlim = c(-0.12, 0.12),
-#                  ylim = c(-0.1, 0.1),
+#                  xlim = xlims,
+#                  ylim = ylims,
 #                  col = alpha.col,
 #                  pch = 16,
 #                  bg = alpha.col,
@@ -224,8 +231,8 @@ abline(lm(-evo.allo.rs$RegScore ~ log(info.means$MeanCsize)), col = "dark grey",
 #                  y = -res.PCA$x[, 2],  
 #                  xlab = paste("PC1 (",summary_meanPCA_res[1],"%)", sep=""), 
 #                  ylab = paste("PC2 (",summary_meanPCA_res[2],"%)", sep=""), 
-#                  xlim = c(-0.12, 0.12),
-#                  ylim = c(-0.1, 0.1),
+#                  xlim = xlims,
+#                  ylim = ylims,
 #                  col = alpha.col,
 #                  pch = 16,
 #                  bg = alpha.col,
@@ -242,8 +249,8 @@ plot(x = res.PCA$x[, 1],  # no flip for consistency
                  y = -res.PCA$x[, 2],  
                  xlab = paste("PC1 (",summary_meanPCA_res[1],"%)", sep=""), 
                  ylab = paste("PC2 (",summary_meanPCA_res[2],"%)", sep=""), 
-                 xlim = c(-0.12, 0.12),
-                 ylim = c(-0.1, 0.1),
+                 xlim = xlims,
+                 ylim = ylims,
                  col = col.diet.means, 
                  pch = pch.gld.means, 
                  bg = col.diet.means,
@@ -252,7 +259,9 @@ plot(x = res.PCA$x[, 1],  # no flip for consistency
                  cex.lab = 1.3, 
                  asp=TRUE)
 text(part.coords[1], part.coords[2], "c", cex = 1.5)
-text(-0.053, 0.092, "shape residual (ecology)")
+text(title_coords[1],title_coords[2], "shape residual (ecology)")
+
+legend(-0.1, -0.0, legend = c("Arboreal", "Hopping", "Terrestrial", "Semiaquatic", "", "Carnivore", "Frugivore", "Granivore", "Folivore", "Omnivore"), col = c(rep("black", 4), "white", col.diet.5), border = NULL, pch = c(24:21, rep(16, 6)), cex = 0.8, bty = "n")
 
 # D) No Notomys shape residuals PCA - diet colors
 par(mar = c(4.5, 4.5, 2, 1))
@@ -260,8 +269,8 @@ plot(x = wrap.PCA.r.n$x[, 1],
                  y = wrap.PCA.r.n$x[, 2],  # no flip for consistency
                 xlab = paste("PC1 (",summary_MeanPCA_res_noNoto[1],"%)", sep=""), 
                  ylab = paste("PC2 (",summary_MeanPCA_res_noNoto[2],"%)", sep=""),
-                 xlim = c(-0.12, 0.12),
-                 ylim = c(-0.1, 0.1),
+                 xlim = xlims,
+                 ylim = ylims,
                  col = col.diet.means.no, 
                  pch = pch.gld.means.no, 
                  bg = col.diet.means.no,
@@ -270,10 +279,10 @@ plot(x = wrap.PCA.r.n$x[, 1],
                  cex.lab = 1.3, 
                  asp=TRUE)
 text(part.coords[1], part.coords[2], "d", cex = 1.5)
-text(-0.034, 0.092, expression(paste("shape residual without ", italic("Notomys"))))
+text(title_coords[1],title_coords[2], expression(paste("shape residual without ", italic("Notomys"))))
 
 
-dev.off()
+#dev.off()
 ```
 
 ## 3) Export skreeplots for PC importance scores for 3 separate datasets
