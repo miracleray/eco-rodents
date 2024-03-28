@@ -119,7 +119,7 @@ resid_BM <- arrayspecs(BM_shapefit$residuals, dim(mean.shapes)[[1]], 3)
 resid_OU <- arrayspecs(OU_shapefit$residuals, dim(mean.shapes)[[1]], 3)
 
 #The r-pls of these residuals is 1
-integration.test(resid_BM, resid_OU)
+two.b.pls(resid_BM, resid_OU)
 
 
 ```
@@ -260,7 +260,7 @@ head(allom_resid_OU)
 
 
 #using the integration.test function which is essentially a 2BPLS - the residuals of the two models are nearly identical
-integration.test(allom_resid_PGLS,allom_resid_OU)
+two.b.pls (allom_resid_PGLS,allom_resid_OU)
 
 ```
 
