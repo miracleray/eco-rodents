@@ -142,10 +142,27 @@ R_pls_matrix_res <- t(R_pls_matrix_res)
 
 R_pls_matrix_res[lower.tri(R_pls_matrix_res)] <- round(int.test.5.res$r.pls.mat, 2)
 
-Integration_results <- cbind(R_pls_matrix, c(rep(NA,5)),R_pls_matrix_res)
+t(R_pls_matrix_res)
+
+Integration_results_supplementary <- cbind(R_pls_matrix, c(rep(NA,5)),R_pls_matrix_res)
+
+
+#Or maybe it is a bit clearer to take out probability values and instead go for just highlighting them. 
+
+
+Integration_results <- R_pls_matrix
+
+#There's a lot of transposing going on here, but I don't know how to improve
+Integration_results[upper.tri(Integration_results)] <- t(R_pls_matrix_res)[upper.tri(t(R_pls_matrix_res))]
+  
+diag(Integration_results) <-  unlist(lapply(module_list, nrow))
+  
+  
+ 
 
 
 write.csv(Integration_results, file="../Data/Results/Integration_pls_results.csv")
+write.csv(Integration_results_supplementary, file="../Data/Results/Supp_Full_Integration_pls_results.csv")
 
 ```
 
