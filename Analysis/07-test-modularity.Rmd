@@ -111,6 +111,14 @@ system("mogrify ../Data/Processed/modules.png -trim ../Data/Processed/*.png")
 
 ```{r}
 
+basicran <- mean.shapes[which(lm.modules[, 4] == "basicran"), ,]
+molar <- mean.shapes[which(lm.modules[, 4] == "molar"), ,]
+orbital <- mean.shapes[which(lm.modules[, 4] == "orbital"), ,]
+rostrum <- mean.shapes[which(lm.modules[, 4] == "rostrum"), ,]
+vault <- mean.shapes[which(lm.modules[, 4] == "vault"), ,]
+
+module_list <- list( basicran=basicran, molar=molar, orbital=orbital, rostrum=rostrum, vault=vault)
+
 load(file = "../Data/Processed/06-integration.rda")
 
 
@@ -169,13 +177,7 @@ write.csv(Integration_results_supplementary, file="../Data/Results/Supp_Full_Int
 #test INTEGRATION between pairs of modules; this repeats the full-shape integration analysis, which contains the pairwise values, but is needed to get the analysis objects to also compare integration strengths
 
 ```{r}
-basicran <- mean.shapes[which(lm.modules[, 4] == "basicran"), ,]
-molar <- mean.shapes[which(lm.modules[, 4] == "molar"), ,]
-orbital <- mean.shapes[which(lm.modules[, 4] == "orbital"), ,]
-rostrum <- mean.shapes[which(lm.modules[, 4] == "rostrum"), ,]
-vault <- mean.shapes[which(lm.modules[, 4] == "vault"), ,]
 
-module_list <- list( basicran=basicran, molar=molar, orbital=orbital, rostrum=rostrum, vault=vault)
 
 #setting up the combinations to be analysed
 
@@ -704,9 +706,9 @@ mantel.full <- apply(as.matrix.noquote(mantel.full[,2:6]),2,as.numeric)
 mantel.res <- apply(as.matrix.noquote(mantel.res[,2:6]),2,as.numeric)
 
 # Add landmark numbers; col #4 gives the Goswami module definitions
-n.num <- c(sum(lm.modules[, 4] == "basicran"), sum(lm.modules[, 4] == "molar"), sum(lm.modules[, 4] == "orbital"), sum(lm.modules[, 4] == "rostrum"), sum(lm.modules[, 4] == "vault"))
-mantel.full <- cbind(mantel.full, n.num)  # add to tables for export
-mantel.res <- cbind(mantel.res, n.num)
+ n.num <- c(sum(lm.modules[, 4] == "basicran"), sum(lm.modules[, 4] == "molar"), sum(lm.modules[, 4] == "orbital"), sum(lm.modules[, 4] == "rostrum"), sum(lm.modules[, 4] == "vault"))
+# mantel.full <- cbind(mantel.full, n.num)  # add to tables for export
+# mantel.res <- cbind(mantel.res, n.num)
 
 
 ```
@@ -716,9 +718,9 @@ Turn the above into a table . This is a really nifty way of combining upper and 
 
 Mantel_matrix <- matrix(NA, nrow = length(mod.levels), ncol = length(mod.levels))
 #         
-Mantel_matrix[upper.tri(Mantel_matrix)]<- mantel.full[upper.tri(mantel.full, diag=FALSE)]
+Mantel_matrix[upper.tri(Mantel_matrix)]<- mantel.res[upper.tri(mantel.full, diag=FALSE)]
 # Here we have to flip the second matrix by transposing (t(mantel.res)) because the values are originally on the upper diagonal 
-Mantel_matrix[lower.tri(Mantel_matrix)]<- t(mantel.res)[(lower.tri(t(mantel.res), diag=FALSE))]
+Mantel_matrix[lower.tri(Mantel_matrix)]<- t(mantel.full)[(lower.tri(t(mantel.res), diag=FALSE))]
 
 diag(Mantel_matrix)<- n.num
                      
