@@ -213,7 +213,7 @@ OU_allomfit$opt$par[2]
 
 
 ```
-#also checks of evolutionary modes of residuals
+#also checks of evolutionary modes of residuals of the best-fitting (OU) model
 ```{r}
 
 load(file="../Data/Processed/Res_evo_modes.rda")
@@ -222,16 +222,16 @@ load(file="../Data/Processed/Res_evo_modes.rda")
 # 
 # #A little check that things line up: 
 # 
- dimnames(OU_allomfit$residuals)[[1]] == aus.tree$tip.label
+ # dimnames(OU_allomfit$residuals)[[1]] == aus.tree$tip.label
 # 
-array2d_res <- OU_allomfit$residuals
+#array2d_res <- OU_allomfit$residuals
 # 
 # 
 # 
-BM_resfit <- mvgls(array2d_res ~ 1, aus.tree, data = two_d_array, model="BM" , method="PL-LOOCV")
-OU_resfit <- mvgls(array2d_res ~ 1, aus.tree, data = two_d_array, model="OU" , method="PL-LOOCV")
-EB_resfit <- mvgls(array2d_res ~ 1, aus.tree, data = two_d_array, model="EB" , method="PL-LOOCV")
-save(BM_resfit,OU_resfit,EB_resfit, file="../Data/Processed/Res_evo_modes.rda")
+# BM_resfit <- mvgls(array2d_res ~ 1, aus.tree, data = two_d_array, model="BM" , method="PL-LOOCV")
+# OU_resfit <- mvgls(array2d_res ~ 1, aus.tree, data = two_d_array, model="OU" , method="PL-LOOCV")
+# EB_resfit <- mvgls(array2d_res ~ 1, aus.tree, data = two_d_array, model="EB" , method="PL-LOOCV")
+# save(BM_resfit,OU_resfit,EB_resfit, file="../Data/Processed/Res_evo_modes.rda")
 
 GIC_BM<- GIC(BM_resfit)
 GIC_OU <- GIC(OU_resfit)
