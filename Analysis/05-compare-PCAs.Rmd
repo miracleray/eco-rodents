@@ -183,6 +183,9 @@ text(title_coords[1],title_coords[2], "full shape dataset (ecology)")
 text(-0.05, 0.05, expression(paste("Marcy ", italic("et al. "), "2020")), cex = 0.8)
 
 
+
+
+
 # B) Evolutionary Allometry plot - diet & locomotion legend
 par(mar = c(4, 4, 1, 1))
 plot(x = log(info.means$MeanCsize),
@@ -260,6 +263,12 @@ plot(x = res.PCA$x[, 1],  # no flip for consistency
                  asp=TRUE)
 text(part.coords[1], part.coords[2], "c", cex = 1.5)
 text(title_coords[1],title_coords[2], "shape residual (ecology)")
+
+text(res.PCA$x[which(rownames(res.PCA$x)=="Mastacomys_fuscus"),1],-res.PCA$x[which(rownames(res.PCA$x)=="Mastacomys_fuscus"),2], expression(italic( "M. fuscus")), pos=1)
+
+text(res.PCA$x[which(rownames(res.PCA$x)=="Conilurus_penicillatus"),1],-res.PCA$x[which(rownames(res.PCA$x)=="Conilurus_penicillatus"),2], expression(italic( "C. penicill.")), pos=3)
+
+text(res.PCA$x[which(rownames(res.PCA$x)=="Notomys_mitchellii"),1],-res.PCA$x[which(rownames(res.PCA$x)=="Notomys_mitchellii"),2], expression(italic( "Notomys")), pos=3)
 
 legend(-0.1, -0.0, legend = c("Arboreal", "Hopping", "Terrestrial", "Semiaquatic", "", "Carnivore", "Frugivore", "Granivore", "Folivore", "Omnivore"), col = c(rep("black", 4), "white", col.diet.5), border = NULL, pch = c(24:21, rep(16, 6)), cex = 0.8, bty = "n")
 
