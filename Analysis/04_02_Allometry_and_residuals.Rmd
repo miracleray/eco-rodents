@@ -94,8 +94,8 @@ physignal(log_mean_csize, aus.tree )
 
 physig_table_modules_csize <- matrix(ncol = 2, nrow= length(module_list))
 
-rownames(physig_table_modules)<- names(mean_modules)
-colnames(physig_table_modules) <- c("K", "p")
+rownames(physig_table_modules_csize)<- names(mean_modules)
+colnames(physig_table_modules_csize) <- c("K", "p")
 
 #as it also says in the help file, phylosig from phytools and physignal from geomorph give the same values in univariate data.
 
@@ -103,12 +103,13 @@ for (i in (1: length(mean_modules))){
   
   temp <- physignal(mean_modules[[i]]$csize, aus.tree)
   
-  physig_table_modules[i,1] <- temp$phy.signal
-   physig_table_modules[i,2] <- temp$pvalue
+  physig_table_modules_csize[i,1] <- temp$phy.signal
+   physig_table_modules_csize[i,2] <- temp$pvalue
 
   
 }
 
+write.csv(physig_table_modules_csize, file="../Data/Results/physig_table_modules_csize.csv")
 
 ```
 
@@ -270,5 +271,8 @@ for (i in (1: length(module_list_res))){
 disparity_table[,3]<- round (((disparity_table[,1]-disparity_table[,2])*100)/(disparity_table[,1]),1)
 
 disparity_table
+
+
+write.csv(disparity_table, file="../Data/Results/disparity_tablex10000.csv")
 
 ```
