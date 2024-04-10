@@ -44,13 +44,42 @@ load(file = "../Data/Processed/03-tree-data.rda")
 load(file = "../Data/Processed/03-graphing-vectors.rda")
 load(file="../Data/Processed/allometry_residuals.rda")
 
+
+#This is repeated in the modularity code but it's easier to just add it again here - less complicated.
+
+
+lm.modules <- read.csv("../Data/Processed/Landmark_modules.csv", sep = ",", header = TRUE)
+
+basicran <- mean.shapes[which(lm.modules[, 4] == "basicran"), ,]
+molar <- mean.shapes[which(lm.modules[, 4] == "molar"), ,]
+orbital <- mean.shapes[which(lm.modules[, 4] == "orbital"), ,]
+rostrum <- mean.shapes[which(lm.modules[, 4] == "rostrum"), ,]
+vault <- mean.shapes[which(lm.modules[, 4] == "vault"), ,]
+
+#"Module_list" is modules from the same gpa; mean_modules is separate GPAs
+
+module_list <- list( basicran=basicran, molar=molar, orbital=orbital, rostrum=rostrum, vault=vault)
+
+
+basicran_res <- residuals[which(lm.modules[, 4] == "basicran"), ,]
+molar_res <- residuals[which(lm.modules[, 4] == "molar"), ,]
+orbital_res <- residuals[which(lm.modules[, 4] == "orbital"), ,]
+rostrum_res <- residuals[which(lm.modules[, 4] == "rostrum"), ,]
+vault_res <- residuals[which(lm.modules[, 4] == "vault"), ,]
+
+module_list_res <- list( basicran_res=basicran_res, molar_res=molar_res, orbital_res=orbital_res, rostrum_res=rostrum_res, vault_res=vault_res)
+
+
+
+
 ```
 
 #Phylogenetic signal of shape and size
 ```{r}
 
 
-physignal(mean.shapes, aus.tree )
+Physig_allshape <- physignal(mean.shapes, aus.tree )
+
 
 #pull out csize so it also has row names and check
 
@@ -60,9 +89,30 @@ names(log_mean_csize) == aus.tree$tip.label
 
 physignal(log_mean_csize, aus.tree )
 
+
+#now csizes of separate modules
+
+physig_table_modules_csize <- matrix(ncol = 2, nrow= length(module_list))
+
+rownames(physig_table_modules)<- names(mean_modules)
+colnames(physig_table_modules) <- c("K", "p")
+
+#as it also says in the help file, phylosig from phytools and physignal from geomorph give the same values in univariate data.
+
+for (i in (1: length(mean_modules))){
+  
+  temp <- physignal(mean_modules[[i]]$csize, aus.tree)
+  
+  physig_table_modules[i,1] <- temp$phy.signal
+   physig_table_modules[i,2] <- temp$pvalue
+
+  
+}
+
+
 ```
 
-#Now we want to know if allometry affects all modules equally. 
+#Now we want to know allometry in separately GPA-ed modules
 
 ```{r}
 
@@ -72,28 +122,153 @@ Allometry <- matrix(ncol=7, nrow=length(names(mean_modules)), dimnames=list(c(na
 
 for (i in 1:length(mean_modules)){
   
-temp <- procD.pgls( mean_modules[[i]]$shape ~ log(mean_modules[[i]]$csize), phy=aus.tree, iter = 10000)
+temp <- procD.pgls( mean_modules[[i]]$shape ~ log(mean_modules[[i]]$csize), phy=aus.tree,lambda = 1, iter = 10000)
 
 Allometry[i, 1:7] <- unlist( temp$aov.table[1,])
 
 }
 
 
-write.csv(Allometry, file="../Data/Results/Module_allometry.csv")
 
-#it is also worth checking whether this pattern holds up if we use the overall csize of the skull, since the datasets are all aligned.
 
-#add empty colums for values
-Allometry_fullcsize <- matrix(ncol=7, nrow=length(names(mean_modules)), dimnames=list(c(names(mean_modules)), c("Df", "SS","MS" ,"Rsq", "F", "Z","P")) )
+Allometry_non_phylo <- matrix(ncol=7, nrow=length(names(mean_modules)), dimnames=list(c(names(mean_modules)), c("Df", "SS","MS" ,"Rsq", "F", "Z","P")) )
 
 
 for (i in 1:length(mean_modules)){
   
-temp <- procD.pgls( mean_modules[[i]]$shape ~ log(info.means$MeanCsize), phy=aus.tree)
+temp <- procD.lm( mean_modules[[i]]$shape ~ log(mean_modules[[i]]$csize), iter = 10000)
 
-Allometry_fullcsize[i, 1:7] <- unlist( temp$aov.table[1,])
+Allometry_non_phylo [i, 1:7] <- unlist( temp$aov.table[1,])
 
 }
 
+
+Allometry_gls_lm <- rbind(Allometry, c(rep(NA, 7)), Allometry_non_phylo)
+
+
+#Take out df column
+
+Allometry_gls_lm <- Allometry_gls_lm[,-1]
+#round SS/MS
+Allometry_gls_lm[,c(1,2,6)] <- round (Allometry_gls_lm[,c(2,3,6)], 3)
+Allometry_gls_lm[,c(3:5)] <- round (Allometry_gls_lm[,c(3:5)], 2)
+
+write.csv(Allometry_gls_lm, file="../Data/Results/Module_allometry.csv")
+
+#it is also worth checking whether this pattern holds up if we use the overall csize of the skull, since the datasets are all aligned.
+
+#add empty colums for values
+# Allometry_fullcsize <- matrix(ncol=7, nrow=length(names(mean_modules)), dimnames=list(c(names(mean_modules)), c("Df", "SS","MS" ,"Rsq", "F", "Z","P")) )
+# 
+# 
+# for (i in 1:length(mean_modules)){
+#   
+# temp <- procD.pgls( mean_modules[[i]]$shape ~ log(info.means$MeanCsize), phy=aus.tree)
+# 
+# Allometry_fullcsize[i, 1:7] <- unlist( temp$aov.table[1,])
+# 
+# }
+# 
+# 
+# #The result is not as expected. so just plotting a check here
+# 
+# mfrow3d(2,3)
+# 
+# for (i in (1:length(mean_modules))){
+#   
+#   
+#   spheres3d(mean_modules[[i]]$shape[,,1], radius=0.01, col="hotpink", )
+#  title3d(main=names(mean_modules)[i])
+#  next3d()
+#   
+# }
+
+
+
+```
+
+#Does this pan out differently if there isn't a joint superimposition?
+
+```{r}
+
+#add empty colums for values
+Allometry_joint_gpa <- matrix(ncol=7, nrow=length(names(mean_modules)), dimnames=list(c(names(mean_modules)), c("Df", "SS","MS" ,"Rsq", "F", "Z","P")) )
+
+
+for (i in 1:length(module_list)){
+  
+temp <- procD.pgls( module_list[[i]] ~ log(info.means$MeanCsize), phy=aus.tree, iter = 10000)
+
+Allometry_joint_gpa[i, 1:7] <- unlist( temp$aov.table[1,])
+
+}
+
+#
+
+
+
+Allometry_joint_gpa_non_phylo <- matrix(ncol=7, nrow=length(names(mean_modules)), dimnames=list(c(names(mean_modules)), c("Df", "SS","MS" ,"Rsq", "F", "Z","P")) )
+
+
+for (i in 1:length(mean_modules)){
+  
+temp <- procD.lm( module_list[[i]] ~ log(info.means$MeanCsize), iter = 10000)
+
+Allometry_joint_gpa_non_phylo [i, 1:7] <- unlist( temp$aov.table[1,])
+
+}
+
+
+Allometry_gls_lm_joint_gpa <- rbind(Allometry_joint_gpa, c(rep(NA, 7)), Allometry_joint_gpa_non_phylo)
+
+
+#Take out df column
+
+Allometry_gls_lm_joint_gpa <- Allometry_gls_lm_joint_gpa[,-1]
+#round SS/MS
+Allometry_gls_lm_joint_gpa[,c(1,2,6)] <- round (Allometry_gls_lm_joint_gpa[,c(2,3,6)], 3)
+Allometry_gls_lm_joint_gpa[,c(3:5)] <- round (Allometry_gls_lm_joint_gpa[,c(3:5)], 2)
+
+
+
+write.csv(Allometry_gls_lm_joint_gpa, file="../Data/Results/Module_allometry_joint_gpa.csv")
+
+
+
+```
+
+#Strange that the rsquareds for the rostrum are so low. How about disparity?
+
+```{r}
+
+disparity_table <- matrix (ncol=3, nrow=length(module_list))
+colnames(disparity_table) <- c("Full dataset", "Residuals", "% reduction")
+rownames(disparity_table)<- names(module_list)
+
+for (i in (1: length(module_list))){
+  
+  temp <- round ((morphol.disparity(module_list[[i]]~1)/length(module_list_res[[i]][,,1][,1]))*10000, 3)
+  
+  disparity_table[i,1] <- temp
+   
+
+  
+}
+
+for (i in (1: length(module_list_res))){
+  
+  temp <- round((morphol.disparity(module_list_res[[i]]~1)/length(module_list_res[[i]][,,1][,1]))*10000, 3)
+  
+  disparity_table[i,2] <- temp
+   
+
+  
+}
+
+#By how much does disparity drop when you take allometry out?
+
+disparity_table[,3]<- round (((disparity_table[,1]-disparity_table[,2])*100)/(disparity_table[,1]),1)
+
+disparity_table
 
 ```

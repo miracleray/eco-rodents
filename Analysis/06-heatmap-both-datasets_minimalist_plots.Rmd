@@ -367,3 +367,16 @@ legend("bottomleft", "Hypothetical maximum to minimum", bty = "n", inset = c(0.1
 dev.off()
 ```
 
+#because the allometry of the rostrum is so much lower than expected, here is a check if the heatmaps are correct - plotting shape variation "the conventional way"
+
+```{r}
+summary(allom.fit)
+
+get_predictors <- plot(allom.fit, predictor =info.means$MeanCsize, type="regression", reg.type="RegScore")
+
+plotRefToTarget(allom.fit$GM$fitted[,,which(dimnames(allom.fit$GM$fitted)[[3]]=="Pseudomys_delicatulus")], allom.fit$GM$fitted[,,which(dimnames(allom.fit$GM$fitted)[[3]]=="Uromys_caudimaculatus")], 
+                method="vector")
+
+
+
+```
