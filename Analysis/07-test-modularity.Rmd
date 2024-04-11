@@ -48,9 +48,12 @@ load(file = "../Data/Processed/allometry_residuals.rda")
 ## Choose the modules
 The five modules will need to be designated from the LM numbers. The first time, this was done with `define.modules()` but each module was then saved in a .csv file so this step can be repeated much more quickly.
 
-### Load in the partition definitions
+### Load in the partition definitions and numbers
 ```{r}
 lm.modules <- read.csv("../Data/Processed/Landmark_modules.csv", sep = ",", header = TRUE)
+
+# Add landmark numbers; col #4 gives the Goswami module definitions
+ n.num <- c(sum(lm.modules[, 4] == "basicran"), sum(lm.modules[, 4] == "molar"), sum(lm.modules[, 4] == "orbital"), sum(lm.modules[, 4] == "rostrum"), sum(lm.modules[, 4] == "vault"))
 ```
 
 ### Visualize the landmark types
@@ -516,16 +519,20 @@ colnames(mod.result.res) <- unique(lm.modules[, 4])  # names from 1st instance
 rownames(mod.result.res) <- unique(lm.modules[, 4])  # ...in lm.module[, 4]
 mod.result.res <- mod.result.res[order(alpha.key), order(alpha.key)]
 
-#phylo.modularity provides a pairwise table. Here, upper is full data and lower is residuals
+#phylo.modularity provides a pairwise table. Here, upper is residual data and lower is full data
 
 Modularity_matrix <- matrix(NA, nrow = nrow(mod.result.phy), ncol = nrow(mod.result.phy))
 
-Modularity_matrix[upper.tri(Modularity_matrix)]<- mod.result.phy[upper.tri(mod.result.phy, diag=FALSE)]
+Modularity_matrix[upper.tri(Modularity_matrix)]<- mod.result.res[upper.tri(mod.result.res, diag=FALSE)]
 
-Modularity_matrix[lower.tri(Modularity_matrix)]<- mod.result.res[lower.tri(mod.result.res, diag=FALSE)]
+Modularity_matrix[lower.tri(Modularity_matrix)]<- mod.result.phy[lower.tri(mod.result.phy, diag=FALSE)]
 
 rownames(Modularity_matrix)<- rownames(mod.result.phy)
 colnames(Modularity_matrix)<- colnames(mod.result.phy)
+
+diag(Modularity_matrix) <- n.num
+
+Modularity_matrix <- round(Modularity_matrix, 2)
 
 write.csv(Modularity_matrix, file="../Data/Results/modularity_pairwise.csv")
 
