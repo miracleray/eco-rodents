@@ -34,7 +34,7 @@ if(!require(dispRity)) install.packages("dispRity")
 if(!require(landvR)) install_github("TGuillerme/landvR")  
 library(landvR)   # [github::TGuillerme/landvR] v0.5.2
 library(png)      # CRAN v0.1-8 
-
+library(Rvcg)
 # This sets the wd to local
 library(rstudioapi) # Safely Access the RStudio API
 setwd(dirname(getActiveDocumentContext()$path))
@@ -380,3 +380,101 @@ plotRefToTarget(allom.fit$GM$fitted[,,which(dimnames(allom.fit$GM$fitted)[[3]]==
 
 
 ```
+
+#making a figure of meshes
+```{r}
+
+#grab stls and convert if needed
+# setwd("../Data/Raw/Meshes/")
+# 
+# filelist <- list.files(path=".", pattern = "*stl")
+# 
+# for (i in 1: length(filelist)){
+#   
+#   convert <- vcgPlyRead(filelist[i])
+#   
+#   vcgPlyWrite(convert, filename = sub(".stl", ".ply", filelist[i]))
+#   
+# }
+
+#grab whole path name to read in and file name for names
+filelist <- list.files("../Data/Raw/Meshes/converted", full.names = TRUE)
+namelist <- list.files("../Data/Raw/Meshes/converted", full.names = FALSE)
+namelist <- sub("*.ply", "", namelist)
+#I am here making a vector taht matches the file list, but note the scope for human error because this is manual
+#namelist <- c("Hydromys chrysogaster (QM J10055)", "Mastacomys fuscus (AM M7170)", "Notomys fuscus (AM M4860)", "Pseudomys delicatulus (QM JM18715", "Uromys caudimaculatus (MV C6982)")
+
+#read in and name meshes
+
+for (i in 1: length(filelist)){
+  
+  read <- vcgPlyRead(filelist[i])
+  
+  assign(namelist[i], read)
+  
+}
+
+#Set orientations for these meshes just once
+# shade3d(Pseudomys_delicatulus_JM18715, col="pink")
+# usrMat_Pseudomys <- par3d()$userMatrix # set by hand, adjust specimen i
+#shade3d(Uromys_caudimaculatus_C6982, col="pink")
+#usrMat_Uromys <- par3d()$userMatrix # set by hand, adjust specimen i
+# shade3d(Notomys_fuscus_AM_M4860, col="pink")
+# usrMat_Notomys <- par3d()$userMatrix
+# shade3d(Mastacomys_fuscus_AM_M7170, col="pink")
+# usrMat_Mastacomys <- par3d()$userMatrix
+# shade3d(Hydromys_chrysogaster_QM_J10055, col="pink")
+# usrMat_Hydromys <- par3d()$userMatrix
+# 
+# 
+#save(usrMat_Pseudomys, usrMat_Mastacomys, usrMat_Notomys, usrMat_Uromys, usrMat_Hydromys, file="../Data/Processed/User_matrices_RGL")
+
+load( file="../Data/Processed/User_matrices_RGL")
+```
+
+Smallest vs largest
+```{r}
+open3d(windowRect=c(0,0,1500, 800), zoom=0.85, FOV=0)
+mfrow3d(1,2)
+
+shade3d(Pseudomys_delicatulus_JM18715, col="pink",tran = par3d(userMatrix=usrMat_Pseudomys ), zoom=0.8 )
+
+
+next3d()
+shade3d(Uromys_caudimaculatus_C6982, col="pink", tran = par3d(userMatrix=usrMat_Uromys ))
+
+#rgl.snapshot(filename = "../Data/Results/Pseudomys_vs_Uromys_meshes.png")
+
+```
+
+Three specialists
+
+```{r}
+
+cexes=1
+
+open3d(windowRect=c(0,0,1500,800), zoom=0.85, FOV=0)
+mfrow3d(1,3)
+
+
+shade3d(Hydromys_chrysogaster_QM_J10055, col="pink", tran = par3d(userMatrix=usrMat_Hydromys ))
+#texts3d(-10,-4,-20,texts=expression(paste(italic("H. chrysogaster"), " QM J10055")) ,cex=cexes)
+
+next3d()
+shade3d(Notomys_fuscus_AM_M4860, col="pink",tran = par3d(userMatrix=usrMat_Notomys ) )
+#texts3d(-21,15,-28,texts=expression(paste(italic("N. fuscus"),  " AM M4860")), cex=cexes)
+
+next3d()
+shade3d(Mastacomys_fuscus_AM_M7170, col="pink", tran = par3d(userMatrix=usrMat_Mastacomys ))
+#texts3d(14,-2,-30,texts=expression(paste(italic("M. fuscus"), " AM M7170")), cex=cexes)
+
+
+
+
+
+
+rgl.snapshot(filename = "../Data/Results/Specialists.png")
+
+
+```
+

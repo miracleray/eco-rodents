@@ -13,3 +13,6 @@ Data/Results/SFigure1_Screeplots.pdf
 *.tiff
 *.pdf
 Data/Results/SFigure3_GItests.pdf
+*.ply
+*.stl
+*.indd
